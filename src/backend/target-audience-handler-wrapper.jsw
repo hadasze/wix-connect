@@ -1,0 +1,27 @@
+import { getAudienceDetailsFromPeopleDataAPI, getAudienceDetailsFromPeopleDataAPIV2 } from './people-data-api.js';
+import * as UserMailer from './user-mailer-api.js';
+import * as TargetAudienceDataHelper from './target-audience-handler.js'
+
+export const getAudienceDetails = async (uuidsAndMsidsList, userJWT) => {
+    try {
+
+        const audienceDetailsReal = await getAudienceDetailsFromPeopleDataAPIV2(uuidsAndMsidsList, userJWT);
+     
+        const filteredAudience = await TargetAudienceDataHelper.filterAudience(Object.values(audienceDetailsReal));
+     
+        return filteredAudience;
+    } catch (error) {
+        return Promise.reject('backend/target-audience-handler-wrapper.jsw -> getAudienceDetails failed - origin error - ' + error);
+    }
+}
+
+export const getDownloadFileUrlFromArray = (array, fileName) => TargetAudienceDataHelper.getDownloadCsvUrlFromArray(array, fileName);
+
+export function sendEmailToWixUsers(arrayOfEmails, userJWT,isTestEmail) {
+    // try {
+    return arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT,isTestEmail));
+    // } catch (error) {
+    //     return Promise.reject('backend -> target-audience-handler-wrapper.js -> sendEmailToWixUsers failed -origin error - ' + error);
+    // }
+}
+

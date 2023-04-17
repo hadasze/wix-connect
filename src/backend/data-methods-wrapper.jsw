@@ -1,0 +1,37 @@
+import * as DataMethods from './data-methods.js'
+
+export const saveCommunication = (data) => DataMethods.saveCommunication(data);
+
+export const getCommunication = (id) => DataMethods.getCommunication(id);
+
+export const createCommunication = () => DataMethods.createCommunication();
+
+export const getTargetAudience = (id) => DataMethods.getTargetAudience(id);
+
+export const getAllUserCommunications = (filters, options, limit, skip) => DataMethods.getAllUserCommunications(filters, options, limit, skip);
+
+export const removeCommunication = (communicationId) => DataMethods.removeCommunication(communicationId);
+
+export const updateCommunication = (communication) => DataMethods.updateCommunication(communication);
+
+export const countAllUserCommunications = () => {
+    const options = { count: true }
+    const getDraftCommunicationsPromise = getAllUserCommunications({ draft: true }, options);
+    const getArchiveCommunicationsPromise = getAllUserCommunications({ archive: true }, options);
+    const getSentCommunicationsPromise = getAllUserCommunications({ sent: true }, options);
+    const getAllCommunicationsPromise = getAllUserCommunications({ "sent": true, "draft": true }, options);
+    const getAllTemplatesCommunications = getAllUserCommunications({ isTemplate: true }, options);
+    return Promise.all([getAllCommunicationsPromise, getDraftCommunicationsPromise, getArchiveCommunicationsPromise, getSentCommunicationsPromise, getAllTemplatesCommunications]);
+}
+
+export const getSentCommunicationDetails = (userID, userJWT) => DataMethods.getSentCommunicationData(userID, userJWT);
+
+export const getUuidByEmail = (email) => DataMethods.getUuidByEmail(email);
+
+import { mediaManager } from 'wix-media-backend';
+
+export const files = () => mediaManager.listFiles()
+
+export const getIsContactedUser = (userId) => DataMethods.getIsContactedUser(userId);
+export const getContactedEmailByMemberID = (memberID) => DataMethods.getContactedEmailByMemberID(memberID);
+

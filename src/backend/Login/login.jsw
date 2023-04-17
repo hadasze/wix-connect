@@ -1,0 +1,50 @@
+import * as OpenID from './openid-client.js';
+import * as ERAPI from '../ero-api.js';
+import { authentication } from 'wix-members-backend';
+
+export const getAuthorizationEndpoint = (redirectURI) => OpenID.getAuthorizationEndpoint(redirectURI);
+
+export const getSessionToken = async (redirectURI, url) => {
+
+    try {
+        const tokenset = await OpenID.getTokenSet(redirectURI, url);
+        const userInfo = await OpenID.getUserinfo(tokenset.access_token);
+
+        if (tokenset && userInfo) {
+            const sessionToken = await authentication.generateSessionToken(userInfo.email);
+            return { sessionToken, tokenset, userInfo };
+        }
+        throw new Error('could not generate tokenset');
+
+    } catch (error) {
+        return Promise.reject('backend/Login/login.jsw -> login failed - origin error - ' + error);
+    }
+}
+
+export const qaLogin = async (access_token) => {
+
+    try {
+        const isQA = true;
+        const [tokenset, userInfo] = await Promise.all([ERAPI.getServerToken(isQA), OpenID.getUserinfo(access_token)])
+        if (tokenset && userInfo) {
+            const sessionToken = await authentication.generateSessionToken(userInfo.email);
+            return { sessionToken, tokenset, userInfo };
+        }
+
+        throw new Error('could not generate tokenset');
+
+    } catch (error) {
+        return Promise.reject('backend/Login/login.jsw -> qaLogin failed - origin error - ' + error);
+    }
+}
+
+export const introspect = (token) => OpenID.introspect(token);
+
+export const refreshToken = (refreshToken) => OpenID.refreshToken(refreshToken);
+
+export const getUserinfo = (accessToken) => OpenID.getUserinfo(accessToken);
+
+export async function isQAMember(accessToken) {
+    const introspectAccessTokenRes = await introspect(accessToken);
+    return introspectAccessTokenRes.active && introspectAccessTokenRes.email === "fake@wix.com";
+}

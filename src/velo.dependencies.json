@@ -1,0 +1,1 @@
+{"dependencies":{"typedarray-to-buffer":"4.0.0","csvtojson":"2.0.10","uuid":"9.0.0","json2csv":"5.0.1","p-limit":"3.1.0","jsonwebtoken":"8.5.1","buffer":"5.6.0","jwt-decode":"2.2.0","openid-client":"5.1.8","request-promise-node":"1.0.1","mobx":"6.6.1","jwks-rsa":"1.8.0","es6-promise-pool":"2.5.0","lodash":"4.17.21"},"wixCodeDependencies":{}}

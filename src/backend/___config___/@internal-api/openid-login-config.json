@@ -1,0 +1,10 @@
+{
+    "idp_app_conf": {
+        "discovery_uri": "https://sso.wewix.net/auth/realms/WIX-APP/.well-known/uma2-configuration",
+        "response_type": "code",
+        "scope": "profile+openid",
+        "client_id": "ero-employee-to-user",
+        "client_secret_manager_key": "IDP_APP_SECRET_KEY",
+        "server_secret_manager_key": "IDP_SERVER_TO_SERVER_SECRET_KEY"
+    }
+}
