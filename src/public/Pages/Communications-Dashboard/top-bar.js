@@ -39,11 +39,10 @@ export const setTopBarButtonsEvents = () => {
             $w('#createCommunicationButton').enable();
         }
     });
-
-    $w('#needHelpButton').onClick((event) => {
-        sendBi('needHelp', {})
-        wixWindow.openLightbox('Need Help Sidebar');
-    });
+    // $w('#needHelpButton').onClick((event) => {
+    //     sendBi('needHelp', {})
+    //     wixWindow.openLightbox('Need Help Sidebar');
+    // });
 }
 
 export const clickCommunicationButton = () => {

@@ -1,5 +1,6 @@
 import wixSite from 'wix-site';
 import wixLocation from 'wix-location';
+import wixWindow from 'wix-window';
 
 import {validateAccessToken, clearQueryParams} from '../login.js';
 
@@ -16,6 +17,7 @@ if (wixSite.currentPage.isHomePage) {
 $w.onReady(function () {
     clearQueryParams();
     refreshTokenTimeout();
+    needHelpTopBarOnClick();
 });
 
 let tokenExpire;
@@ -26,4 +28,10 @@ function refreshTokenTimeout() {
         clearTimeout(tokenExpire);
     }
     tokenExpire = setTimeout(() => refreshTokenTimeout(), 600000);
+}
+
+const needHelpTopBarOnClick = () => {
+    $w('#needHelpButton').onClick((event) => {
+        wixWindow.openLightbox('Need Help Sidebar');
+    });
 }
