@@ -115,6 +115,7 @@ export function clearQueryParams() {
     const toRemove = [];
     for (const property in query) {
         if (!state[property]) {
+            if (property !== 'siteRevision' && property!== 'branchId')
             toRemove.push(property);
         }
     }
