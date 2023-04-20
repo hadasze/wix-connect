@@ -266,7 +266,7 @@ const setApproveToggleEvent = () => {
 const handleNotValidAudience = (uploadedCounter, allAudienceCounter) => {
     if (uploadedCounter < allAudienceCounter) {
         $w("#usersWereNotAddedErrorText").text = Text.USERS_WERE_NOT_UPLOADED(allAudienceCounter - uploadedCounter);
-        showToast('usersWereNotAddedError', 6000);
+        showToast('usersWereNotAddedError', 10000);
     } else {
         $w("#uploadCSVSuccessText").text = Text.USERS_WERE_UPLOADED(uploadedCounter);
         showToast('uploadCSVSuccessToast', 3000);
