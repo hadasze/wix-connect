@@ -4,6 +4,8 @@ export const TIME = {
     AUTO_SAVE: 2000,
 }
 
+export const FileNameLength = 22;
+
 export const WixSmartConectCourseid = '8333';
 
 export const SmartSecret = "SmartSecret";

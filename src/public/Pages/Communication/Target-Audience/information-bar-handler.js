@@ -1,9 +1,9 @@
-import { autorun, toJS } from 'mobx';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { reciveLatestApprovedUsers } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler.js';
-import { disbaleCurrentButton } from 'public/Pages/helpers.js';
-import { AllAudienceRepeaterButtons } from 'public/consts.js';
+import {autorun, toJS} from 'mobx';
+import {targetAudienceState} from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import {state} from 'public/Pages/Communication/state-management.js';
+import {reciveLatestApprovedUsers} from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler.js';
+import {disbaleCurrentButton} from 'public/Pages/helpers.js';
+import {AllAudienceRepeaterButtons, FileNameLength} from 'public/consts.js';
 
 export const initAudienceInformationBarActions = () => {
     setInfoBarButtonsOnClickActions();
@@ -46,16 +46,24 @@ const setInfoBarButtonsOnClickActions = () => {
 }
 
 const setInfoBarButtonsLabels = () => {
-    autorun(() => $w('#csvFileNameText').text = `${state?.communication?.targetAudienceCsvFileName || $w('#csvFileNameText').value}`);
+    autorun(() => {
+        let fileName = state?.communication?.targetAudienceCsvFileName || $w('#csvFileNameText').value || '';
+        if (fileName.length > FileNameLength) {
+            fileName = fileName.slice(0, filenameLength);
+            +'...'
+        }
+        $w('#csvFileNameText').text = fileName;
+        // $w('#csvFileNameText').text = `${state?.communication?.targetAudienceCsvFileName || $w('#csvFileNameText').value}`;
+    })
     autorun(() => $w('#approvedCounterText').text = `${targetAudienceState?.approvedCounter || '0'}`);
-    autorun(() => $w('#approvedPrecentageText').text = `${(targetAudienceState?.approvedPercenatge || '0') +'%'}`);
+    autorun(() => $w('#approvedPrecentageText').text = `${(targetAudienceState?.approvedPercenatge || '0') + '%'}`);
     autorun(() => {
         $w('#needAprrovalCounterText').text = `${targetAudienceState.needApprovalCounter || '0'}`
     });
-    autorun(() => $w('#needApprovalPrecentageText').text = `${(targetAudienceState?.needApprovalPercenatge || '0') +'%'}`);
+    autorun(() => $w('#needApprovalPrecentageText').text = `${(targetAudienceState?.needApprovalPercenatge || '0') + '%'}`);
 
     autorun(() => $w('#rejectedCounterText').text = `${targetAudienceState?.rejectedCounter || '0'}`);
-    autorun(() => $w('#rejectedPrecentageText').text = `${(targetAudienceState?.rejectedPercenatge || '0') +'%'}`);
+    autorun(() => $w('#rejectedPrecentageText').text = `${(targetAudienceState?.rejectedPercenatge || '0') + '%'}`);
 
     autorun(() => $w('#totalUsersCounterText').text = `${targetAudienceState?.totalCounter || '0'}`);
 
