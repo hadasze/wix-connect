@@ -17,7 +17,7 @@ if (wixSite.currentPage.isHomePage) {
 $w.onReady(function () {
     clearQueryParams();
     refreshTokenTimeout();
-    needHelpTopBarOnClick();
+    // needHelpTopBarOnClick();
 });
 
 let tokenExpire;
@@ -30,8 +30,3 @@ function refreshTokenTimeout() {
     tokenExpire = setTimeout(() => refreshTokenTimeout(), 600000);
 }
 
-const needHelpTopBarOnClick = () => {
-    $w('#needHelpButton').onClick((event) => {
-        wixWindow.openLightbox('Need Help Sidebar');
-    });
-}

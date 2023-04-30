@@ -49,8 +49,7 @@ const setInfoBarButtonsLabels = () => {
     autorun(() => {
         let fileName = state?.communication?.targetAudienceCsvFileName || $w('#csvFileNameText').value || '';
         if (fileName.length > FileNameLength) {
-            fileName = fileName.slice(0, filenameLength);
-            +'...'
+            fileName = fileName.slice(0, FileNameLength) + '...';
         }
         $w('#csvFileNameText').text = fileName;
         // $w('#csvFileNameText').text = `${state?.communication?.targetAudienceCsvFileName || $w('#csvFileNameText').value}`;
