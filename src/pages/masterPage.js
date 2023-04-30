@@ -17,7 +17,6 @@ if (wixSite.currentPage.isHomePage) {
 $w.onReady(function () {
     clearQueryParams();
     refreshTokenTimeout();
-    // needHelpTopBarOnClick();
 });
 
 let tokenExpire;
