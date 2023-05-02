@@ -48,6 +48,7 @@ const setTargetAudienceData = () => {
 
     autorun(async () => {
         if (state.communication?.targetAudience) {
+            console.log('setTargetAudienceData::AutoRun');
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
             await setAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
