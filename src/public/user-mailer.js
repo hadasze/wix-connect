@@ -26,6 +26,7 @@ export async function sendEmails(communicationn) {
                 senderName,
                 replyTo: replyToAddress,
                 subjectLine,
+                previewText,
                 title,
                 emailContent: emailContent,
                 emailcontent2: finalGreeting || '',
@@ -51,7 +52,7 @@ export const sendTestEmail = async (emailAddress, communication) => {
     try {
         const uuid = await getUuidByEmail(emailAddress);
         const userJWT = await getUserJWTToken();
-        let { title, emailContent, subjectLine, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+        let { title, emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
         adjustTemplateType(title);
 
         const email = new Email({
@@ -59,6 +60,7 @@ export const sendTestEmail = async (emailAddress, communication) => {
             senderName,
             replyTo: replyToAddress,
             subjectLine,
+            previewText,
             title,
             emailContent: emailContent,
             emailcontent2: finalGreeting || '',
