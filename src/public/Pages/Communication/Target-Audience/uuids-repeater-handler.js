@@ -1,15 +1,15 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import { autorun, toJS } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
+import {autorun, toJS} from 'mobx';
+import {state} from 'public/Pages/Communication/state-management.js';
 import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import { getAudienceDetails } from 'public/audience-handler.js';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import { showToast } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
-import { disbaleCurrentButton, contains } from 'public/Pages/helpers.js';
-import { AllAudienceRepeaterButtons, Text } from 'public/consts.js';
-import { sendBi } from '../../../BI/biModule.js';
-import * as Helpers from './helpers.js'
+import {getAudienceDetails} from 'public/audience-handler.js';
+import {targetAudienceState} from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import {showToast} from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
+import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
+import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
+import {sendBi} from '../../../BI/biModule.js';
+import * as Helpers from './helpers.js';
 
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
@@ -167,8 +167,11 @@ const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
-        sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' });
-        wixWindow.openLightbox('Create Requests Pop Up', { uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))), needApprovalCounter: targetAudienceState.needApprovalCounter });
+        sendBi('audienceClick', {'campaignId': state.communication._id, 'button_name': 'download_report'});
+        wixWindow.openLightbox('Create Requests Pop Up', {
+            uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
+            needApprovalCounter: targetAudienceState.needApprovalCounter
+        });
     })
     repeatedItemActions();
     setApproveToggleEvent();
@@ -214,19 +217,36 @@ const repeatedItemActions = () => {
     const clickOnUrl = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
-        wixLocation.to(clickedItemData.url)
+        const link = clickedItemData.url;
+        const suffix = Math.random().toString(36).slice(2);
+        const urlToOpen = `${link}&v=${suffix}`;
+        console.log()
+        $w('#linkOpener').setAttribute('link', urlToOpen)
+        // return urlToOpen;
+        // wixLocation.to(clickedItemData.url)
     }
     const openContactedLightBox = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
-        sendBi('openSideBar', { 'campaignId': state.communication._id, 'uuidChosen': clickedItemData.uuid, 'cloumnName': 'contacted' })
-        wixWindow.openLightbox("Contacted User Details Sidebar", { "user": clickedItemData, "communication": state.communication });
+        sendBi('openSideBar', {
+            'campaignId': state.communication._id,
+            'uuidChosen': clickedItemData.uuid,
+            'cloumnName': 'contacted'
+        })
+        wixWindow.openLightbox("Contacted User Details Sidebar", {
+            "user": clickedItemData,
+            "communication": state.communication
+        });
     }
     const openTopUserLightBox = (repeater, event, biCloumnName) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
-        sendBi('openSideBar', { 'campaignId': state.communication._id, 'uuidChosen': clickedItemData.uuid, biCloumnName: biCloumnName })
-        wixWindow.openLightbox("Top user", { "user": clickedItemData, "communication": state.communication });
+        sendBi('openSideBar', {
+            'campaignId': state.communication._id,
+            'uuidChosen': clickedItemData.uuid,
+            biCloumnName: biCloumnName
+        })
+        wixWindow.openLightbox("Top user", {"user": clickedItemData, "communication": state.communication});
     }
 }
 
@@ -241,12 +261,12 @@ const setApproveToggleEvent = () => {
                     state.addApprovedUser(user);
             })
             $w('#approveAllButton').text = Text.UNAPPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'approve_all' })
+            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'approve_all'})
         } else {
             $w("#approveToggleSwitch").checked = false;
             state.resetApprovedUserList();
             $w('#approveAllButton').text = Text.APPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'unapprove_all' })
+            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'unapprove_all'})
         }
     })
 
@@ -256,10 +276,18 @@ const setApproveToggleEvent = () => {
         const isChecked = event.target.checked;
         if (isChecked) {
             state.addApprovedUser(clickedItemData);
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': clickedItemData.uuid, 'button_name': 'toggle_on' })
+            sendBi('approveToggle', {
+                'campaignId': state.communication._id,
+                'uuid': clickedItemData.uuid,
+                'button_name': 'toggle_on'
+            })
         } else {
             state.removeApprovedUser(clickedItemData);
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': clickedItemData.uuid, 'button_name': 'toggle_off' })
+            sendBi('approveToggle', {
+                'campaignId': state.communication._id,
+                'uuid': clickedItemData.uuid,
+                'button_name': 'toggle_off'
+            })
         }
     });
 }
