@@ -70,13 +70,16 @@ export const sendTestEmail = async (emailAddress, communication) => {
         });
         const arrayOfEmail = [{ userId: uuid, body: email.createBody() }];
         const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmail, userJWT, true);
+        console.log({res})
         if (res) {
             state.setIsTested(true);
             wixWindow.openLightbox('Setup & Publish - Send Test Toast');
         }
 
     } catch (error) {
-        return Promise.reject('public/user-mailer.js sendTestEmail failed -origin error- ' + error)
+        console.log("hereeee")
+        wixWindow.openLightbox('Edit Email - Exit Warning Popup');
+        return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error)
     }
 }
 
