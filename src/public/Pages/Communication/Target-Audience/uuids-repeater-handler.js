@@ -10,7 +10,9 @@ import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
 import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
 import {sendBi} from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
+import {PagedRepeater} from '../../../PagedRepeater';
 
+let pagedRepeater;
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
 }
@@ -78,6 +80,20 @@ const setAllRepeatersAudienceData = async () => {
     }
 }
 
+const getAllData = async () => {
+    console.log("GetAllData");
+    try {
+        const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
+        const audienceData = await getAudienceDetails(uuidsAndMsidsList);
+        // console.log("AudienceData : ", JSON.stringify(audienceData));
+        return audienceData.approved;
+
+    } catch (error) {
+        console.error('getAllData error, original error: ' + error);
+        return null;
+    }
+}
+
 export const reciveLatestApprovedUsers = async () => {
     const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)))
     const audienceData = await getAudienceDetails(uuidsAndMsidsList);
@@ -123,7 +139,9 @@ export const reciveLatestApprovedUsers = async () => {
 // }
 
 const setApprovedRepeater = (data) => {
-    $w('#approvedRepeater').data = [];
+    // $w('#approvedRepeater').data = [];
+    // console.log("AP Data = ", JSON.stringify(data));
+    /*
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -131,9 +149,18 @@ const setApprovedRepeater = (data) => {
             $w('#approvedRepeater').data = newData;
         }, i * 100);
     }
+    */
+    pagedRepeater =
+        new PagedRepeater($w('#approvedRepeater'), getAllData, null, null);
+    pagedRepeater.initRepeater('');
+
     targetAudienceState.setApprovalCounter(data.length)
 }
 
+export function nextPage() {
+    console.log("moving forward!");
+    pagedRepeater.next();
+}
 const setNeedApprovaldRepeater = (data) => {
     $w('#needApprovalReapter').data = [];
     for (let i = 0; i < data.length; i += 10) {

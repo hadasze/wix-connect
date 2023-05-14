@@ -2,6 +2,7 @@ import { observable, configure } from 'mobx';
 import { initCSVFileActions } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js'
 import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
 import { initAudienceInformationBarActions, initAudienceInformationBarData } from 'public/Pages/Communication/Target-Audience/information-bar-handler.js'
+import { nextPage } from './uuids-repeater-handler';
 
 configure({
     useProxies: "never"
@@ -11,6 +12,10 @@ export const initTargetAudienceActions = () => {
     initCSVFileActions();
     initAudienceInformationBarActions();
     initTargetAudienceRepeatersActions();
+    $w("#button67").onClick( (event) => {
+        nextPage();
+    } );
+
 }
 export const initTargetAudienceData = () => {
     initTargetAudienceRepeatersData();
