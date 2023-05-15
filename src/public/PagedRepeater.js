@@ -60,10 +60,13 @@ export class PagedRepeater {
         this.setPageData(0);
     }
 
-    setActiveData(val) {
+    setActiveData(filter) {
         var pos = 0;
+        console.log("SAD Filter:", filter)
         for (var i = 0 ; i < this.allData.length ; i++) {
-            if (true) {// (this.allData[i].language.includes(val)) {
+            const value = this.allData[i][filter.column];
+
+            if (filter.value == '' || value.includes(filter.value)) {
                 this.activeData[pos++] = this.allData[i];
             }
         }

@@ -152,7 +152,7 @@ const setApprovedRepeater = (data) => {
     */
     pagedRepeater =
         new PagedRepeater($w('#approvedRepeater'), getAllData, null, null);
-    pagedRepeater.initRepeater('');
+    pagedRepeater.initRepeater({column: 'uuid', value: '', operator: 0});
 
     targetAudienceState.setApprovalCounter(data.length)
 }
@@ -161,6 +161,17 @@ export function nextPage() {
     console.log("moving forward!");
     pagedRepeater.next();
 }
+
+export function prevPage() {
+    console.log("Back off!");
+    pagedRepeater.prev();
+}
+
+export function filterData(column, value) {
+    console.log("Looking for: ", value, " in: ", column);
+    pagedRepeater.search({column: column.trim(), value: value.trim(), operator: 0});
+}
+
 const setNeedApprovaldRepeater = (data) => {
     $w('#needApprovalReapter').data = [];
     for (let i = 0; i < data.length; i += 10) {
