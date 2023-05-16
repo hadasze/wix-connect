@@ -13,6 +13,7 @@ import * as Helpers from './helpers.js';
 import {PagedRepeater} from '../../../PagedRepeater';
 
 let pagedRepeater;
+
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
 }
@@ -138,21 +139,16 @@ export const reciveLatestApprovedUsers = async () => {
 //     targetAudienceState.setApprovalCounter(data.length)
 // }
 
-const setApprovedRepeater = (data) => {
-    // $w('#approvedRepeater').data = [];
-    // console.log("AP Data = ", JSON.stringify(data));
-    /*
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#approvedRepeater').data, ...chunk];
-            $w('#approvedRepeater').data = newData;
-        }, i * 100);
-    }
-    */
+function filter(value, filter) {
+    if (value.includes(filter.value))
+        return true;
+    return false;
+}
+
+const setApprovedRepeater = async (data) => {
     pagedRepeater =
-        new PagedRepeater($w('#approvedRepeater'), getAllData, null, null);
-    pagedRepeater.initRepeater({column: 'uuid', value: '', operator: 0});
+        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null);
+    await pagedRepeater.initRepeater({column: 'uuid', value: '', operator: 0});
 
     targetAudienceState.setApprovalCounter(data.length)
 }

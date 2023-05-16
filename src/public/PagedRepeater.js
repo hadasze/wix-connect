@@ -3,11 +3,10 @@ const PagedRepeaterConsts = {
 }
 
 export class PagedRepeater {
-    constructor(repeater, getData, filters, onItemReady) {
+    constructor(repeater, getData, filter, onItemReady) {
         this.repeater = repeater;
         this.getData = getData;
-        this.finishLoad = false;
-        this.filters = filters;
+        this.filter = filter;
         this.page = 0;
         this.itemReady = onItemReady
         this.activeData = [];
@@ -27,19 +26,16 @@ export class PagedRepeater {
 
     setPageData(page) {
         const pageData = this.getPageData(page);
-        console.log("PD = ", JSON.stringify(pageData));
         this.repeater.data = pageData;
         this.page = page;
     }
 
     next() {
-        console.log("PagedRepeater::Next");
         const numPages = Math.ceil(this.activeData.length / PagedRepeaterConsts.PAGE_SIZE);
         if (this.page >= numPages - 1) {
             console.log("OOPS, page = ", this.page, " num pages = ", numPages);
             return;
         }
-        console.log("NumItems: ", this.activeData.length, " num pages: ", numPages);
         this.page++;
         this.setPageData(this.page);
     }
@@ -55,30 +51,24 @@ export class PagedRepeater {
     }
 
     search(value) {
-        console.log("Searching: ", value);
         this.setActiveData(value);
         this.setPageData(0);
     }
 
     setActiveData(filter) {
-        var pos = 0;
-        console.log("SAD Filter:", filter)
-        for (var i = 0 ; i < this.allData.length ; i++) {
+        let pos = 0;
+        for (let i = 0 ; i < this.allData.length ; i++) {
             const value = this.allData[i][filter.column];
 
-            if (filter.value == '' || value.includes(filter.value)) {
+            if (this.filter(value, filter)) {
                 this.activeData[pos++] = this.allData[i];
             }
         }
         this.activeData.length = pos;
-        console.log("ActiveData Length: ", this.activeData.length);
     }
 
     async initRepeater(val) {
-        console.log("Init: <", val, ">");
-        // initData(val);
         this.repeater.data = [];
-        // this.repeater.onItemReady(($item, itemData, index) => this.itemReady($item, itemData, index))
         this.allData = await this.getData();
         this.setActiveData(val);
         this.setPageData(0);
