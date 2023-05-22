@@ -31,8 +31,7 @@ export const sendButtonValidations = () => {
 const allRequiredFieldsForSendToUsers = (communication) => {
     const { title, emailContent, subjectLine, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
     const response = title && emailContent && subjectLine && senderName && replyToAddress && communication.tested;
-    //todo frizing send button
-    return false;
+    return response;
 }
 
 const allRequiredFieldsForSendTestEmail = (communication) => {
