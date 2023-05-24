@@ -26,24 +26,26 @@ export const initTargetAudienceRepeatersData = () => {
 }
 
 export const initRepeatersActions = () => {
-    $w("#button67").onClick((event) => {
+    $w("#next").onClick((event) => {
         nextPage();
     });
-    $w("#button68").onClick((event) => {
+    $w("#back").onClick((event) => {
         prevPage();
     });
-    $w("#searchVal").onInput((event) => {
+    $w("#input15").onInput((event) => {
         filterData(
             $w('#searchCol').value,
             $w('#searchVal').value);
     });
 }
+
 const setTargetAudienceData = () => {
     $w('#approvedRepeater').onItemReady(($item, itemData, index) => {
         $item('#approvedUuidButton').label = itemData.uuid || '';
         $item('#approvedUuidTooltipText').text = itemData.uuid || '';
         $item('#approvedUserNameText').text = itemData.site_display_name || '';
-        $item('#approvedSiteUrlText').text = itemData.url || '';
+        $item('#approvedSiteUrlText').html =
+            "<a  href=" + itemData.url  + " class=\"font_8 wixui-rich-text__text\" target=”_blank”>" + itemData.url + "</a>";
         roles.setUuidProperties(itemData, $item, 'Approved');
     });
 
@@ -241,21 +243,21 @@ const repeatedItemActions = () => {
     $w('#needApprovalCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#needApprovalReapter"), event)
     });
-    $w('#needApprovalSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#needApprovalReapter"), event);
-    });
+    //$w('#needApprovalSiteUrlText').onClick((event) => {
+    //    clickOnUrl($w("#needApprovalReapter"), event);
+    //});
     $w('#approvedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#approvedRepeater"), event)
     });
-    $w('#approvedSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#approvedRepeater"), event);
-    });
+    //$w('#approvedSiteUrlText').onClick((event) => {
+    //    clickOnUrl($w("#approvedRepeater"), event);
+    //});
     $w('#rejectedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#rejectedRepeater"), event)
     });
-    $w('#rejectedSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#rejectedRepeater"), event);
-    });
+    //$w('#rejectedSiteUrlText').onClick((event) => {
+    //    clickOnUrl($w("#rejectedRepeater"), event);
+    //});
     $w(`#seeDetailsRejectedContacted`).onClick((event) => {
         openContactedLightBox($w("#rejectedRepeater"), event);
     })
