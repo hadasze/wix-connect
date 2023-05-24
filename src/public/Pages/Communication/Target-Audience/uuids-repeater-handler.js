@@ -19,12 +19,17 @@ export const initTargetAudienceRepeatersData = () => {
     setTargetAudienceData();
 }
 
+const getLinkHTML = (url) => {
+    return "<a  href=" + url  +
+        " class=\"font_8 wixui-rich-text__text\" target=\"_blank\">" + url + "</a>";
+}
+
 const setTargetAudienceData = () => {
     $w('#approvedRepeater').onItemReady(($item, itemData, index) => {
         $item('#approvedUuidButton').label = itemData.uuid || '';
         $item('#approvedUuidTooltipText').text = itemData.uuid || '';
         $item('#approvedUserNameText').text = itemData.site_display_name || '';
-        $item('#approvedSiteUrlText').text = itemData.url || '';
+        $item('#approvedSiteUrlText').html = getLinkHTML(itemData.url || '');
         roles.setUuidProperties(itemData, $item, 'Approved');
     });
 
@@ -32,7 +37,7 @@ const setTargetAudienceData = () => {
         $item('#uuidButton').label = itemData.uuid || '';
         $item('#needApprovalUuidTooltipText').text = itemData.uuid || '';
         $item('#userNameText').text = itemData.site_display_name || '';
-        $item('#needApprovalSiteUrlText').text = itemData.url || '';
+        $item('#needApprovalSiteUrlText').html = getLinkHTML(itemData.url || '');
         $item("#approveToggleSwitch").checked = false;
         Helpers.indicateApprovedToggleShouldBeChecked(itemData, $item);
         roles.setUuidProperties(itemData, $item, 'NeedApprove');
@@ -42,7 +47,7 @@ const setTargetAudienceData = () => {
         $item('#rejectedUuidButton').label = itemData.uuid || '';
         $item('#rejectedUuidTooltipText').text = itemData.uuid || '';
         $item('#rejectedUserNameText').text = itemData.site_display_name || '';
-        $item('#rejectedSiteUrlText').text = itemData.url || '';
+        $item('#rejectedSiteUrlText').html = getLinkHTML(itemData.url || '');
         roles.setUuidProperties(itemData, $item, 'Rejected');
     });
 
@@ -181,20 +186,11 @@ const repeatedItemActions = () => {
     $w('#needApprovalCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#needApprovalReapter"), event)
     });
-    $w('#needApprovalSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#needApprovalReapter"), event);
-    });
     $w('#approvedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#approvedRepeater"), event)
     });
-    $w('#approvedSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#approvedRepeater"), event);
-    });
     $w('#rejectedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#rejectedRepeater"), event)
-    });
-    $w('#rejectedSiteUrlText').onClick((event) => {
-        clickOnUrl($w("#rejectedRepeater"), event);
     });
     $w(`#seeDetailsRejectedContacted`).onClick((event) => {
         openContactedLightBox($w("#rejectedRepeater"), event);
