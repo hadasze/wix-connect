@@ -1,6 +1,6 @@
 import { observable, configure } from 'mobx';
 import { initCSVFileActions } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js'
-import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
+import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions, initRepeatersActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
 import { initAudienceInformationBarActions, initAudienceInformationBarData } from 'public/Pages/Communication/Target-Audience/information-bar-handler.js'
 import { nextPage, prevPage, filterData } from './uuids-repeater-handler';
 
@@ -12,19 +12,9 @@ export const initTargetAudienceActions = () => {
     initCSVFileActions();
     initAudienceInformationBarActions();
     initTargetAudienceRepeatersActions();
-    $w("#button67").onClick( (event) => {
-        nextPage();
-    } );
-    $w("#button68").onClick( (event) => {
-        prevPage();
-    } );
-    $w("#searchVal").onInput( (event) => {
-        filterData(
-            $w('#searchCol').value,
-            $w('#searchVal').value);
-    } );
-
+    initRepeatersActions();
 }
+
 export const initTargetAudienceData = () => {
     initTargetAudienceRepeatersData();
     initAudienceInformationBarData();

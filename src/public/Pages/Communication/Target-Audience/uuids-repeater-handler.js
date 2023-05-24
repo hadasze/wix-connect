@@ -10,9 +10,12 @@ import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
 import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
 import {sendBi} from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
-import {PagedRepeater} from '../../../PagedRepeater';
+import {PagedRepeater, PagedRepeaterOptions} from '../../../paged-repeater';
+import { create } from 'wix-fedops';
 
-let pagedRepeater;
+const fedopsLogger = create('wix-connect');
+let approvedRepeater;
+const approvedRepeaterOptions = new PagedRepeaterOptions(10);
 
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
@@ -22,6 +25,19 @@ export const initTargetAudienceRepeatersData = () => {
     setTargetAudienceData();
 }
 
+export const initRepeatersActions = () => {
+    $w("#button67").onClick((event) => {
+        nextPage();
+    });
+    $w("#button68").onClick((event) => {
+        prevPage();
+    });
+    $w("#searchVal").onInput((event) => {
+        filterData(
+            $w('#searchCol').value,
+            $w('#searchVal').value);
+    });
+}
 const setTargetAudienceData = () => {
     $w('#approvedRepeater').onItemReady(($item, itemData, index) => {
         $item('#approvedUuidButton').label = itemData.uuid || '';
@@ -90,8 +106,7 @@ const getAllData = async () => {
         return audienceData.approved;
 
     } catch (error) {
-        console.error('getAllData error, original error: ' + error);
-        return null;
+        throw new Error('Failed to fetch repeater data: ' + error);
     }
 }
 
@@ -139,33 +154,44 @@ export const reciveLatestApprovedUsers = async () => {
 //     targetAudienceState.setApprovalCounter(data.length)
 // }
 
-function filter(value, filter) {
-    if (value.includes(filter.value))
+function filter(row, value) {
+    console.log('searching for: ', value);
+    if (value == '') {
         return true;
+    }
+    console.log(JSON.stringify(row));
+    for (const field of Object.values(row)) {
+        console.log(JSON.stringify(field));
+        if ((typeof field) == 'string' && field.includes(value)) {
+            return true;
+        }
+    }
     return false;
 }
 
 const setApprovedRepeater = async (data) => {
-    pagedRepeater =
-        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null);
-    await pagedRepeater.initRepeater({column: 'uuid', value: '', operator: 0});
+    fedopsLogger.interactionStarted('set-approved-repeater');
+    approvedRepeater =
+        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, approvedRepeaterOptions);
+    await approvedRepeater.initRepeater();
+    fedopsLogger.interactionEnded('set-approved-repeater');
 
     targetAudienceState.setApprovalCounter(data.length)
 }
 
 export function nextPage() {
     console.log("moving forward!");
-    pagedRepeater.next();
+    approvedRepeater.next();
 }
 
 export function prevPage() {
     console.log("Back off!");
-    pagedRepeater.prev();
+    approvedRepeater.prev();
 }
 
 export function filterData(column, value) {
     console.log("Looking for: ", value, " in: ", column);
-    pagedRepeater.search({column: column.trim(), value: value.trim(), operator: 0});
+    approvedRepeater.search(value.trim());
 }
 
 const setNeedApprovaldRepeater = (data) => {

@@ -1,14 +1,18 @@
-const PagedRepeaterConsts = {
-    PAGE_SIZE: 10,
+export class PagedRepeaterOptions {
+    constructor(page_size) {
+        this.page_size = page_size;
+    }
 }
 
 export class PagedRepeater {
-    constructor(repeater, getData, filter, onItemReady) {
+    constructor(repeater, getData, filter, onItemReady, logger = null, options = null) {
         this.repeater = repeater;
         this.getData = getData;
         this.filter = filter;
         this.page = 0;
-        this.itemReady = onItemReady
+        this.onItemReady = onItemReady
+        this.logger = logger;
+        this.options = options;
         this.activeData = [];
     }
 
@@ -16,16 +20,19 @@ export class PagedRepeater {
         return this.repeater.data
     }
 
-    set data(data) {
+    async setData(data) {
         this.repeater.data = data;
+        await this.initRepeater();
     }
 
     getPageData(page) {
-        return this.activeData.slice(page * PagedRepeaterConsts.PAGE_SIZE, (page + 1) * PagedRepeaterConsts.PAGE_SIZE);
+        // use pagination NPM?
+        return this.activeData.slice(page * this.options.page_size, (page + 1)  * this.options.page_size);
     }
 
     setPageData(page) {
         const pageData = this.getPageData(page);
+        console.log(pageData);
         this.repeater.data = pageData;
         this.page = page;
     }
@@ -33,7 +40,6 @@ export class PagedRepeater {
     next() {
         const numPages = Math.ceil(this.activeData.length / PagedRepeaterConsts.PAGE_SIZE);
         if (this.page >= numPages - 1) {
-            console.log("OOPS, page = ", this.page, " num pages = ", numPages);
             return;
         }
         this.page++;
@@ -42,7 +48,6 @@ export class PagedRepeater {
 
     prev() {
         if (this.page <= 0) {
-            console.log("OOPS");
             return false;
         }
         this.page--;
@@ -55,22 +60,31 @@ export class PagedRepeater {
         this.setPageData(0);
     }
 
-    setActiveData(filter) {
+    setActiveData(value) {
         let pos = 0;
         for (let i = 0 ; i < this.allData.length ; i++) {
-            const value = this.allData[i][filter.column];
-
-            if (this.filter(value, filter)) {
+            if (this.filter(this.allData[i], value)) {
                 this.activeData[pos++] = this.allData[i];
             }
         }
         this.activeData.length = pos;
+        console.log(this.activeData.length);
     }
 
-    async initRepeater(val) {
+    log(message) {
+        if (this.logger != null) {
+            this.logger.log(message);
+        }
+    }
+    async initRepeater() {
         this.repeater.data = [];
-        this.allData = await this.getData();
-        this.setActiveData(val);
-        this.setPageData(0);
+        try {
+            this.allData = await this.getData();
+            this.setActiveData('');
+            this.setPageData(0);
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 }
