@@ -82,7 +82,7 @@ function noDataForThisUser(user) {
     return isNotExistUser(user)
 }
 
-const unSubscribed = (user) => user?.subscribed_ind === 'false';
+const unSubscribed = (user) => user?.unqualified_for_emails_ind === 'false';
 const isChannels = (user) => user?.channels_ind === 'true';
 const isB2B = (user) => user?.b2b_ind === 'true';
 const isManaged = (user) => user?.managed_ind === 'true';

@@ -87,7 +87,7 @@ const isB2B = (user, $item, repeaterType = 'Rejected') => {
 }
 const isUnsubscribed = (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#X${repeaterType}Unsubscribe`).isVisible) {
-        user.subscribed_ind === 'false' ?
+        user.unqualified_for_emails_ind === 'false' ?
             $item(`#V${repeaterType}Unsubscribe`).show() && $item(`#X${repeaterType}Unsubscribe`).hide() :
             $item(`#V${repeaterType}Unsubscribe`).hide() && $item(`#X${repeaterType}Unsubscribe`).show();
     }
