@@ -21,19 +21,19 @@ function uploadFile(buffer, fileName) {
         "/myUploadFolder/subfolder",
         buffer,
         `${fileName}.csv`, {
-            "mediaOptions": {
-                "mimeType": "application/vnd.ms-excel",
-                "mediaType": "document"
-            },
-            "metadataOptions": {
-                "isPrivate": true,
-                "isVisitorUpload": false,
-                "context": {
-                    "someKey1": "someValue1",
-                    "someKey2": "someValue2"
-                }
+        "mediaOptions": {
+            "mimeType": "application/vnd.ms-excel",
+            "mediaType": "document"
+        },
+        "metadataOptions": {
+            "isPrivate": true,
+            "isVisitorUpload": false,
+            "context": {
+                "someKey1": "someValue1",
+                "someKey2": "someValue2"
             }
         }
+    }
     );
 }
 
@@ -52,7 +52,8 @@ export async function filterAudience(audienceDetails) {
         const users = audienceDetails[index];
         for (const user in users) {
             for (const key in users[user]) {
-                const currUser = users[user][key];
+                const _currUser = users[user][key];
+                const currUser = stringToBoolean(_currUser);
                 if (await isRejectedUser(currUser)) {
                     rejected.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
@@ -82,10 +83,26 @@ function noDataForThisUser(user) {
     return isNotExistUser(user)
 }
 
-const unSubscribed = (user) => user?.unqualified_for_emails_ind === 'false';
-const isChannels = (user) => user?.channels_ind === 'true';
-const isB2B = (user) => user?.b2b_ind === 'true';
-const isManaged = (user) => user?.managed_ind === 'true';
+const unSubscribed = (user) => user?.unqualified_for_emails_ind === true;
+const isChannels = (user) => user?.channels_ind === true;
+const isB2B = (user) => user?.b2b_ind === true;
+const isManaged = (user) => user?.managed_ind === true;
 
-const contactedLately = async (user) => user?.contacted_lately_ind === 'true' || await getIsContactedUser(user.uuid);
+const contactedLately = async (user) => user?.contacted_lately_ind === true || await getIsContactedUser(user.uuid);
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
+
+
+
+
+function stringToBoolean(obj) {
+    const toReturn = { ...obj };
+    for (const property in toReturn) {
+        if (toReturn[property] === 'true')
+            toReturn[property] = true;
+        if (toReturn[property] === 'false')
+            toReturn[property] = false;
+    }
+    console.log('stringToBoolean toReturn: ', toReturn);
+    return toReturn;
+
+}
