@@ -25,6 +25,11 @@ export const initTargetAudienceRepeatersData = () => {
     setTargetAudienceData();
 }
 
+const getLinkHTML = (url) => {
+    return "<a  href=" + url  +
+        " class=\"font_8 wixui-rich-text__text\" target=\"_blank\">" + url + "</a>";
+}
+
 export const initRepeatersActions = () => {
     $w("#next").onClick((event) => {
         nextPage();
@@ -32,6 +37,17 @@ export const initRepeatersActions = () => {
     $w("#back").onClick((event) => {
         prevPage();
     });
+    for (let i = 1 ; i < 8 ; i++) {
+        let button = getPaginationButton(i);
+        button.onClick((event) => {
+            if (event.target.label == '...') {
+                return;
+            } else {
+                gotoPage(Number(event.target.label) - 1);
+            }
+        });
+    }
+
     $w("#input15").onInput((event) => {
         filterData(
             $w('#searchCol').value,
@@ -44,8 +60,7 @@ const setTargetAudienceData = () => {
         $item('#approvedUuidButton').label = itemData.uuid || '';
         $item('#approvedUuidTooltipText').text = itemData.uuid || '';
         $item('#approvedUserNameText').text = itemData.site_display_name || '';
-        $item('#approvedSiteUrlText').html =
-            "<a  href=" + itemData.url  + " class=\"font_8 wixui-rich-text__text\" target=”_blank”>" + itemData.url + "</a>";
+        $item('#approvedSiteUrlText').html = getLinkHTML(itemData.url || '');
         roles.setUuidProperties(itemData, $item, 'Approved');
     });
 
@@ -53,7 +68,7 @@ const setTargetAudienceData = () => {
         $item('#uuidButton').label = itemData.uuid || '';
         $item('#needApprovalUuidTooltipText').text = itemData.uuid || '';
         $item('#userNameText').text = itemData.site_display_name || '';
-        $item('#needApprovalSiteUrlText').text = itemData.url || '';
+        $item('#needApprovalSiteUrlText').html = getLinkHTML(itemData.url || '');
         $item("#approveToggleSwitch").checked = false;
         Helpers.indicateApprovedToggleShouldBeChecked(itemData, $item);
         roles.setUuidProperties(itemData, $item, 'NeedApprove');
@@ -63,7 +78,7 @@ const setTargetAudienceData = () => {
         $item('#rejectedUuidButton').label = itemData.uuid || '';
         $item('#rejectedUuidTooltipText').text = itemData.uuid || '';
         $item('#rejectedUserNameText').text = itemData.site_display_name || '';
-        $item('#rejectedSiteUrlText').text = itemData.url || '';
+        $item('#rejectedSiteUrlText').html = getLinkHTML(itemData.url || '');
         roles.setUuidProperties(itemData, $item, 'Rejected');
     });
 
@@ -177,18 +192,85 @@ const setApprovedRepeater = async (data) => {
         new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, approvedRepeaterOptions);
     await approvedRepeater.initRepeater();
     fedopsLogger.interactionEnded('set-approved-repeater');
+    const approvedState = approvedRepeater.getState();
+    setPagination(approvedState);
 
     targetAudienceState.setApprovalCounter(data.length)
 }
 
+function getPaginationButton(i) {
+    return $w('#toggle' + (i).toString());
+}
+
+function getButtonByPage(page) {
+    console.log("getByPage:", page)
+    const pageStr = page.toString();
+    for (let i = 1 ; i < 8 ; i++) {
+        let button = getPaginationButton(i);
+        if (button.label == pageStr) {
+            return button;
+        }
+    }
+    return null;
+}
+
+function setPagination() {
+    for (let i = 1 ; i < 8 ; i++) {
+        let button = getPaginationButton(i);
+        button.style.backgroundColor = "#ffffff";
+        button.style.foregroundColor = "#000000";
+        button.show();
+    }
+    const state = approvedRepeater.getState();
+    console.log("SP: curr = ", state.currPage, " , num pages = ", state.numPages);
+
+    $w('#toggle1').label = '1';
+    let label = (state.currPage > 2) ? '...' : '2';
+    $w('#toggle2').label = label;
+    label = (state.currPage > 2) ? (state.currPage).toString() : '3';
+    $w('#toggle3').label = label;
+    label = (state.currPage > 2) ? (state.currPage + 1).toString() : '4';
+    $w('#toggle4').label = label;
+    label = (state.currPage > 2) ? (state.currPage + 2).toString() : '5';
+    $w('#toggle5').label = label;
+    label = (state.numPages > 7) ? "..." : '6';
+    $w('#toggle6').label = label;
+    $w('#toggle7').label = state.numPages.toString();
+
+    const selected = getButtonByPage(state.currPage + 1);
+    console.log("Selected = ", selected.id);
+    selected.style.backgroundColor = "#166AEA";
+
+    if (state.currPage == 0) {
+        $w('#back').disable();
+    } else {
+        $w('#back').enable();
+    }
+    if (state.currPage == state.numPages - 1) {
+        $w('#next').disable();
+    } else {
+        $w('#next').enable();
+    }
+}
+
+
+function gotoPage(page) {
+    console.log("Jumping to:", page);
+    approvedRepeater.goto(page);
+    setPagination();
+}
+
+
 export function nextPage() {
     console.log("moving forward!");
     approvedRepeater.next();
+    setPagination();
 }
 
 export function prevPage() {
     console.log("Back off!");
     approvedRepeater.prev();
+    setPagination();
 }
 
 export function filterData(column, value) {
@@ -243,21 +325,21 @@ const repeatedItemActions = () => {
     $w('#needApprovalCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#needApprovalReapter"), event)
     });
-    //$w('#needApprovalSiteUrlText').onClick((event) => {
-    //    clickOnUrl($w("#needApprovalReapter"), event);
-    //});
+    $w('#needApprovalSiteUrlText').onClick((event) => {
+        clickOnUrl($w("#needApprovalReapter"), event);
+    });
     $w('#approvedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#approvedRepeater"), event)
     });
-    //$w('#approvedSiteUrlText').onClick((event) => {
-    //    clickOnUrl($w("#approvedRepeater"), event);
-    //});
+    $w('#approvedSiteUrlText').onClick((event) => {
+        clickOnUrl($w("#approvedRepeater"), event);
+    });
     $w('#rejectedCopyToClipBoardBtn').onClick((event) => {
         copyToClipBoard($w("#rejectedRepeater"), event)
     });
-    //$w('#rejectedSiteUrlText').onClick((event) => {
-    //    clickOnUrl($w("#rejectedRepeater"), event);
-    //});
+    $w('#rejectedSiteUrlText').onClick((event) => {
+        clickOnUrl($w("#rejectedRepeater"), event);
+    });
     $w(`#seeDetailsRejectedContacted`).onClick((event) => {
         openContactedLightBox($w("#rejectedRepeater"), event);
     })

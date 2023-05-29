@@ -4,6 +4,13 @@ export class PagedRepeaterOptions {
     }
 }
 
+export class PagedRepeaterState {
+    constructor(numPages, page) {
+        this.numPages = numPages;
+        this.currPage = page;
+    }
+}
+
 export class PagedRepeater {
     constructor(repeater, getData, filter, onItemReady, logger = null, options = null) {
         this.repeater = repeater;
@@ -25,6 +32,10 @@ export class PagedRepeater {
         await this.initRepeater();
     }
 
+    getState() {
+        return new PagedRepeaterState(this.numPages(), this.page);
+    }
+
     getPageData(page) {
         // use pagination NPM?
         return this.activeData.slice(page * this.options.page_size, (page + 1)  * this.options.page_size);
@@ -37,8 +48,13 @@ export class PagedRepeater {
         this.page = page;
     }
 
+    numPages() {
+        console.log("numPages: ", this.activeData.length)
+        return Math.ceil(this.activeData.length / this.options.page_size);
+    }
+
     next() {
-        const numPages = Math.ceil(this.activeData.length / PagedRepeaterConsts.PAGE_SIZE);
+        const numPages = this.numPages();
         if (this.page >= numPages - 1) {
             return;
         }
@@ -53,6 +69,12 @@ export class PagedRepeater {
         this.page--;
         this.setPageData(this.page);
         return this.page > 0;
+    }
+
+    goto(page) {
+        this.page = page;
+        this.setPageData(this.page);
+        return;
     }
 
     search(value) {
@@ -86,5 +108,6 @@ export class PagedRepeater {
         } catch (error) {
             return false;
         }
+        return true;
     }
 }
