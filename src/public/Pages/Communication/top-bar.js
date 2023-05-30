@@ -164,6 +164,7 @@ const handleNextButton = (currStep) => {
 }
 
 const getNextStepIndex = (currentStep, allSteps) => {
+    console.log('getNextStepIndex: ', currentStep, allSteps);
     for (let i = 0; i < allSteps.length - 1; i++) {
         if (allSteps[i].id === currentStep) {
             return i + 1
