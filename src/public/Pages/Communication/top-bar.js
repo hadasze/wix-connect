@@ -16,7 +16,7 @@ export const initTopBarActions = () => {
     setOnClickStepsEvents();
     setClickNextButton();
     setDisabledSendButtonTooltip();
-    setStepsOfCreationMultistateBoxChange();
+    setStepsOfCreationMultistateBox();
 }
 
 export const initTestAndSendData = () => {
@@ -136,13 +136,17 @@ const setOnClickStepsEvents = () => {
     })
 }
 
-const setStepsOfCreationMultistateBoxChange = () => {
+const setStepsOfCreationMultistateBox = () => {
+
     $w("#stepsOfCreationMultistateBox").onChange((event) => {
         let currentState = event.target.currentState.id;
         wixLocation.queryParams.add({
             "stepOfCreation": currentState
         });
     });
+
+    if (wixLocation.queryParams.stepOfCreation)
+        $w("#stepsOfCreationMultistateBox").changeState(wixLocation.queryParams.stepOfCreation);
 }
 
 const setClickNextButton = () => {
