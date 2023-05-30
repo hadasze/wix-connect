@@ -64,6 +64,8 @@ const setTargetAudienceData = () => {
 }
 
 const setAllRepeatersAudienceData = async () => {
+    //To remove once we have paginator
+    $w('#Pagination').hide();
     try {
         const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
         const audienceData = await getAudienceDetails(uuidsAndMsidsList);
