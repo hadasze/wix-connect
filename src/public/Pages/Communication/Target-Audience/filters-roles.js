@@ -81,7 +81,7 @@ const isChannels = (user, $item, repeaterType = 'Rejected') => {
 }
 const isB2B = (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#V${repeaterType}B2B`).isVisible) {
-        user.velo_ind === true ?
+        user.b2b_ind === true ?
             $item(`#V${repeaterType}B2B`).show() && $item(`#X${repeaterType}B2B`).hide() :
             $item(`#V${repeaterType}B2B`).hide() && $item(`#X${repeaterType}B2B`).show();
     }
