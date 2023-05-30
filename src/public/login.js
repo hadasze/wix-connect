@@ -109,14 +109,15 @@ export async function refreshToken() {
 }
 
 export function clearQueryParams() {
+    const doNotRemove = ['siteRevision', 'branchId', 'stepOfCreation'];
     let state = {};
     if (query?.state)
         state = JSON.parse(query.state);
     const toRemove = [];
     for (const property in query) {
         if (!state[property]) {
-            if (property !== 'siteRevision' && property!== 'branchId')
-            toRemove.push(property);
+            if (!doNotRemove.includes(property))
+                toRemove.push(property);
         }
     }
     wixLocation.queryParams.remove(toRemove);
