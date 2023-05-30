@@ -87,7 +87,8 @@ const initPreviewDetailsHeaderData = async () => {
 
 const initPreviewDetailsRepeaterData = async () => {
     try {
-        const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)))
+        $w('#sentEmailUsersRepeater').data = [];
+        const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
         const audienceData = await getAudienceDetails(uuidsAndMsidsList);
         const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
         $w('#sentEmailUsersRepeater').data = allApprovedUsers;
