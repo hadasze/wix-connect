@@ -102,7 +102,7 @@ function stringToBoolean(obj) {
         if (toReturn[property] === 'false')
             toReturn[property] = false;
     }
-    console.log('stringToBoolean toReturn: ', toReturn);
+    
     return toReturn;
 
 }

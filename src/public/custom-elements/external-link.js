@@ -22,7 +22,6 @@ class ExternalLink extends HTMLElement {
         if (name === 'link' && newValue) {
             const isUnique = decodeURI(newValue).indexOf(DELIMITER) > -1;
             const linkToOpen = isUnique ? decodeURI(newValue).split(DELIMITER)[0] : newValue;
-            // console.log("recieved a link and will open it:", linkToOpen || `no link to open this is the new value - ${newValue}`);
             window.open(linkToOpen, "_blank");
         }
     }

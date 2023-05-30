@@ -146,7 +146,7 @@ const setStepsOfCreationMultistateBox = () => {
         let currentState = event.target.currentState.id;
         addStateToParam(currentState);
     });
-    console.log(wixLocation.query);
+    
     if (wixLocation.query?.stepOfCreation) {
         $w("#stepsOfCreationMultistateBox").changeState(wixLocation.query.stepOfCreation);
     } else {

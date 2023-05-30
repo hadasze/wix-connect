@@ -70,7 +70,7 @@ export const sendTestEmail = async (emailAddress, communication) => {
         });
         const arrayOfEmail = [{ userId: uuid, body: email.createBody() }];
         const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmail, userJWT, true);
-        console.log({res})
+
         if (res) {
             state.setIsTested(true);
             wixWindow.openLightbox('Setup & Publish - Send Test Toast');

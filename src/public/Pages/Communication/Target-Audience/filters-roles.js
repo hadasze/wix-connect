@@ -1,7 +1,7 @@
 import * as DataMethods from 'backend/data-methods-wrapper.jsw';
 
 export const setUuidProperties = (user, $item, repeaterType) => {
-    console.log('setUuidProperties user: ', user);
+    
     isTopUser(user, $item, repeaterType);
     isPartnerUser(user, $item, repeaterType);
     isVeloUser(user, $item, repeaterType);

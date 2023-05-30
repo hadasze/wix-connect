@@ -53,7 +53,6 @@ const setTargetAudienceData = () => {
 
     autorun(async () => {
         if (state.communication?.targetAudience) {
-            console.log('setTargetAudienceData::AutoRun');
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
             await setAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
@@ -103,7 +102,7 @@ export const reciveLatestApprovedUsers = async () => {
 //     const table = {};
 
 //     $w('#loadMoreApprovalButton').onClick((event) => {
-//         console.log({ curr, table });
+//         
 //         curr++;
 //         const newData = [...$w('#approvedRepeater').data, ...table[curr]];
 //         $w('#approvedRepeater').data = newData;
@@ -218,7 +217,7 @@ const repeatedItemActions = () => {
         const link = clickedItemData.url;
         const suffix = Math.random().toString(36).slice(2);
         const urlToOpen = `${link}&v=${suffix}`;
-        console.log()
+       
         $w('#linkOpener').setAttribute('link', urlToOpen)
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)
