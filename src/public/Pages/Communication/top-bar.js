@@ -140,7 +140,7 @@ const setStepsOfCreationMultistateBoxChange = () => {
     $w("#stepsOfCreationMultistateBox").onChange((event) => {
         let currentState = event.target.currentState.id;
         wixLocation.queryParams.add({
-            "stepsOfCreation": currentState
+            "stepOfCreation": currentState
         });
     });
 }
