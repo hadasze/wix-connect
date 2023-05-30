@@ -39,6 +39,13 @@ export const CommunicationActions = {
     Archive: ['#reuseCommunicationButton', '#saveAsTempalteButton', '#uarchiveCommunicationButton'],
 }
 
+export const CommunicationStatesByOrder = [
+    "AddDetailsState",
+    "TargetAudienceState",
+    "CreateEmailStep",
+    "TestAndSendState",
+]
+
 export const Urls = {
     EXISTS_COMMUNICATION: '/communication/',
     MY_COMMUNICATIONS_DASHOBOARD: '/my-communications',
@@ -88,83 +95,83 @@ export const TemplatesTypes = {
 }
 
 export const AllVerticals = [{
-        _id: '1',
-        shouldDispaly: (user) => filterRoles.isTopUserByBlog(user),
-        verticalTitle: 'blog',
-        fields: ['blog_paid_post_gpv', 'blog_post_views']
-    },
-    {
-        _id: '2',
-        shouldDispaly: (user) => filterRoles.isTopUserByBookings(user),
-        verticalTitle: 'bookings',
-        fields: ['booking_online_gpv', 'booking_participants', 'booking_total_gpv', 'booking_mixed']
-    },
-    {
-        _id: '3',
-        shouldDispaly: (user) => filterRoles.isTopUserByEvents(user),
-        verticalTitle: 'events',
-        fields: ['events_top_gpv', 'events_top_rsvp'],
-    },
-    {
-        _id: '4',
-        shouldDispaly: (user) => filterRoles.isTopUserByForum(user),
-        verticalTitle: 'forum',
-        fields: ['forum_zscore']
-    },
-    {
-        shouldDispaly: (user) => filterRoles.isTopUserByGroups(user),
-        _id: '5',
-        verticalTitle: 'groups',
-        fields: ['groups_engagement']
-    },
-    {
-        _id: '6',
-        shouldDispaly: (user) => filterRoles.isTopUserByPayments(user),
-        verticalTitle: 'payments',
-        fields: ['payments_pbw_top_merchant_rank', 'payments_wp_top_merchant_rank']
-    },
-    {
-        _id: '7',
-        shouldDispaly: (user) => filterRoles.isTopUserByPromote(user),
-        verticalTitle: 'promote',
-        fields: ['promote_top_social_marketing']
-    },
-    {
-        _id: '8',
-        shouldDispaly: (user) => filterRoles.isTopUserByRestaurants(user),
-        verticalTitle: 'restaurants',
-        fields: ['restaurants_rank_by_7_days_online_gpv', 'restaurants_rank_by_30_days_online_gpv', 'restaurants_rank_by_90_days_online_gpv']
-    },
-    {
-        _id: '9',
-        shouldDispaly: (user) => filterRoles.isTopUserByStores(user),
-        verticalTitle: 'stores',
-        fields: ['stores_top_gpv']
-    },
-    {
-        _id: '10',
-        shouldDispaly: (user) => filterRoles.isTopUserByViewer(user),
-        verticalTitle: 'viewer',
-        fields: ['viewer_top_sessions']
-    },
-    {
-        _id: '11',
-        shouldDispaly: (user) => filterRoles.isTopUserByPricingPlans(user),
-        verticalTitle: 'pricing_Plans',
-        fields: ['pricing_plans_top_gpv']
-    },
-    {
-        _id: '12',
-        shouldDispaly: (user) => filterRoles.isTopUserBySiteSuccess(user),
-        verticalTitle: 'site_success',
-        fields: ['site_success_top_gpv', 'site_success_top_traffic']
-    },
-    {
-        _id: '13',
-        shouldDispaly: (user) => filterRoles.isTopUserByMobileApps(user),
-        verticalTitle: 'mobile_apps',
-        fields: ['mobile_apps_top_engagement', 'mobile_apps_top_traffic', 'mobile_apps_top_gpv']
-    },
+    _id: '1',
+    shouldDispaly: (user) => filterRoles.isTopUserByBlog(user),
+    verticalTitle: 'blog',
+    fields: ['blog_paid_post_gpv', 'blog_post_views']
+},
+{
+    _id: '2',
+    shouldDispaly: (user) => filterRoles.isTopUserByBookings(user),
+    verticalTitle: 'bookings',
+    fields: ['booking_online_gpv', 'booking_participants', 'booking_total_gpv', 'booking_mixed']
+},
+{
+    _id: '3',
+    shouldDispaly: (user) => filterRoles.isTopUserByEvents(user),
+    verticalTitle: 'events',
+    fields: ['events_top_gpv', 'events_top_rsvp'],
+},
+{
+    _id: '4',
+    shouldDispaly: (user) => filterRoles.isTopUserByForum(user),
+    verticalTitle: 'forum',
+    fields: ['forum_zscore']
+},
+{
+    shouldDispaly: (user) => filterRoles.isTopUserByGroups(user),
+    _id: '5',
+    verticalTitle: 'groups',
+    fields: ['groups_engagement']
+},
+{
+    _id: '6',
+    shouldDispaly: (user) => filterRoles.isTopUserByPayments(user),
+    verticalTitle: 'payments',
+    fields: ['payments_pbw_top_merchant_rank', 'payments_wp_top_merchant_rank']
+},
+{
+    _id: '7',
+    shouldDispaly: (user) => filterRoles.isTopUserByPromote(user),
+    verticalTitle: 'promote',
+    fields: ['promote_top_social_marketing']
+},
+{
+    _id: '8',
+    shouldDispaly: (user) => filterRoles.isTopUserByRestaurants(user),
+    verticalTitle: 'restaurants',
+    fields: ['restaurants_rank_by_7_days_online_gpv', 'restaurants_rank_by_30_days_online_gpv', 'restaurants_rank_by_90_days_online_gpv']
+},
+{
+    _id: '9',
+    shouldDispaly: (user) => filterRoles.isTopUserByStores(user),
+    verticalTitle: 'stores',
+    fields: ['stores_top_gpv']
+},
+{
+    _id: '10',
+    shouldDispaly: (user) => filterRoles.isTopUserByViewer(user),
+    verticalTitle: 'viewer',
+    fields: ['viewer_top_sessions']
+},
+{
+    _id: '11',
+    shouldDispaly: (user) => filterRoles.isTopUserByPricingPlans(user),
+    verticalTitle: 'pricing_Plans',
+    fields: ['pricing_plans_top_gpv']
+},
+{
+    _id: '12',
+    shouldDispaly: (user) => filterRoles.isTopUserBySiteSuccess(user),
+    verticalTitle: 'site_success',
+    fields: ['site_success_top_gpv', 'site_success_top_traffic']
+},
+{
+    _id: '13',
+    shouldDispaly: (user) => filterRoles.isTopUserByMobileApps(user),
+    verticalTitle: 'mobile_apps',
+    fields: ['mobile_apps_top_engagement', 'mobile_apps_top_traffic', 'mobile_apps_top_gpv']
+},
 ]
 
 export const Labels = {

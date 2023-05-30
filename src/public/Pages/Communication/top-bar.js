@@ -5,16 +5,18 @@ import { state } from 'public/Pages/Communication/state-management.js';
 import * as previewHandler from 'public/Pages/Communication/preview.js';
 import { disbaleCurrentButton } from 'public/Pages/helpers.js';
 import { sendEmails, sendTestEmail } from 'public/user-mailer';
-import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, Urls } from 'public/consts.js';
+import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, Urls, CommunicationStatesByOrder } from 'public/consts.js';
 import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
 import { create } from 'wix-fedops';
 import { sendBi } from '../../BI/biModule.js';
+
 const fedopsLogger = create('wix-connect');
 
 export const initTopBarActions = () => {
     setOnClickStepsEvents();
     setClickNextButton();
     setDisabledSendButtonTooltip();
+    setStepsOfCreationMultistateBoxChange();
 }
 
 export const initTestAndSendData = () => {
@@ -22,7 +24,7 @@ export const initTestAndSendData = () => {
 }
 
 const setTopBarData = () => {
-    
+
     $w('#sendStepButton').hide();
     $w('#nextStepButton').show() && $w('#nextStepButton').enable();
     autorun(() => {
@@ -87,7 +89,7 @@ const setOnClickStepsEvents = () => {
         handleNextButton('createEmailButton');
     })
     $w('#testAndSendButton').onClick((event) => {
-        
+
         $w('#stepsOfCreationMultistateBox').changeState('TestAndSendState');
         disbaleCurrentButton('testAndSendButton', buttonslist);
         handleNextButton('testAndSendButton');
@@ -134,17 +136,24 @@ const setOnClickStepsEvents = () => {
     })
 }
 
+const setStepsOfCreationMultistateBoxChange = () => {
+    $w("#stepsOfCreationMultistateBox").onChange((event) => {
+        let currentState = event.target.currentState.id;
+        wixLocation.queryParams.add({
+            "stepsOfCreation": currentState
+        });
+    });
+}
+
 const setClickNextButton = () => {
     const buttonslist = state.communication?.isTemplate ? AllEditTemplateBarButton : AllCompuseEmailTopBarButton;
     $w('#nextStepButton').onClick((event) => {
-        const currentStep = $w('#stepsOfCreationMultistateBox').currentState.id;
-        const allSteps = $w('#stepsOfCreationMultistateBox').states;
-        const nextStepIndex = getNextStepIndex(currentStep, allSteps);
-        $w('#stepsOfCreationMultistateBox').changeState(allSteps[nextStepIndex])
-        disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist)
-        handleNextButton(buttonslist[nextStepIndex])
-        sendBi('upperMenu', { 'button_name': 'next' })
-    })
+        const nextStepIndex = getNextStepIndex();
+        $w('#stepsOfCreationMultistateBox').changeState(CommunicationStatesByOrder[nextStepIndex]);
+        disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist);
+        handleNextButton(buttonslist[nextStepIndex]);
+        sendBi('upperMenu', { 'button_name': 'next' });
+    });
 }
 
 const handleNextButton = (currStep) => {
@@ -163,10 +172,10 @@ const handleNextButton = (currStep) => {
     }
 }
 
-const getNextStepIndex = (currentStep, allSteps) => {
-    console.log('getNextStepIndex: ', currentStep, allSteps);
-    for (let i = 0; i < allSteps.length - 1; i++) {
-        if (allSteps[i].id === currentStep) {
+const getNextStepIndex = () => {
+    const currentStep = $w('#stepsOfCreationMultistateBox').currentState.id;
+    for (let i = 0; i < CommunicationStatesByOrder.length - 1; i++) {
+        if (CommunicationStatesByOrder[i] === currentStep) {
             return i + 1
         }
     }
