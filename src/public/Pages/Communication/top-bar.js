@@ -138,15 +138,20 @@ const setOnClickStepsEvents = () => {
 
 const setStepsOfCreationMultistateBox = () => {
 
-    $w("#stepsOfCreationMultistateBox").onChange((event) => {
-        let currentState = event.target.currentState.id;
-        wixLocation.queryParams.add({
-            "stepOfCreation": currentState
-        });
+    const addStateToParam = (stateID) => wixLocation.queryParams.add({
+        "stepOfCreation": stateID
     });
 
-    if (wixLocation.queryParams.stepOfCreation)
+    $w("#stepsOfCreationMultistateBox").onChange((event) => {
+        let currentState = event.target.currentState.id;
+        addStateToParam(currentState);
+    });
+
+    if (wixLocation.queryParams.stepOfCreation) {
         $w("#stepsOfCreationMultistateBox").changeState(wixLocation.queryParams.stepOfCreation);
+    } else {
+        addStateToParam(CommunicationStatesByOrder[0]);
+    }
 }
 
 const setClickNextButton = () => {
