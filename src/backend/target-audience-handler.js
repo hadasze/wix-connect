@@ -54,15 +54,17 @@ export async function filterAudience(audienceDetails) {
             for (const key in users[user]) {
                 const _currUser = users[user][key];
                 const currUser = stringToBoolean(_currUser);
-                if (await isRejectedUser(currUser)) {
-                    rejected.push(currUser);
+               
+                if (await noDataForThisUser (currUser)) {
+                     noData.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
                     needAprroval.push(currUser);
-                } else if (noDataForThisUser(currUser)) {
-                    noData.push(currUser);
+                } else if (isRejectedUser(currUser)) {
+                    rejected.push(currUser);
                 } else {
                     approved.push(currUser);
                 }
+
             }
         }
     }
