@@ -11,12 +11,22 @@ import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
 import {sendBi} from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
 
+export const initRejectedStateActions = () => {
+    setTooltipActions();
+}
+
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
 }
 
 export const initTargetAudienceRepeatersData = () => {
     setTargetAudienceData();
+}
+
+const setTooltipActions = () => {
+    $w('#unqualifiedBox').onMouseIn((event) => {
+        $w('#unqualifiedTooltip').show();
+    })
 }
 
 const getLinkHTML = (url) => {
