@@ -11,6 +11,16 @@ export class PagedRepeaterState {
     }
 }
 
+export class ButtonInfo {
+    constructor(text, state) {
+        this.text = text;
+        this.state = state;
+    }
+    static NORMAL = 'NORMAL';
+    static SELECTED = 'SELECTED';
+    static RANGE = 'RANGE';
+}
+
 export class PagedRepeater {
     constructor(repeater, getData, filter, onItemReady, logger = null, options = null) {
         this.repeater = repeater;
@@ -49,7 +59,7 @@ export class PagedRepeater {
     }
 
     numPages() {
-        console.log("numPages: ", this.activeData.length)
+        //console.log("numPages: ", this.activeData.length)
         return Math.ceil(this.activeData.length / this.options.page_size);
     }
 
@@ -109,5 +119,85 @@ export class PagedRepeater {
             return false;
         }
         return true;
+    }
+
+    getButtonState(index, numButtons) {
+        if (index == this.page) {
+            return ButtonInfo.SELECTED;
+        } else if ((index == 1) && (this.page > 3)) {
+            return ButtonInfo.RANGE;
+        }  else if ((index == 6) && (this.page < this.numPages() - 2)) {
+            return ButtonInfo.RANGE;
+        }
+        return ButtonInfo.NORMAL;
+    }
+
+    getButtonText(index, buttonState, numButtons) {
+        if (numButtons == this.numPages()) {
+            return (index + 1).toString();
+        }
+        let result = 0;
+        if (index == 0) {
+            result = 1;
+        } else if ((index == 1) && (buttonState != ButtonInfo.RANGE)) {
+            result = 2;
+        }  else if ((index == numButtons - 2) && (buttonState != ButtonInfo.RANGE)) {
+            result = this.numPages() - 1;
+        } else if (index == numButtons - 1) {
+            result = this.numPages();
+        } else {
+            const midButton = (numButtons + 1) / 2;
+            const offset = index - midButton;
+            result = this.page + offset;
+        }
+        return result.toString();
+    }
+
+    getButtonInfo(index, numButtons) {
+        const buttonState = this.getButtonState(index, numButtons);
+        const buttonText = this.getButtonText(index, buttonState, numButtons);
+
+        return new ButtonInfo(buttonText, buttonState);
+    }
+
+    getPagination(numButtons) {
+        const len = Math.min(numButtons, this.numPages());
+        const result = new Array(len);
+
+        for (let i = 0 ; i < numButtons ; i++) {
+            result[i] = this.getButtonInfo(i);
+        }
+        return result;
+    }
+
+    getPaginatioNew(c, m) {
+        var current = c,
+            last = m,
+            delta = 2,
+            left = current - delta,
+            right = current + delta + 1,
+            range = [],
+            rangeWithDots = [],
+            l;
+
+        for (let i = 1; i <= last; i++) {
+            if (i == 1 || i == last || i >= left && i < right) {
+                range.push(i);
+            }
+        }
+
+        for (let i of range) {
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithDots.push(l + 1);
+                } else if (i - l !== 1) {
+                    rangeWithDots.push('...');
+                }
+            }
+            rangeWithDots.push(i);
+            l = i;
+        }
+
+        return rangeWithDots;
     }
 }

@@ -10,12 +10,14 @@ import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
 import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
 import {sendBi} from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
-import {PagedRepeater, PagedRepeaterOptions} from '../../../paged-repeater';
+import { PagedRepeater, PagedRepeaterOptions, ButtonInfo } from '../../../paged-repeater';
 import { create } from 'wix-fedops';
 
 const fedopsLogger = create('wix-connect');
-let approvedRepeater;
-const approvedRepeaterOptions = new PagedRepeaterOptions(10);
+let approvedRepeater, needApprovalRepeater, rejectedRepeater;
+let audienceData;
+const repeaterOptions = new PagedRepeaterOptions(10);
+const NUM_BUTTONS = 7;
 
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
@@ -103,7 +105,7 @@ const setAllRepeatersAudienceData = async () => {
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
 
-            setApprovedRepeater(allApprovedUsers)
+            setApprovedRepeater(allApprovedUsers);
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
             handleNotValidAudience(totalNumOfAudience, uuidsAndMsidsList.length);
@@ -189,7 +191,7 @@ function filter(row, value) {
 const setApprovedRepeater = async (data) => {
     fedopsLogger.interactionStarted('set-approved-repeater');
     approvedRepeater =
-        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, approvedRepeaterOptions);
+        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, repeaterOptions);
     await approvedRepeater.initRepeater();
     fedopsLogger.interactionEnded('set-approved-repeater');
     const approvedState = approvedRepeater.getState();
@@ -214,7 +216,7 @@ function getButtonByPage(page) {
     return null;
 }
 
-function setPagination() {
+function setPaginationOLD() {
     for (let i = 1 ; i < 8 ; i++) {
         let button = getPaginationButton(i);
         button.style.backgroundColor = "#ffffff";
@@ -241,6 +243,39 @@ function setPagination() {
     console.log("Selected = ", selected.id);
     selected.style.backgroundColor = "#166AEA";
 
+    if (state.currPage == 0) {
+        $w('#back').disable();
+    } else {
+        $w('#back').enable();
+    }
+    if (state.currPage == state.numPages - 1) {
+        $w('#next').disable();
+    } else {
+        $w('#next').enable();
+    }
+}
+
+function setPagination() {
+    for (let i = 1 ; i <= NUM_BUTTONS ; i++) {
+        let button = getPaginationButton(i);
+        button.hide();
+    }
+    const buttons = approvedRepeater.getPagination(NUM_BUTTONS);
+
+    for (let i = 0 ; i <buttons.length ; i++) {
+        const buttonInfo = buttons[i];
+        const button = getPaginationButton(i + 1);
+        button.style.backgroundColor = "#ffffff";
+        button.style.foregroundColor = "#000000";
+        button.show();
+        if (buttonInfo.state == ButtonInfo.RANGE) {
+            button.label = '...';
+        }
+        if (buttonInfo.state == ButtonInfo.SELECTED) {
+            button.style.backgroundColor = "#166AEA";
+        }
+    }
+    const state = approvedRepeater.getState();
     if (state.currPage == 0) {
         $w('#back').disable();
     } else {
