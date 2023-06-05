@@ -216,54 +216,16 @@ function getButtonByPage(page) {
     return null;
 }
 
-function setPaginationOLD() {
-    for (let i = 1 ; i < 8 ; i++) {
-        let button = getPaginationButton(i);
-        button.style.backgroundColor = "#ffffff";
-        button.style.foregroundColor = "#000000";
-        button.show();
-    }
-    const state = approvedRepeater.getState();
-    console.log("SP: curr = ", state.currPage, " , num pages = ", state.numPages);
-
-    $w('#toggle1').label = '1';
-    let label = (state.currPage > 2) ? '...' : '2';
-    $w('#toggle2').label = label;
-    label = (state.currPage > 2) ? (state.currPage).toString() : '3';
-    $w('#toggle3').label = label;
-    label = (state.currPage > 2) ? (state.currPage + 1).toString() : '4';
-    $w('#toggle4').label = label;
-    label = (state.currPage > 2) ? (state.currPage + 2).toString() : '5';
-    $w('#toggle5').label = label;
-    label = (state.numPages > 7) ? "..." : '6';
-    $w('#toggle6').label = label;
-    $w('#toggle7').label = state.numPages.toString();
-
-    const selected = getButtonByPage(state.currPage + 1);
-    console.log("Selected = ", selected.id);
-    selected.style.backgroundColor = "#166AEA";
-
-    if (state.currPage == 0) {
-        $w('#back').disable();
-    } else {
-        $w('#back').enable();
-    }
-    if (state.currPage == state.numPages - 1) {
-        $w('#next').disable();
-    } else {
-        $w('#next').enable();
-    }
-}
-
 function setPagination() {
     for (let i = 1 ; i <= NUM_BUTTONS ; i++) {
         let button = getPaginationButton(i);
         button.hide();
     }
-    const buttons = approvedRepeater.getPagination(NUM_BUTTONS);
+    const buttonsInfo = approvedRepeater.getPagination(NUM_BUTTONS);
+    console.log(JSON.stringify(buttonsInfo));
 
-    for (let i = 0 ; i <buttons.length ; i++) {
-        const buttonInfo = buttons[i];
+    for (let i = 0 ; i <buttonsInfo.length ; i++) {
+        const buttonInfo = buttonsInfo[i];
         const button = getPaginationButton(i + 1);
         button.style.backgroundColor = "#ffffff";
         button.style.foregroundColor = "#000000";

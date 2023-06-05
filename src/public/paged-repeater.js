@@ -124,9 +124,9 @@ export class PagedRepeater {
     getButtonState(index, numButtons) {
         if (index == this.page) {
             return ButtonInfo.SELECTED;
-        } else if ((index == 1) && (this.page > 3)) {
+        } else if ((index == 1) && (numButtons < this.numPages()) && (this.page > numButtons/2)) {
             return ButtonInfo.RANGE;
-        }  else if ((index == 6) && (this.page < this.numPages() - 2)) {
+        }  else if ((index == numButtons - 2) && (numButtons < this.numPages()) && (this.page < numButtons / 2)) {
             return ButtonInfo.RANGE;
         }
         return ButtonInfo.NORMAL;
@@ -147,8 +147,18 @@ export class PagedRepeater {
             result = this.numPages();
         } else {
             const midButton = (numButtons + 1) / 2;
-            const offset = index - midButton;
-            result = this.page + offset;
+            if (this.page <= midButton) {
+                if (index <= midButton) {
+                    result = index + 1;
+                } else {
+                    result = 99;
+                }
+            } else {
+                result = -1;
+            }
+            //const offset = index - midButton;
+
+            //result = this.page + offset;
         }
         return result.toString();
     }
@@ -165,7 +175,7 @@ export class PagedRepeater {
         const result = new Array(len);
 
         for (let i = 0 ; i < numButtons ; i++) {
-            result[i] = this.getButtonInfo(i);
+            result[i] = this.getButtonInfo(i, numButtons);
         }
         return result;
     }
