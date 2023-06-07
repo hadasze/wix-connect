@@ -39,7 +39,6 @@ export async function getTargetAudience(id) {
 }
 
 export const insertToSentUsers = (userId) => wixData.insert('SentUsers', { _id: userId }, dataOptions)
-export const getIsContactedUser = (userId) => wixData.get('SentUsers', userId, dataOptions);
 
 export async function getAllUserCommunications(filters, options = {}, limit = 10, skip = 0) {
     let query = wixData.query('Communications').eq('_owner', wixUsersBackend.currentUser.id).skip(limit * skip).limit(limit);

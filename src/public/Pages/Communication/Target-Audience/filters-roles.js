@@ -66,7 +66,7 @@ const isAccountManaged = (user, $item, repeaterType = 'NeedApprove') => {
 
 const isContacted = async (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#seeDetails${repeaterType}Contacted`).isVisible) {
-        user.contacted_lately_ind === true || await DataMethods.getIsContactedUser(user.uuid) ?
+        user.contacted_lately_ind === true ?
             $item(`#seeDetails${repeaterType}Contacted`).show() && $item(`#X${repeaterType}Contacted`).hide() && $item(`#V${repeaterType}Contacted`).hide() :
             $item(`#V${repeaterType}Contacted`).hide() && $item(`#X${repeaterType}Contacted`).show() && $item(`#seeDetails${repeaterType}Contacted`).hide();
     }
