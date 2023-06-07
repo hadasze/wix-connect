@@ -1,5 +1,4 @@
 import { mediaManager } from 'wix-media-backend';
-import { getIsContactedUser } from './data-methods.js'
 const { Parser } = require('json2csv');
 
 export async function getDownloadCsvUrlFromArray(array, fileName) {
@@ -73,8 +72,8 @@ export async function filterAudience(audienceDetails) {
 
 }
 
-export async function isRejectedUser(user) {
-    return unSubscribed(user) || isB2B(user) || isChannels(user) || await contactedLately(user);
+export function isRejectedUser(user) {
+    return unSubscribed(user) || isB2B(user) || isChannels(user) || contactedLately(user);
 }
 
 function isWaitingForApproval(user) {
@@ -90,7 +89,7 @@ const isChannels = (user) => user?.channels_ind === true;
 const isB2B = (user) => user?.b2b_ind === true;
 const isManaged = (user) => user?.managed_ind === true;
 
-const contactedLately = async (user) => user?.contacted_lately_ind === true || await getIsContactedUser(user.uuid);
+const contactedLately = (user) => user?.contacted_lately_ind === true;
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
 
 
