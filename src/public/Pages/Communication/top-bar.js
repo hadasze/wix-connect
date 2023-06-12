@@ -120,7 +120,6 @@ const setOnClickStepsEvents = () => {
         const recivedData = await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { 'communication': state.communication, 'approvedCounter': targetAudienceState.approvedCounter });
         if (recivedData?.buttonName === Text.SEND) {
             await sendEmails(state.communication);
-            wixLocation.to(Urls.MY_COMMUNICATIONS_DASHOBOARD);
             fedopsLogger.interactionEnded('send-email');
         }
     })
