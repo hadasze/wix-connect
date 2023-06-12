@@ -37,7 +37,7 @@ export async function sendEmails(communicationn) {
             return { userId: user.uuid, body: email.createBody() };
         });
         const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
-        if (res) { 
+        if (res) {
             state.setIsSent(true);
             state.setDraftStatus(false);
             wixWindow.openLightbox('Setup & Publish – Sent Communication ');
