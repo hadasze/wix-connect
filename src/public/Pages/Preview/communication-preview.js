@@ -85,13 +85,10 @@ const initPreviewDetailsHeaderData = async () => {
     $w('#sentEmailCounterText').text = currCommunication.sentToCounter.toString();
 }
 
-const initPreviewDetailsRepeaterData = async () => {
-    try {
+const initPreviewDetailsRepeaterData = () => {
+    // try {
         $w('#sentEmailUsersRepeater').data = [];
-        const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
-        const audienceData = await getAudienceDetails(uuidsAndMsidsList);
-        const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
-        $w('#sentEmailUsersRepeater').data = allApprovedUsers;
+        $w('#sentEmailUsersRepeater').data = currCommunication.finalSentToAudience;
         $w('#sentEmailUsersRepeater').onItemReady(($item, itemData, index) => {
             $item('#userUUIDButton').label = itemData.uuid;
             $item('#userNameText').text = itemData.site_display_name || '';
@@ -99,9 +96,9 @@ const initPreviewDetailsRepeaterData = async () => {
             setRepeaterActions($item, itemData)
             roles.setSentUuidProperties(itemData, $item, 'Sent');
         });
-    } catch (err) {
-        console.error('initPreviewDetailsRepeaterData error, original error: ', err);
-    }
+    // } catch (err) {
+    //     console.error('initPreviewDetailsRepeaterData error, original error: ', err);
+    // }
 }
 
 const setRepeaterActions = ($item, itemData) => {
