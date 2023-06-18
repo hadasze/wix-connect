@@ -19,7 +19,7 @@ export async function getAudienceDetails(uuidsAndMsidsList) {
         if ($w('#rejectedRepeater').hidden)
             $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
 
-        const chunkSize = 50;
+        const chunkSize = 1000;
         const chunks = [];
 
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {

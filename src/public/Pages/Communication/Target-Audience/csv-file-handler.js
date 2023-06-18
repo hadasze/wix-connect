@@ -4,10 +4,11 @@ import { state } from 'public/Pages/Communication/state-management.js';
 import { toJS } from 'mobx';
 import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
 import { getAudienceDetails } from 'public/audience-handler.js';
+import { clearAllRepeatersAudienceData } from './uuids-repeater-handler.js'
 import { getTargetAudience } from 'backend/data-methods-wrapper.jsw';
 import { AllAudienceRepeaterButtons } from 'public/consts.js';
 import { sendBi } from '../../../BI/biModule.js';
-import { create } from  'wix-fedops';  
+import { create } from 'wix-fedops';
 const fedopsLogger = create('wix-connect');
 
 export const initCSVFileActions = () => {
@@ -27,12 +28,14 @@ const replaceCsvFileEvent = async () => {
         fedopsLogger.interactionStarted('replace-csv');
         try {
             const recivedData = await wixWindow.openLightbox('Target Audience - Replace CSV Warning Po', { "communication": state.communication });
+            if (!recivedData?.uploadedFiles) {
+                return
+            }
+
             const uploadedFile = recivedData.uploadedFiles[0];
             const csvLocalUrl = uploadedFile.fileUrl;
             cleanOldFile();
-            $w('#approvedRepeater').data = [];
-            $w('#needApprovalReapter').data = [];
-            $w('#rejectedRepeater').data = [];
+            clearAllRepeatersAudienceData();
             state.resetApprovedUserList();
             state.setTargetAudienceCSV(csvLocalUrl);
             prepareUIAfterReplacingFile(uploadedFile.originalFileName);
@@ -114,7 +117,6 @@ const downloadReportEvent = () => {
         try {
             $w('#downloadReportButton').disable();
             const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
-            
             const audienceData = await getAudienceDetails(uuidsAndMsidsList);
             const dataForFile = [...audienceData.approved, ...audienceData.needAprroval, ...audienceData.rejected];
             const url = await getDownloadFileUrlFromArray(dataForFile, "targetAudienceReport")
