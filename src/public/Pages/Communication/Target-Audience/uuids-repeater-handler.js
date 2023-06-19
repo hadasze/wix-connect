@@ -1,14 +1,14 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import {autorun, toJS} from 'mobx';
-import {state} from 'public/Pages/Communication/state-management.js';
+import { autorun, toJS } from 'mobx';
+import { state } from 'public/Pages/Communication/state-management.js';
 import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import {getAudienceDetails} from 'public/audience-handler.js';
-import {targetAudienceState} from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import {showToast} from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
-import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
-import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
-import {sendBi} from '../../../BI/biModule.js';
+import { getAudienceDetails } from 'public/audience-handler.js';
+import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import { showToast } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
+import { disbaleCurrentButton, contains } from 'public/Pages/helpers.js';
+import { AllAudienceRepeaterButtons, Text } from 'public/consts.js';
+import { sendBi } from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
 
 export const initRejectedStateActions = () => {
@@ -30,7 +30,7 @@ const setTooltipActions = () => {
 }
 
 const getLinkHTML = (url) => {
-    return "<a  href=" + url  +
+    return "<a  href=" + url +
         " class=\"font_8 wixui-rich-text__text\" target=\"_blank\">" + url + "</a>";
 }
 
@@ -63,6 +63,7 @@ const setTargetAudienceData = () => {
 
     autorun(async () => {
         if (state.communication?.targetAudience) {
+            clearAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
             await setAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
@@ -70,6 +71,12 @@ const setTargetAudienceData = () => {
             disbaleCurrentButton('approvedUsersButton', AllAudienceRepeaterButtons);
         }
     })
+}
+
+export function clearAllRepeatersAudienceData() {
+    $w('#approvedRepeater').data = [];
+    $w('#needApprovalReapter').data = [];
+    $w('#rejectedRepeater').data = [];
 }
 
 const setAllRepeatersAudienceData = async () => {
@@ -106,40 +113,7 @@ export const reciveLatestApprovedUsers = async () => {
     }
 }
 
-// const setApprovedRepeaterNew = (data) => {
-//     $w('#approvedRepeater').data = [];
-//     let curr = 0;
-//     const table = {};
-
-//     $w('#loadMoreApprovalButton').onClick((event) => {
-//         
-//         curr++;
-//         const newData = [...$w('#approvedRepeater').data, ...table[curr]];
-//         $w('#approvedRepeater').data = newData;
-//     })
-//     // curr++;
-
-//     // on click load t[curr]
-//     // const newData = [...$w('#approvedRepeater').data, ...t[curr]];
-//     //$w('#approvedRepeater').data = newData;
-
-//     for (let i = 0; i < data.length; i += 10) {
-//         const chunk = data.slice(i, i + 10);
-//         table[i] = chunk;
-
-//         //     setTimeout(() => {
-//         //         const newData = [...$w('#approvedRepeater').data, ...chunk];
-
-//         //         $w('#approvedRepeater').data = newData;
-
-//         //     }, i * 100);
-//     }
-//     $w('#approvedRepeater').data = table[curr];
-//     targetAudienceState.setApprovalCounter(data.length)
-// }
-
 const setApprovedRepeater = (data) => {
-    $w('#approvedRepeater').data = [];
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -151,7 +125,6 @@ const setApprovedRepeater = (data) => {
 }
 
 const setNeedApprovaldRepeater = (data) => {
-    $w('#needApprovalReapter').data = [];
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -166,7 +139,7 @@ const setNeedApprovaldRepeater = (data) => {
 }
 
 const setRejectedRepeater = (data) => {
-    $w('#rejectedRepeater').data = [];
+
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -183,7 +156,7 @@ const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
-        sendBi('audienceClick', {'campaignId': state.communication._id, 'button_name': 'download_report'});
+        sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' });
         wixWindow.openLightbox('Create Requests Pop Up', {
             uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
             needApprovalCounter: targetAudienceState.needApprovalCounter
@@ -227,7 +200,7 @@ const repeatedItemActions = () => {
         const link = clickedItemData.url;
         const suffix = Math.random().toString(36).slice(2);
         const urlToOpen = `${link}&v=${suffix}`;
-       
+
         $w('#linkOpener').setAttribute('link', urlToOpen)
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)
@@ -253,7 +226,7 @@ const repeatedItemActions = () => {
             'uuidChosen': clickedItemData.uuid,
             biCloumnName: biCloumnName
         })
-        wixWindow.openLightbox("Top user", {"user": clickedItemData, "communication": state.communication});
+        wixWindow.openLightbox("Top user", { "user": clickedItemData, "communication": state.communication });
     }
 }
 
@@ -268,12 +241,12 @@ const setApproveToggleEvent = () => {
                     state.addApprovedUser(user);
             })
             $w('#approveAllButton').text = Text.UNAPPROVE_ALL
-            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'approve_all'})
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'approve_all' })
         } else {
             $w("#approveToggleSwitch").checked = false;
             state.resetApprovedUserList();
             $w('#approveAllButton').text = Text.APPROVE_ALL
-            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'unapprove_all'})
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'unapprove_all' })
         }
     })
 

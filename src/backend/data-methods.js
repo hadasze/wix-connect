@@ -6,7 +6,7 @@ import * as EROAPI from './ero-api.js';
 
 import { v4 as uuidv4 } from 'uuid';
 
-const dataOptions = { suppressAuth: true }
+const dataOptions = { suppressAuth: true, consistentRead: true }
 
 export function getCommunication(id) {
     return wixData.get('Communications', id, dataOptions);
