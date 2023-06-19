@@ -114,6 +114,7 @@ export const reciveLatestApprovedUsers = async () => {
 }
 
 const setApprovedRepeater = (data) => {
+    $w('#approvedRepeater').data = [];
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -125,6 +126,7 @@ const setApprovedRepeater = (data) => {
 }
 
 const setNeedApprovaldRepeater = (data) => {
+    $w('#needApprovalReapter').data = [];
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
@@ -139,7 +141,7 @@ const setNeedApprovaldRepeater = (data) => {
 }
 
 const setRejectedRepeater = (data) => {
-
+    $w('#rejectedRepeater').data = [];
     for (let i = 0; i < data.length; i += 10) {
         const chunk = data.slice(i, i + 10);
         setTimeout(() => {
