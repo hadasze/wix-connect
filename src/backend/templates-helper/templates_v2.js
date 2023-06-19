@@ -655,6 +655,15 @@ export const templateHTML = (title, emailContent, firstLastName, positionTitle, 
 <td align="center" height="100%" valign="top" width="100%" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #fff">
 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
+    <td align="left" valign="top" style="padding-right:10px;padding-top:5px;padding-bottom:5px;font-family:Helvetica, Arial, sans-serif;font-size:11px;line-height:14px;color:#666666; display:none !important;max-height:0px;overflow:hidden;">
+<span id="preheader" style=" display: none; height: 0; line-height: 0;max-height: 0; max-width: 0; opacity: 0; overflow: hidden; visibility: hidden;width: 0">
+<div style="display: none; max-height: 0px; overflow: hidden;">
+${"preheader"}
+</div>
+<div style="display: none; max-height: 0px; overflow: hidden;">
+                            &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+                        </div>
+</span></td>
 </tr>
 </table><!--[if gte mso 9]>
           <table align='center' border='0' cellspacing='0' cellpadding='0' width='800'>
@@ -704,7 +713,7 @@ export const templateHTML = (title, emailContent, firstLastName, positionTitle, 
 </tr>
 <tr>
 <td align="center" valign="top" class="no-border-mob" style="padding-top: 0; padding-bottom: 0; mso-line-height-rule: exactly;-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #ffffff;">
-<table align="center" class="no-border-mob" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#ffffff;border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;border:1px solid black">
+<table align="center" class="no-border-mob" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#ffffff;border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; ">
 <tbody>
 <tr>
 <td align="center" valign="top" style="padding-right: 0px; padding-bottom: 0px; background-color: #ffffff;padding-left: 0px; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%">
