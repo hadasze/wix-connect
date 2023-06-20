@@ -19,11 +19,7 @@ $w.onReady(async function () {
     $w('#contactedUserEmployeeEmailText').text = receivedData.user.last_contact_email || await getLastContactEmail();
     $w('#dateOfLastContactedText').text = receivedData.user.last_contact_date || await getLastContactDate();
 
-    // $w('#contactedUserSiteURLText').onClick(() => {
-    //     console.log("hiiiiiiii")
-    //     console.log(receivedData.user.url)
-    // sendBi('sideBarOptions', { 'campaignId': receivedData.communication._id, 'uuidChosen': receivedData.user.uuid, 'cloumnName': 'contacted', 'button_name': 'site_url' })
-    // })
+   
 });
 
 async function getLastContactEmail() {

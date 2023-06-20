@@ -73,7 +73,7 @@ const setTargetAudienceData = () => {
     })
 }
 
-export function clearAllRepeatersAudienceData() {
+function clearAllRepeatersAudienceData() {
     $w('#approvedRepeater').data = [];
     $w('#needApprovalReapter').data = [];
     $w('#rejectedRepeater').data = [];
@@ -89,7 +89,6 @@ const setAllRepeatersAudienceData = async () => {
             const totalNumOfAudience = Helpers.calcTotalAudienceNum(audienceData);
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
-
             setApprovedRepeater(allApprovedUsers)
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
@@ -114,42 +113,27 @@ export const reciveLatestApprovedUsers = async () => {
 }
 
 const setApprovedRepeater = (data) => {
-    $w('#approvedRepeater').data = [];
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#approvedRepeater').data, ...chunk];
-            $w('#approvedRepeater').data = newData;
-        }, i * 100);
-    }
-    targetAudienceState.setApprovalCounter(data.length)
+    $w('#approvedRepeater').data = data;
+    targetAudienceState.setApprovalCounter(data.length);
 }
 
 const setNeedApprovaldRepeater = (data) => {
-    $w('#needApprovalReapter').data = [];
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#needApprovalReapter').data, ...chunk];
-            $w('#needApprovalReapter').data = newData;
-        }, i * 100);
-    }
-
+    $w('#needApprovalReapter').data = data;
     const numOfManuallyApproved = Object.values(state.communication.manuallyApprovedUsers).length;
     targetAudienceState.setNeedApprovalCounter(data.length - numOfManuallyApproved);
     autorun(() => $w('#numOfManuallyApprovedText').text = Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
 }
 
 const setRejectedRepeater = (data) => {
-    $w('#rejectedRepeater').data = [];
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#rejectedRepeater').data, ...chunk];
-            $w('#rejectedRepeater').data = newData;
-        }, i * 100);
-    }
-
+    // $w('#rejectedRepeater').data = [];
+    // for (let i = 0; i < data.length; i += 10) {
+    //     const chunk = data.slice(i, i + 10);
+    //     setTimeout(() => {
+    //         const newData = [...$w('#rejectedRepeater').data, ...chunk];
+    //         $w('#rejectedRepeater').data = newData;
+    //     }, i * 100);
+    // }
+    $w('#rejectedRepeater').data = data;
     targetAudienceState.setRejectedCounter(data.length)
 }
 // let tmp;

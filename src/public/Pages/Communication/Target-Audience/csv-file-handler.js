@@ -4,7 +4,6 @@ import { state } from 'public/Pages/Communication/state-management.js';
 import { toJS } from 'mobx';
 import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
 import { getAudienceDetails } from 'public/audience-handler.js';
-import { clearAllRepeatersAudienceData } from './uuids-repeater-handler.js'
 import { getTargetAudience } from 'backend/data-methods-wrapper.jsw';
 import { AllAudienceRepeaterButtons } from 'public/consts.js';
 import { sendBi } from '../../../BI/biModule.js';
@@ -35,13 +34,13 @@ const replaceCsvFileEvent = async () => {
             const uploadedFile = recivedData.uploadedFiles[0];
             const csvLocalUrl = uploadedFile.fileUrl;
             cleanOldFile();
-            clearAllRepeatersAudienceData();
             state.resetApprovedUserList();
             state.setTargetAudienceCSV(csvLocalUrl);
             prepareUIAfterReplacingFile(uploadedFile.originalFileName);
             sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'replace_csv_file' })
             await customePolling();
             fedopsLogger.interactionEnded('replace-csv');
+
         } catch (error) {
             console.error('public/Pages/Communication/Target-Audience/csv-file-handler.js -> replaceCsvFileEvent failed - origin error -' + error);
             $w('#replaceCsvFile').enable();
