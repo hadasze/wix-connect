@@ -125,18 +125,10 @@ const setNeedApprovaldRepeater = (data) => {
 }
 
 const setRejectedRepeater = (data) => {
-    // $w('#rejectedRepeater').data = [];
-    // for (let i = 0; i < data.length; i += 10) {
-    //     const chunk = data.slice(i, i + 10);
-    //     setTimeout(() => {
-    //         const newData = [...$w('#rejectedRepeater').data, ...chunk];
-    //         $w('#rejectedRepeater').data = newData;
-    //     }, i * 100);
-    // }
     $w('#rejectedRepeater').data = data;
     targetAudienceState.setRejectedCounter(data.length)
 }
-// let tmp;
+
 const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
