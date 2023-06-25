@@ -1,19 +1,25 @@
 import wixWindow from 'wix-window';
-import { state } from 'public/Pages/Communication/state-management.js';
+import { local } from 'wix-storage';
+
 import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
+
+import { state } from './Pages/Communication/state-management.js';
 import { getTokenset } from './login.js';
-import { local } from 'wix-storage';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
+
+import * as Utils from './_utils.js';
 
 import pLimit from 'p-limit';
 
-export async function getAudienceDetails(uuidsAndMsidsList) {
+export async function getAudienceDetails(payload) {
 
     const limit = pLimit(10);
 
-    const isValid = validateFile(uuidsAndMsidsList)
-    if (isValid) {
+    const validateRes = validateFile(payload);
+
+    if (validateRes.valid) {
+        const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
         const tokenset = await getTokenset();
         const userJWT = tokenset.access_token;
         if ($w('#rejectedRepeater').hidden)
@@ -45,7 +51,7 @@ export async function getAudienceDetails(uuidsAndMsidsList) {
 
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
-        wixWindow.openLightbox('CSV File Error', { "communication": state.communication });
+        wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
         return;
     }
 }
@@ -58,23 +64,25 @@ export async function getSentCommunicationDetails() {
 }
 
 function validateFile(uuidsAndMsids) {
-    let isValid = true;
-    if (!Array.isArray(uuidsAndMsids)) {
-        isValid = false;
+
+    const uuidsAndMsidsList = [];
+
+    if (!Utils.isArray(uuidsAndMsids)) {
+        return { valid: false, reason: 'file is not a valid csv' };
     }
-    uuidsAndMsids.forEach((item) => {
-        const keys = Object.keys(item);
-        if (keys.length > 2) {
-            isValid = false;
+
+    for (let index = 0; index < uuidsAndMsids.length; index++) {
+        const item = Utils.lowerize(uuidsAndMsids[index]);
+        if (item.uuid && item.msid) {
+            if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
+                uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
         }
-        if (!keys.includes('uuid')) {
-            isValid = false;
-        }
-        if (keys.includes('MSID')) {
-            isValid = false;
-        }
-    })
-    return isValid
+    }
+
+    if (uuidsAndMsidsList.length > 0) {
+        return { valid: true, uuidsAndMsidsList };
+    }
+    return { valid: false, reason: 'file must include at least one item with uuid and msid' };
 }
 
 const setNotValidFileUI = () => {
@@ -84,29 +92,4 @@ const setNotValidFileUI = () => {
     targetAudienceState.setRejectedCounter(0)
     targetAudienceState.setNeedApprovalCounter(0);
     $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').hide();
-}
-
-const mockData = {
-    "data": [{
-            "sent_date": "2020-12-08 07:48:27.000",
-            "subjectLine": "It's Tom from Wix — I'd love to get your feedback",
-            "delivered": "6",
-            "opened": "0",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-        {
-            "sent_date": "2020-12-08 07:48:22.000",
-            "delivered": "8",
-            "subjectLine": "this is a try of mock data 2",
-            "opened": "3",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-        {
-            "sent_date": "2020-12-08 07:48:25.000",
-            "delivered": "11",
-            "subjectLine": "this is a try of mock data 1",
-            "opened": "1",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-    ]
 }
