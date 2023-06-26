@@ -18,6 +18,7 @@ export async function sendEmails(communicationn) {
 
         const arrayOfEmails = allApprovedUsers.map((user) => {
             let { title, emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+
             ({ title, emailContent, subjectLine, previewText } = evaluateDynamicVariabels(user, title, emailContent, subjectLine, previewText));
             adjustTemplateType(title);
 
@@ -45,7 +46,8 @@ export async function sendEmails(communicationn) {
         }
         return res
     } catch (error) {
-        return Promise.reject('public/user-mailer.js sendEmails failed -origin error- ' + error)
+        console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
+        wixWindow.openLightbox('Setup & Publish - Error sending');
     }
 }
 
@@ -94,13 +96,18 @@ export const reciveAllApprovedUsers = async (communication) => {
 }
 
 const evaluateDynamicVariabels = (user, emailTitle, emailContent, subjectLine, previewText) => {
-    const strings = [emailTitle, emailContent, subjectLine, previewText]
-    const evaluetedStrings = strings.map(string => {
-        string = string.replace(new RegExp('{' + DynamicFieldsOptions.BusinessName + '}', "g"), user.site_display_name || state.communication.dynamicVaribels.businessName);
-        string = string.replace(new RegExp('{' + DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
-        return string;
-    });
-    return { title: evaluetedStrings[0], emailContent: evaluetedStrings[1], subjectLine: evaluetedStrings[2], previewText: evaluetedStrings[3] }
+    try {
+        const strings = [emailTitle, emailContent, subjectLine, previewText];
+        const evaluetedStrings = strings.map(string => {
+            if (!string) return;
+            string = string.replace(new RegExp('{' + DynamicFieldsOptions.BusinessName + '}', "g"), user.site_display_name || state.communication.dynamicVaribels.businessName);
+            string = string.replace(new RegExp('{' + DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
+            return string;
+        });
+        return { title: evaluetedStrings[0], emailContent: evaluetedStrings[1], subjectLine: evaluetedStrings[2], previewText: evaluetedStrings[3] }
+    } catch (error) {
+        throw new Error('public -> user-mailer.js -> evaluateDynamicVariabels failed - origin error - ' + error);
+    }
 }
 
 const adjustTemplateType = (emailTitle) => {

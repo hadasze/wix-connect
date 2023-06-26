@@ -16,4 +16,8 @@ $w.onReady(function () {
     $w('#cancelBtn').onClick((event) => {
         sendBi('testEmail', { 'campaignId': communication._id, 'button_name': 'cancel' })
     })
+
+    $w('#testEmailsInput').onChange((event) => {
+        $w('#testEmailsInput').value.length > 0 ? $w('#sendBtn').enable() : $w('#sendBtn').disable();
+    })
 });

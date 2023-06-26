@@ -29,13 +29,12 @@ export const sendButtonValidations = () => {
 }
 
 const allRequiredFieldsForSendToUsers = (communication) => {
-    const { title, emailContent, subjectLine, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
-    const response = title && emailContent && subjectLine && senderName && replyToAddress && communication.tested;
+    const response = allRequiredFieldsForSendTestEmail(communication) && communication.tested;
     return response;
 }
 
 const allRequiredFieldsForSendTestEmail = (communication) => {
-    const { title, emailContent, subjectLine, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
-    const response = title && emailContent && subjectLine && senderName && replyToAddress;
+    const { emailContent, subjectLine, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+    const response = emailContent && subjectLine && senderName && replyToAddress;
     return response;
 }

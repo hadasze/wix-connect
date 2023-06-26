@@ -1,7 +1,7 @@
 import * as filterRoles from 'public/Pages/Communication/Target-Audience/filters-roles.js'
 
 export const TIME = {
-    AUTO_SAVE: 2000,
+    AUTO_SAVE: 1000,
 }
 
 export const FileNameLength = 22;

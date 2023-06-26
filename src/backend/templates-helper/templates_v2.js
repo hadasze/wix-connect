@@ -745,7 +745,7 @@ ${"preheader"}
 <tr>
 <td class="mob-padding-bottom-15" align="" width="600" style="color: #000000;padding-top: 5px; padding-bottom:15px;text-size-adjust: 100%; font-family: Arial, Helvetica, sans-serif;font-size: 20px; font-style: normal; font-weight: normal; line-height: 30px;" valign="top">
 <span style="color: #000000;padding-bottom: 0px; font-weight: normal; " class="text-block-sub-title">
-<span class="" style=""><strong>${title}</strong></span><br>
+<span class="" style=""><strong>${title || ''}</strong></span><br>
 
 </span>
 </td>
