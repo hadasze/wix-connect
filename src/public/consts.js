@@ -225,3 +225,12 @@ export const Labels = {
     mobile_apps_top_traffic: 'Top traffic',
     mobile_apps_top_engagement: 'Top engagement',
 }
+
+export const csvErrors = {
+    notValidFile: 'file is not a valid csv',
+    missingUUIDMSID: 'file must include at least one item with uuid and msid',
+    moreThenLimitItems: 'no more then 2000 uuid msid',
+    generalMSG: (error) => `<p class="p1 wixui-rich-text__text">${error} <br class="wixui-rich-text__text"> CSV files have to follow a specific format. Compare your file to the template and make sure all the fields are filled correctly.<br class="wixui-rich-text__text">
+<br class="wixui-rich-text__text">
+If you haven&rsquo;t already, <span style="text-decoration:underline;" class="wixui-rich-text__text"><a href="https://docs.google.com/spreadsheets/d/1vHd0hkn2jv4w6mtGzAlUaDzIlmw0wKmk_E9WIrXWOP8/edit#gid=1675989783" target="_blank" rel="noreferrer noopener" class="wixui-rich-text__text">download the template CSV file</a></span> and follow the instructions inside.</p>`
+}
