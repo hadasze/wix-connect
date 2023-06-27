@@ -5,9 +5,11 @@ import { toJS } from 'mobx';
 import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
 import { getAudienceDetails } from 'public/audience-handler.js';
 import { getTargetAudience } from 'backend/data-methods-wrapper.jsw';
-import { AllAudienceRepeaterButtons } from 'public/consts.js';
+import { AllAudienceRepeaterButtons, csvErrors } from 'public/consts.js';
 import { sendBi } from '../../../BI/biModule.js';
 import { create } from 'wix-fedops';
+
+
 const fedopsLogger = create('wix-connect');
 
 export const initCSVFileActions = () => {
@@ -70,19 +72,26 @@ const setUploadCSVEvent = () => {
     $w("#uploadCSVButton").fileType = "Document";
     $w('#uploadCSVButton').onChange(async (event) => {
         try {
-            setTimeout(() => {
-                $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
-            }, 100);
-            cleanOldFile();
-            $w("#uploadCSVButton").disable();
-            const uploadedFile = await uploadFileAndSetAudience();
-            state.setTargetAudienceCSVFileName(uploadedFile.originalFileName)
-            sendBi('uploadCSV', { 'campaignId': state.communication._id, 'button_name': 'upload_csv_file' })
-            await customePolling();
-            fedopsLogger.interactionEnded('upload-csv');
+            if (isValidFileBeforeUpload(event)) {
+                setTimeout(() => {
+                    $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
+                }, 100);
+                cleanOldFile();
+                $w("#uploadCSVButton").disable();
+
+                const uploadedFile = await uploadFileAndSetAudience();
+
+                state.setTargetAudienceCSVFileName(uploadedFile.originalFileName)
+                sendBi('uploadCSV', { 'campaignId': state.communication._id, 'button_name': 'upload_csv_file' })
+                await customePolling();
+                fedopsLogger.interactionEnded('upload-csv');
+
+            } else {
+                wixWindow.openLightbox('CSV File Error', { communication: state.communication, reason: csvErrors.notValidFile });
+            }
         } catch (error) {
             $w('#TargetAudienceContent').changeState('TargetAudienceContentUpload') && $w('#csvDetailsAndActionsBox').hide();
-            console.error();
+            console.error('public -> pages->Communication ->Target-Audiance ->csv-file-handler.js -> uploadCSVButton onChange failed - origin error - ' + error);
         }
         $w("#uploadCSVButton").enable();
     })
@@ -154,3 +163,5 @@ const uploadFileAndSetAudience = async () => {
     state.setTargetAudienceCSV(csvLocalUrl);
     return uploadedFiles[0];
 }
+
+export const isValidFileBeforeUpload = (event) => event.target.value[0].valid && event.target.value[0].name.toLowerCase().includes('csv');

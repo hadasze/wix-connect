@@ -7,6 +7,7 @@ import * as DataHandler from 'backend/data-methods-wrapper.jsw';
 import { state } from './Pages/Communication/state-management.js';
 import { getTokenset } from './login.js';
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
+import { csvErrors } from './consts.js';
 
 import * as Utils from './_utils.js';
 
@@ -48,7 +49,6 @@ export async function getAudienceDetails(payload) {
         return toReturn;
 
     } else {
-
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
         wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
@@ -63,16 +63,16 @@ export async function getSentCommunicationDetails() {
     return await DataHandler.getSentCommunicationDetails(userID, userJWT);
 }
 
-function validateFile(uuidsAndMsids) {
+function validateFile(payload) {
 
     const uuidsAndMsidsList = [];
 
-    if (!Utils.isArray(uuidsAndMsids)) {
-        return { valid: false, reason: 'file is not a valid csv' };
+    if (!Utils.isArray(payload)) {
+        return { valid: false, reason: csvErrors.notValidFile };
     }
 
-    for (let index = 0; index < uuidsAndMsids.length; index++) {
-        const item = Utils.lowerize(uuidsAndMsids[index]);
+    for (let index = 0; index < payload.length; index++) {
+        const item = Utils.lowerize(payload[index]);
         if (item.uuid && item.msid) {
             if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
                 uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
@@ -82,7 +82,8 @@ function validateFile(uuidsAndMsids) {
     if (uuidsAndMsidsList.length > 0) {
         return { valid: true, uuidsAndMsidsList };
     }
-    return { valid: false, reason: 'file must include at least one item with uuid and msid' };
+
+    return { valid: false, reason: csvErrors.missingUUIDMSID };
 }
 
 const setNotValidFileUI = () => {
