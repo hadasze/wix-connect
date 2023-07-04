@@ -24,7 +24,7 @@ export const countAllUserCommunications = () => {
     return Promise.all([getAllCommunicationsPromise, getDraftCommunicationsPromise, getArchiveCommunicationsPromise, getSentCommunicationsPromise, getAllTemplatesCommunications]);
 }
 
-export const getSentCommunicationDetails = (userID, userJWT) => DataMethods.getSentCommunicationData(userID, userJWT);
+export const getSentCommunicationData = (userID, userJWT) => DataMethods.getSentCommunicationData(userID, userJWT);
 
 export const getUuidByEmail = (email) => DataMethods.getUuidByEmail(email);
 

@@ -1,15 +1,14 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import {toJS} from 'mobx';
-import {state} from 'public/Pages/Communication/state-management.js';
-import {disbaleCurrentButton} from 'public/Pages/helpers.js';
-import {initPreviewUIData} from 'public/Pages/Preview/preview-component.js';
-import {getSentCommunicationDetails} from 'public/audience-handler.js';
-import {prepareSentCommunicationsDetails} from 'public/Pages/Communications-Dashboard/communications-dashboard.js'
-import {getDownloadFileUrlFromArray} from 'backend/target-audience-handler-wrapper.jsw';
-import {getAudienceDetails} from 'public/audience-handler.js';
+import { toJS } from 'mobx';
+import { state } from 'public/Pages/Communication/state-management.js';
+import { disbaleCurrentButton } from 'public/Pages/helpers.js';
+import { initPreviewUIData } from 'public/Pages/Preview/preview-component.js';
+import { prepareSentCommunicationsDetails } from 'public/Pages/Communications-Dashboard/communications-dashboard.js'
+import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
+import { getAudienceDetails } from 'public/audience-handler.js';
 import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import {AllPreviewSectionsButtons} from 'public/consts.js'
+import { AllPreviewSectionsButtons } from 'public/consts.js'
 
 let currCommunication = wixWindow.getRouterData();
 
@@ -87,15 +86,15 @@ const initPreviewDetailsHeaderData = async () => {
 
 const initPreviewDetailsRepeaterData = () => {
     // try {
-        $w('#sentEmailUsersRepeater').data = [];
-        $w('#sentEmailUsersRepeater').data = currCommunication.finalSentToAudience;
-        $w('#sentEmailUsersRepeater').onItemReady(($item, itemData, index) => {
-            $item('#userUUIDButton').label = itemData.uuid;
-            $item('#userNameText').text = itemData.site_display_name || '';
-            $item('#siteUrlText').text = itemData.url || '';
-            setRepeaterActions($item, itemData)
-            roles.setSentUuidProperties(itemData, $item, 'Sent');
-        });
+    $w('#sentEmailUsersRepeater').data = [];
+    $w('#sentEmailUsersRepeater').data = currCommunication.finalSentToAudience;
+    $w('#sentEmailUsersRepeater').onItemReady(($item, itemData, index) => {
+        $item('#userUUIDButton').label = itemData.uuid;
+        $item('#userNameText').text = itemData.site_display_name || '';
+        $item('#siteUrlText').text = itemData.url || '';
+        setRepeaterActions($item, itemData)
+        roles.setSentUuidProperties(itemData, $item, 'Sent');
+    });
     // } catch (err) {
     //     console.error('initPreviewDetailsRepeaterData error, original error: ', err);
     // }

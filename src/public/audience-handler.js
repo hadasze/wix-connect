@@ -56,11 +56,20 @@ export async function getAudienceDetails(payload) {
     }
 }
 
-export async function getSentCommunicationDetails() {
+export async function getSentCommunicationData() {
     const tokenset = await getTokenset();
     const userJWT = tokenset.access_token;
-    const userID = JSON.parse(local.getItem('userInfo')).uuid;
-    return await DataHandler.getSentCommunicationDetails(userID, userJWT);
+    // const userID = JSON.parse(local.getItem('userInfo')).uuid;
+    // const resForCurrentUser = await DataHandler.getSentCommunicationData(userID, userJWT);
+    const filters = { "sent": true };
+    const getAllUserCommunicationsRes = await DataHandler.getAllUserCommunications(filters);
+    const uniqueReplayToEmails = [...new Set(getAllUserCommunicationsRes.items.map((item) => item.finalDetails.replyToAddress))];
+    const uuidsPromise = uniqueReplayToEmails.map((email) => DataHandler.getUuidByEmail(email));
+    console.log({ uuidsPromise });
+    const uuids = (await Promise.all(uniqueReplayToEmails.map((email) => DataHandler.getUuidByEmail(email)))).flat;
+    const results = (await Promise.all(uuids.map((userID) => DataHandler.getSentCommunicationData(userID, userJWT)))).flat;
+    console.log('getSentCommunicationData resForCurrentUser: ', { results });
+    return results;
 }
 
 function validateFile(payload) {

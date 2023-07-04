@@ -3,7 +3,7 @@ import wixLocation from 'wix-location';
 import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from 'public/consts.js';
 import { disbaleCurrentButton } from 'public/Pages/helpers.js'
 import { SmartRepeater } from 'public/smart-repeater.js';
-import { getSentCommunicationDetails } from 'public/audience-handler.js';
+import { getSentCommunicationData } from 'public/audience-handler.js';
 import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
 import { setCommunicationMoreActionsEvents } from 'public/Pages/Communications-Dashboard/communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
@@ -134,7 +134,7 @@ const setCommunicationMoreActionsUI = ($item) => {
 
 export const prepareSentCommunicationsDetails = async () => {
     try {
-        const communicationDetails = await getSentCommunicationDetails();
+        const communicationDetails = await getSentCommunicationData();
         const aggregatedData = aggregateBySubjectLine(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {
