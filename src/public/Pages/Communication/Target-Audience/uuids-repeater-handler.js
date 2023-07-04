@@ -1,14 +1,14 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import {autorun, toJS} from 'mobx';
-import {state} from 'public/Pages/Communication/state-management.js';
+import { autorun, toJS } from 'mobx';
+import { state } from 'public/Pages/Communication/state-management.js';
 import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import {getAudienceDetails} from 'public/audience-handler.js';
-import {targetAudienceState} from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import {showToast} from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
-import {disbaleCurrentButton, contains} from 'public/Pages/helpers.js';
-import {AllAudienceRepeaterButtons, Text} from 'public/consts.js';
-import {sendBi} from '../../../BI/biModule.js';
+import { getAudienceDetails } from 'public/audience-handler.js';
+import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import { showToast } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
+import { disbaleCurrentButton, contains } from 'public/Pages/helpers.js';
+import { AllAudienceRepeaterButtons, Text } from 'public/consts.js';
+import { sendBi } from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
 import { PagedRepeater, PagedRepeaterOptions, ButtonInfo } from '../../../paged-repeater';
 import { create } from 'wix-fedops';
@@ -28,7 +28,7 @@ export const initTargetAudienceRepeatersData = () => {
 }
 
 const getLinkHTML = (url) => {
-    return "<a  href=" + url  +
+    return "<a  href=" + url +
         " class=\"font_8 wixui-rich-text__text\" target=\"_blank\">" + url + "</a>";
 }
 
@@ -39,9 +39,10 @@ export const initRepeatersActions = () => {
     $w("#back").onClick((event) => {
         prevPage();
     });
-    for (let i = 1 ; i < 8 ; i++) {
+    for (let i = 1; i < 8; i++) {
         let button = getPaginationButton(i);
         button.onClick((event) => {
+            console.log({ event });
             if (event.target.label == '...') {
                 return;
             } else {
@@ -194,8 +195,8 @@ const setApprovedRepeater = async (data) => {
         new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, repeaterOptions);
     await approvedRepeater.initRepeater();
     fedopsLogger.interactionEnded('set-approved-repeater');
-    const approvedState = approvedRepeater.getState();
-    setPagination(approvedState);
+    // const approvedState = approvedRepeater.getState();
+    setPagination(approvedRepeater);
 
     targetAudienceState.setApprovalCounter(data.length)
 }
@@ -207,7 +208,7 @@ function getPaginationButton(i) {
 function getButtonByPage(page) {
     console.log("getByPage:", page)
     const pageStr = page.toString();
-    for (let i = 1 ; i < 8 ; i++) {
+    for (let i = 1; i < 8; i++) {
         let button = getPaginationButton(i);
         if (button.label == pageStr) {
             return button;
@@ -217,14 +218,14 @@ function getButtonByPage(page) {
 }
 
 function setPagination() {
-    for (let i = 1 ; i <= NUM_BUTTONS ; i++) {
+    
+    for (let i = 1; i <= NUM_BUTTONS; i++) {
         let button = getPaginationButton(i);
         button.hide();
     }
-    const buttonsInfo = approvedRepeater.getPagination(NUM_BUTTONS);
-    console.log(JSON.stringify(buttonsInfo));
+    const buttonsInfo = approvedRepeater.setPaginator(NUM_BUTTONS);
 
-    for (let i = 0 ; i <buttonsInfo.length ; i++) {
+    for (let i = 0; i < buttonsInfo.length; i++) {
         const buttonInfo = buttonsInfo[i];
         const button = getPaginationButton(i + 1);
         button.style.backgroundColor = "#ffffff";
@@ -233,8 +234,11 @@ function setPagination() {
         if (buttonInfo.state == ButtonInfo.RANGE) {
             button.label = '...';
         }
-        if (buttonInfo.state == ButtonInfo.SELECTED) {
+        else if (buttonInfo.state == ButtonInfo.SELECTED) {
             button.style.backgroundColor = "#166AEA";
+        }
+        else {
+            button.label = buttonInfo.text;
         }
     }
     const state = approvedRepeater.getState();
@@ -259,7 +263,7 @@ function gotoPage(page) {
 
 
 export function nextPage() {
-    console.log("moving forward!");
+    console.log(`moving forward! - next page ${this.page + 1}`);
     approvedRepeater.next();
     setPagination();
 }
@@ -308,7 +312,7 @@ const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
-        sendBi('audienceClick', {'campaignId': state.communication._id, 'button_name': 'download_report'});
+        sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' });
         wixWindow.openLightbox('Create Requests Pop Up', {
             uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
             needApprovalCounter: targetAudienceState.needApprovalCounter
@@ -361,7 +365,6 @@ const repeatedItemActions = () => {
         const link = clickedItemData.url;
         const suffix = Math.random().toString(36).slice(2);
         const urlToOpen = `${link}&v=${suffix}`;
-        console.log()
         $w('#linkOpener').setAttribute('link', urlToOpen)
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)
@@ -387,7 +390,7 @@ const repeatedItemActions = () => {
             'uuidChosen': clickedItemData.uuid,
             biCloumnName: biCloumnName
         })
-        wixWindow.openLightbox("Top user", {"user": clickedItemData, "communication": state.communication});
+        wixWindow.openLightbox("Top user", { "user": clickedItemData, "communication": state.communication });
     }
 }
 
@@ -402,12 +405,12 @@ const setApproveToggleEvent = () => {
                     state.addApprovedUser(user);
             })
             $w('#approveAllButton').text = Text.UNAPPROVE_ALL
-            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'approve_all'})
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'approve_all' })
         } else {
             $w("#approveToggleSwitch").checked = false;
             state.resetApprovedUserList();
             $w('#approveAllButton').text = Text.APPROVE_ALL
-            sendBi('approveToggle', {'campaignId': state.communication._id, 'button_name': 'unapprove_all'})
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'unapprove_all' })
         }
     })
 
