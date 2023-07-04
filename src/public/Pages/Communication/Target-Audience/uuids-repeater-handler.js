@@ -114,8 +114,7 @@ function clearAllRepeatersAudienceData() {
 }
 
 const setAllRepeatersAudienceData = async () => {
-    //To remove once we have paginator
-    $w('#Pagination').hide();
+   
     try {
         const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
         const audienceData = await getAudienceDetails(uuidsAndMsidsList);
@@ -123,12 +122,7 @@ const setAllRepeatersAudienceData = async () => {
             const totalNumOfAudience = Helpers.calcTotalAudienceNum(audienceData);
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
-<<<<<<< HEAD
-
-            setApprovedRepeater(allApprovedUsers);
-=======
             setApprovedRepeater(allApprovedUsers)
->>>>>>> main
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
             handleNotValidAudience(totalNumOfAudience, uuidsAndMsidsList.length);
@@ -164,39 +158,6 @@ export const reciveLatestApprovedUsers = async () => {
     }
 }
 
-<<<<<<< HEAD
-// const setApprovedRepeaterNew = (data) => {
-//     $w('#approvedRepeater').data = [];
-//     let curr = 0;
-//     const table = {};
-
-//     $w('#loadMoreApprovalButton').onClick((event) => {
-//         console.log({ curr, table });
-//         curr++;
-//         const newData = [...$w('#approvedRepeater').data, ...table[curr]];
-//         $w('#approvedRepeater').data = newData;
-//     })
-//     // curr++;
-
-//     // on click load t[curr]
-//     // const newData = [...$w('#approvedRepeater').data, ...t[curr]];
-//     //$w('#approvedRepeater').data = newData;
-
-//     for (let i = 0; i < data.length; i += 10) {
-//         const chunk = data.slice(i, i + 10);
-//         table[i] = chunk;
-
-//         //     setTimeout(() => {
-//         //         const newData = [...$w('#approvedRepeater').data, ...chunk];
-
-//         //         $w('#approvedRepeater').data = newData;
-
-//         //     }, i * 100);
-//     }
-//     $w('#approvedRepeater').data = table[curr];
-//     targetAudienceState.setApprovalCounter(data.length)
-// }
-
 function filter(row, value) {
     console.log('searching for: ', value);
     if (value == '') {
@@ -214,19 +175,14 @@ function filter(row, value) {
 
 const setApprovedRepeater = async (data) => {
     fedopsLogger.interactionStarted('set-approved-repeater');
-    approvedRepeater =
-        new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, repeaterOptions);
+    approvedRepeater = new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, repeaterOptions);
     await approvedRepeater.initRepeater();
     fedopsLogger.interactionEnded('set-approved-repeater');
-    // const approvedState = approvedRepeater.getState();
-    setPagination(approvedRepeater);
+
+    setPagination();
 
     targetAudienceState.setApprovalCounter(data.length)
-=======
-const setApprovedRepeater = (data) => {
-    $w('#approvedRepeater').data = data;
-    targetAudienceState.setApprovalCounter(data.length);
->>>>>>> main
+
 }
 
 function getPaginationButton(i) {
@@ -377,11 +333,7 @@ const repeatedItemActions = () => {
         const link = clickedItemData.url;
         const suffix = Math.random().toString(36).slice(2);
         const urlToOpen = `${link}&v=${suffix}`;
-<<<<<<< HEAD
-=======
 
->>>>>>> main
-        $w('#linkOpener').setAttribute('link', urlToOpen)
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)
     }

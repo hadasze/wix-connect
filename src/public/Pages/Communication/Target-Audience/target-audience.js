@@ -1,10 +1,7 @@
 import { observable, configure } from 'mobx';
 import { initCSVFileActions } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js'
-<<<<<<< HEAD
-import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions, initRepeatersActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
-=======
-import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions, initRejectedStateActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
->>>>>>> main
+
+import { initTargetAudienceRepeatersData, initTargetAudienceRepeatersActions, initRepeatersActions, initRejectedStateActions } from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler';
 import { initAudienceInformationBarActions, initAudienceInformationBarData } from 'public/Pages/Communication/Target-Audience/information-bar-handler.js'
 import { nextPage, prevPage, filterData } from './uuids-repeater-handler';
 
@@ -16,11 +13,8 @@ export const initTargetAudienceActions = () => {
     initCSVFileActions();
     initAudienceInformationBarActions();
     initTargetAudienceRepeatersActions();
-<<<<<<< HEAD
     initRepeatersActions();
-=======
     initRejectedStateActions();
->>>>>>> main
 }
 
 export const initTargetAudienceData = () => {
