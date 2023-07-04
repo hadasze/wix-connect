@@ -9,7 +9,7 @@ export const setCommunicationMoreActionsEvents = ($item, itemData) => {
         wixLocation.to(Urls.EXISTS_COMMUNICATION + itemData._id)
     })
     $item('#reuseCommunicationButton').onClick(async (event) => {
-        reuseCommunication(itemData)
+        await reuseCommunication(itemData)
     })
 
     $item('#saveAsTempalteButton').onClick(async (event) => {

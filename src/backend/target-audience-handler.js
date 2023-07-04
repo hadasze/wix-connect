@@ -1,5 +1,4 @@
 import { mediaManager } from 'wix-media-backend';
-import { getIsContactedUser } from './data-methods.js'
 const { Parser } = require('json2csv');
 
 export async function getDownloadCsvUrlFromArray(array, fileName) {
@@ -21,19 +20,19 @@ function uploadFile(buffer, fileName) {
         "/myUploadFolder/subfolder",
         buffer,
         `${fileName}.csv`, {
-            "mediaOptions": {
-                "mimeType": "application/vnd.ms-excel",
-                "mediaType": "document"
-            },
-            "metadataOptions": {
-                "isPrivate": true,
-                "isVisitorUpload": false,
-                "context": {
-                    "someKey1": "someValue1",
-                    "someKey2": "someValue2"
-                }
+        "mediaOptions": {
+            "mimeType": "application/vnd.ms-excel",
+            "mediaType": "document"
+        },
+        "metadataOptions": {
+            "isPrivate": true,
+            "isVisitorUpload": false,
+            "context": {
+                "someKey1": "someValue1",
+                "someKey2": "someValue2"
             }
         }
+    }
     );
 }
 
@@ -52,16 +51,19 @@ export async function filterAudience(audienceDetails) {
         const users = audienceDetails[index];
         for (const user in users) {
             for (const key in users[user]) {
-                const currUser = users[user][key];
-                if (await isRejectedUser(currUser)) {
-                    rejected.push(currUser);
+                const _currUser = users[user][key];
+                const currUser = stringToBoolean(_currUser);
+               
+                if (await noDataForThisUser (currUser)) {
+                     noData.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
                     needAprroval.push(currUser);
-                } else if (noDataForThisUser(currUser)) {
-                    noData.push(currUser);
+                } else if (isRejectedUser(currUser)) {
+                    rejected.push(currUser);
                 } else {
                     approved.push(currUser);
                 }
+
             }
         }
     }
@@ -70,8 +72,8 @@ export async function filterAudience(audienceDetails) {
 
 }
 
-export async function isRejectedUser(user) {
-    return unSubscribed(user) || isB2B(user) || isChannels(user) || await contactedLately(user);
+export function isRejectedUser(user) {
+    return unSubscribed(user) || isB2B(user) || isChannels(user) || contactedLately(user);
 }
 
 function isWaitingForApproval(user) {
@@ -82,10 +84,26 @@ function noDataForThisUser(user) {
     return isNotExistUser(user)
 }
 
-const unSubscribed = (user) => user?.subscribed_ind === 'false';
-const isChannels = (user) => user?.channels_ind === 'true';
-const isB2B = (user) => user?.b2b_ind === 'true';
-const isManaged = (user) => user?.managed_ind === 'true';
+const unSubscribed = (user) => user?.unqualified_for_emails_ind === true;
+const isChannels = (user) => user?.channels_ind === true;
+const isB2B = (user) => user?.b2b_ind === true;
+const isManaged = (user) => user?.managed_ind === true;
 
-const contactedLately = async (user) => user?.contacted_lately_ind === 'true' || await getIsContactedUser(user.uuid);
+const contactedLately = (user) => user?.contacted_lately_ind === true;
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
+
+
+
+
+function stringToBoolean(obj) {
+    const toReturn = { ...obj };
+    for (const property in toReturn) {
+        if (toReturn[property] === 'true')
+            toReturn[property] = true;
+        if (toReturn[property] === 'false')
+            toReturn[property] = false;
+    }
+    
+    return toReturn;
+
+}

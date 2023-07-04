@@ -19,12 +19,22 @@ let audienceData;
 const repeaterOptions = new PagedRepeaterOptions(10);
 const NUM_BUTTONS = 7;
 
+export const initRejectedStateActions = () => {
+    setTooltipActions();
+}
+
 export const initTargetAudienceRepeatersActions = () => {
     initActions();
 }
 
 export const initTargetAudienceRepeatersData = () => {
     setTargetAudienceData();
+}
+
+const setTooltipActions = () => {
+    $w('#unqualifiedBox').onMouseIn((event) => {
+        $w('#unqualifiedTooltip').show();
+    })
 }
 
 const getLinkHTML = (url) => {
@@ -87,7 +97,7 @@ const setTargetAudienceData = () => {
 
     autorun(async () => {
         if (state.communication?.targetAudience) {
-            console.log('setTargetAudienceData::AutoRun');
+            clearAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
             await setAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
@@ -97,7 +107,15 @@ const setTargetAudienceData = () => {
     })
 }
 
+function clearAllRepeatersAudienceData() {
+    $w('#approvedRepeater').data = [];
+    $w('#needApprovalReapter').data = [];
+    $w('#rejectedRepeater').data = [];
+}
+
 const setAllRepeatersAudienceData = async () => {
+    //To remove once we have paginator
+    $w('#Pagination').hide();
     try {
         const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
         const audienceData = await getAudienceDetails(uuidsAndMsidsList);
@@ -105,8 +123,12 @@ const setAllRepeatersAudienceData = async () => {
             const totalNumOfAudience = Helpers.calcTotalAudienceNum(audienceData);
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
+<<<<<<< HEAD
 
             setApprovedRepeater(allApprovedUsers);
+=======
+            setApprovedRepeater(allApprovedUsers)
+>>>>>>> main
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
             handleNotValidAudience(totalNumOfAudience, uuidsAndMsidsList.length);
@@ -142,6 +164,7 @@ export const reciveLatestApprovedUsers = async () => {
     }
 }
 
+<<<<<<< HEAD
 // const setApprovedRepeaterNew = (data) => {
 //     $w('#approvedRepeater').data = [];
 //     let curr = 0;
@@ -199,6 +222,11 @@ const setApprovedRepeater = async (data) => {
     setPagination(approvedRepeater);
 
     targetAudienceState.setApprovalCounter(data.length)
+=======
+const setApprovedRepeater = (data) => {
+    $w('#approvedRepeater').data = data;
+    targetAudienceState.setApprovalCounter(data.length);
+>>>>>>> main
 }
 
 function getPaginationButton(i) {
@@ -280,33 +308,17 @@ export function filterData(column, value) {
 }
 
 const setNeedApprovaldRepeater = (data) => {
-    $w('#needApprovalReapter').data = [];
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#needApprovalReapter').data, ...chunk];
-            $w('#needApprovalReapter').data = newData;
-        }, i * 100);
-    }
-
+    $w('#needApprovalReapter').data = data;
     const numOfManuallyApproved = Object.values(state.communication.manuallyApprovedUsers).length;
     targetAudienceState.setNeedApprovalCounter(data.length - numOfManuallyApproved);
     autorun(() => $w('#numOfManuallyApprovedText').text = Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
 }
 
 const setRejectedRepeater = (data) => {
-    $w('#rejectedRepeater').data = [];
-    for (let i = 0; i < data.length; i += 10) {
-        const chunk = data.slice(i, i + 10);
-        setTimeout(() => {
-            const newData = [...$w('#rejectedRepeater').data, ...chunk];
-            $w('#rejectedRepeater').data = newData;
-        }, i * 100);
-    }
-
+    $w('#rejectedRepeater').data = data;
     targetAudienceState.setRejectedCounter(data.length)
 }
-// let tmp;
+
 const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
     autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
@@ -365,6 +377,10 @@ const repeatedItemActions = () => {
         const link = clickedItemData.url;
         const suffix = Math.random().toString(36).slice(2);
         const urlToOpen = `${link}&v=${suffix}`;
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
         $w('#linkOpener').setAttribute('link', urlToOpen)
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)

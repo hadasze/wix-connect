@@ -1,19 +1,12 @@
 import { templateHTML } from './templates_v2.js';
 
-const Text = {
-    Empty_Title: "This is your mail title, edit it in 'Create Email' page",
-    Empty_Content: "This is your mail body, edit it in 'Create Email' page",
-    Empty_Greetings: "this is your email greetings, edit it in ‘create Email’ page",
-    Empty_Signature_Name: "This is your mail signature, add your name in 'Create Email' page",
-    Empty_Signature_Job: "This is your mail signature, add your Wix position in 'Create Email' page",
-}
-
 export const HTMLgenerator = (variables = {}) => {
     const templateData = variables.template?.data;
     const signatureData = variables?.signature;
-    return templateHTML(templateData?.title || Text.Empty_Title,
-        templateData?.body || Text.Empty_Content,
-        signatureData?.fullName || Text.Empty_Signature_Name,
-        signatureData?.jobTitle || Text.Empty_Signature_Job,
-        signatureData?.finalGreeting || Text.Empty_Greetings);
+    return templateHTML(
+        templateData?.title,
+        templateData?.body,
+        signatureData?.fullName,
+        signatureData?.jobTitle,
+        signatureData?.finalGreeting);
 }

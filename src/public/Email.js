@@ -17,7 +17,7 @@ export class Email {
         this.replyTo = this.isValid('replyTo', replyTo);
         this.subjectLine = this.isValid('subjectLine', subjectLine);
         this.previewText = previewText;
-        this.title = this.isValid('title', title);
+        this.title = title;
         this.emailContent = this.isValid('emailContent', emailContent);
         this.emailcontent2 = emailcontent2;
         this.firstLastName = firstLastName;
@@ -33,9 +33,9 @@ export class Email {
 
     createBody() {
         let params = {
-            "senderName": this.senderName,
-            "replyTo": this.replyTo,
-            "subjectLine": this.subjectLine,
+            'senderName': this.senderName,
+            'replyTo': this.replyTo,
+            'subjectLine': this.subjectLine,
             'title': this.title,
             'emailContent': this.emailContent,
             'emailcontent2': this.emailcontent2,
@@ -44,20 +44,21 @@ export class Email {
             'communicationId': this.communicationId
         };
         if (this.previewText) {
-            params["preheader"] = this.previewText
+            params['preheader'] = this.previewText
         }
         let body = {
-            "template": {
-                "name": this.templateName,
-                "params": params,
-                "nonHashParams": [
-                    "replyTo",
-                    "senderName",
-                    "subjectLine",
-                    "firstLastName",
-                    "emailcontent2",
-                    "positionTitle",
-                    "title"
+            'template': {
+                'name': this.templateName,
+                'params': params,
+                'nonHashParams': [
+                    'replyTo',
+                    'senderName',
+                    'subjectLine',
+                    'firstLastName',
+                    'emailcontent2',
+                    'positionTitle',
+                    'title',
+                    'communicationId'
                 ]
             }
         }

@@ -1,25 +1,32 @@
 import wixWindow from 'wix-window';
-import { state } from 'public/Pages/Communication/state-management.js';
+import { local } from 'wix-storage';
+
 import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
+
+import { state } from './Pages/Communication/state-management.js';
 import { getTokenset } from './login.js';
-import { local } from 'wix-storage';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
+import { csvErrors } from './consts.js';
+
+import * as Utils from './_utils.js';
 
 import pLimit from 'p-limit';
 
-export async function getAudienceDetails(uuidsAndMsidsList) {
+export async function getAudienceDetails(payload) {
 
     const limit = pLimit(10);
 
-    const isValid = validateFile(uuidsAndMsidsList)
-    if (isValid) {
+    const validateRes = validateFile(payload);
+
+    if (validateRes.valid) {
+        const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
         const tokenset = await getTokenset();
         const userJWT = tokenset.access_token;
         if ($w('#rejectedRepeater').hidden)
             $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
 
-        const chunkSize = 50;
+        const chunkSize = 1000;
         const chunks = [];
 
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
@@ -42,10 +49,9 @@ export async function getAudienceDetails(uuidsAndMsidsList) {
         return toReturn;
 
     } else {
-
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
-        wixWindow.openLightbox('CSV File Error', { "communication": state.communication });
+        wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
         return;
     }
 }
@@ -57,24 +63,27 @@ export async function getSentCommunicationDetails() {
     return await DataHandler.getSentCommunicationDetails(userID, userJWT);
 }
 
-function validateFile(uuidsAndMsids) {
-    let isValid = true;
-    if (!Array.isArray(uuidsAndMsids)) {
-        isValid = false;
+function validateFile(payload) {
+
+    const uuidsAndMsidsList = [];
+
+    if (!Utils.isArray(payload)) {
+        return { valid: false, reason: csvErrors.notValidFile };
     }
-    uuidsAndMsids.forEach((item) => {
-        const keys = Object.keys(item);
-        if (keys.length > 2) {
-            isValid = false;
+
+    for (let index = 0; index < payload.length; index++) {
+        const item = Utils.lowerize(payload[index]);
+        if (item.uuid && item.msid) {
+            if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
+                uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
         }
-        if (!keys.includes('uuid')) {
-            isValid = false;
-        }
-        if (keys.includes('MSID')) {
-            isValid = false;
-        }
-    })
-    return isValid
+    }
+
+    if (uuidsAndMsidsList.length > 0) {
+        return { valid: true, uuidsAndMsidsList };
+    }
+
+    return { valid: false, reason: csvErrors.missingUUIDMSID };
 }
 
 const setNotValidFileUI = () => {
@@ -84,29 +93,4 @@ const setNotValidFileUI = () => {
     targetAudienceState.setRejectedCounter(0)
     targetAudienceState.setNeedApprovalCounter(0);
     $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').hide();
-}
-
-const mockData = {
-    "data": [{
-            "sent_date": "2020-12-08 07:48:27.000",
-            "subjectLine": "It's Tom from Wix — I'd love to get your feedback",
-            "delivered": "6",
-            "opened": "0",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-        {
-            "sent_date": "2020-12-08 07:48:22.000",
-            "delivered": "8",
-            "subjectLine": "this is a try of mock data 2",
-            "opened": "3",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-        {
-            "sent_date": "2020-12-08 07:48:25.000",
-            "delivered": "11",
-            "subjectLine": "this is a try of mock data 1",
-            "opened": "1",
-            "_id": "02484B9C-17D2-4848-8810-E0CD6DE23671"
-        },
-    ]
 }

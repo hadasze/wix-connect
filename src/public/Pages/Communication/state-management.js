@@ -27,6 +27,9 @@ export const state = observable({
     setManuallyApprovedUsers(approvedUsers) {
         state.communication.manuallyApprovedUsers = approvedUsers;
     },
+    setFinalAudience(approvedUsers){
+    state.communication.finalSentToAudience = approvedUsers;
+    },
     addApprovedUser(user) {
         const manuallyApproveArray = (Object.values(toJS(state.communication.manuallyApprovedUsers)))
         manuallyApproveArray.push(user);
