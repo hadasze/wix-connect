@@ -83,9 +83,9 @@ export async function getSentCommunicationData(comuunicationIds, userJWT) {
                 'Authorization': `Bearer ${userJWT}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ "uuid": comuunicationIds })
+            body: JSON.stringify({ "UUIDs": comuunicationIds })
         });
-
+        
         if (res.ok)
             return await res.json();
 

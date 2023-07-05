@@ -55,9 +55,9 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
     $item('#communicationClickbaleArea').onClick(() => {
         wixLocation.to(Urls.PREVIEW + itemData._id)
     })
-    const id = itemData._id;
-    const deliveredCount = communicationDetails[id]?.delivered ? (communicationDetails[id]?.delivered).toString() : '0';
-    const openedCount = communicationDetails[id]?.opened ? (communicationDetails[id]?.opened).toString() : '0';
+    const _id = itemData._id;
+    const deliveredCount = communicationDetails[_id]?.delivered ? (communicationDetails[_id]?.delivered).toString() : '0';
+    const openedCount = communicationDetails[_id]?.opened ? (communicationDetails[_id]?.opened).toString() : '0';
 
     if (deliveredCount && openedCount && +deliveredCount != 0) {
         $item('#deliveredCountText').text = deliveredCount;
@@ -145,16 +145,16 @@ export const prepareSentCommunicationsDetails = async () => {
 const aggregateByComuunicationId = (data) => {
     const result = {};
     data.forEach((item) => {
-        const id = item.comuunicationId;
-        if (id in result) {
-            result[id].delivered += parseInt(item.delivered);
-            result[id].opened += parseInt(item.opened);
+        const _id = item._id;
+        if (_id in result) {
+            result[_id].delivered += parseInt(item.delivered);
+            result[_id].opened += parseInt(item.opened);
         } else {
-            result[id] = {
+            result[_id] = {
                 sent_date: item.sent_date,
                 delivered: parseInt(item.delivered),
                 opened: parseInt(item.opened),
-                _id: item._id,
+                _id
             };
         }
     });
