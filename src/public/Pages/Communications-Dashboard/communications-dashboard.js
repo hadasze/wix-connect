@@ -55,9 +55,9 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
     $item('#communicationClickbaleArea').onClick(() => {
         wixLocation.to(Urls.PREVIEW + itemData._id)
     })
-    const subjectLine = (itemData.finalDetails.subjectLine).toLowerCase();
-    const deliveredCount = communicationDetails[subjectLine]?.delivered ? (communicationDetails[subjectLine]?.delivered).toString() : '0';
-    const openedCount = communicationDetails[subjectLine]?.opened ? (communicationDetails[subjectLine]?.opened).toString() : '0';
+    const id = itemData._id;
+    const deliveredCount = communicationDetails[id]?.delivered ? (communicationDetails[id]?.delivered).toString() : '0';
+    const openedCount = communicationDetails[id]?.opened ? (communicationDetails[id]?.opened).toString() : '0';
 
     if (deliveredCount && openedCount && +deliveredCount != 0) {
         $item('#deliveredCountText').text = deliveredCount;
