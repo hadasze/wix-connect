@@ -159,13 +159,10 @@ export const reciveLatestApprovedUsers = async () => {
 }
 
 function filter(row, value) {
-    console.log('searching for: ', value);
     if (value == '') {
         return true;
     }
-    console.log(JSON.stringify(row));
     for (const field of Object.values(row)) {
-        console.log(JSON.stringify(field));
         if ((typeof field) == 'string' && field.includes(value)) {
             return true;
         }
@@ -247,7 +244,7 @@ function gotoPage(page) {
 
 
 export function nextPage() {
-    console.log(`moving forward! - next page ${this.page + 1}`);
+    console.log(`moving forward!`);
     approvedRepeater.next();
     setPagination();
 }
