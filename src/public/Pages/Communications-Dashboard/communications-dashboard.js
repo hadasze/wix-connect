@@ -135,17 +135,17 @@ const setCommunicationMoreActionsUI = ($item) => {
 export const prepareSentCommunicationsDetails = async () => {
     try {
         const communicationDetails = await getSentCommunicationData();
-        const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
+        const aggregatedData = aggregateByCommunicationId(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {
         throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
     }
 }
 
-const aggregateByComuunicationId = (data) => {
+const aggregateByCommunicationId = (data) => {
     const result = {};
     data.forEach((item) => {
-        const id = item.comuunicationId;
+        const id = item.communicationId;
         if (id in result) {
             result[id].delivered += parseInt(item.delivered);
             result[id].opened += parseInt(item.opened);

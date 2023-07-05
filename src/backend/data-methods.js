@@ -68,10 +68,10 @@ export async function getUuidByEmail(email) {
     return uuid;
 }
 
-export async function getSentCommunicationData(comuunicationIds, userJWT) {
+export async function getSentCommunicationData(communicationIds, userJWT) {
     try {
-        if (!comuunicationIds)
-            throw new Error('comuunicationIds is mandetory');
+        if (!communicationIds)
+            throw new Error('communicationIds is mandetory');
         if (!userJWT)
             throw new Error('userJWT is mandetory');
 
@@ -83,7 +83,7 @@ export async function getSentCommunicationData(comuunicationIds, userJWT) {
                 'Authorization': `Bearer ${userJWT}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ "uuid": comuunicationIds })
+            body: JSON.stringify({ "uuid": communicationIds })
         });
 
         if (res.ok)
