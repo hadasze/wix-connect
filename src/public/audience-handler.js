@@ -56,11 +56,14 @@ export async function getAudienceDetails(payload) {
     }
 }
 
-export async function getSentCommunicationDetails() {
+export async function getSentCommunicationData() {
     const tokenset = await getTokenset();
     const userJWT = tokenset.access_token;
-    const userID = JSON.parse(local.getItem('userInfo')).uuid;
-    return await DataHandler.getSentCommunicationDetails(userID, userJWT);
+    const filters = { "sent": true };
+    const getAllUserCommunicationsRes = await DataHandler.getAllUserCommunications(filters);
+    const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
+    const results = await DataHandler.getSentCommunicationData(uniqueIds, userJWT);
+    return results;
 }
 
 function validateFile(payload) {

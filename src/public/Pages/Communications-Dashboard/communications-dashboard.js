@@ -3,7 +3,7 @@ import wixLocation from 'wix-location';
 import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from 'public/consts.js';
 import { disbaleCurrentButton } from 'public/Pages/helpers.js'
 import { SmartRepeater } from 'public/smart-repeater.js';
-import { getSentCommunicationDetails } from 'public/audience-handler.js';
+import { getSentCommunicationData } from 'public/audience-handler.js';
 import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
 import { setCommunicationMoreActionsEvents } from 'public/Pages/Communications-Dashboard/communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
@@ -55,9 +55,9 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
     $item('#communicationClickbaleArea').onClick(() => {
         wixLocation.to(Urls.PREVIEW + itemData._id)
     })
-    const subjectLine = (itemData.finalDetails.subjectLine).toLowerCase();
-    const deliveredCount = communicationDetails[subjectLine]?.delivered ? (communicationDetails[subjectLine]?.delivered).toString() : '0';
-    const openedCount = communicationDetails[subjectLine]?.opened ? (communicationDetails[subjectLine]?.opened).toString() : '0';
+    const id = itemData._id;
+    const deliveredCount = communicationDetails[id]?.delivered ? (communicationDetails[id]?.delivered).toString() : '0';
+    const openedCount = communicationDetails[id]?.opened ? (communicationDetails[id]?.opened).toString() : '0';
 
     if (deliveredCount && openedCount && +deliveredCount != 0) {
         $item('#deliveredCountText').text = deliveredCount;
@@ -134,23 +134,23 @@ const setCommunicationMoreActionsUI = ($item) => {
 
 export const prepareSentCommunicationsDetails = async () => {
     try {
-        const communicationDetails = await getSentCommunicationDetails();
-        const aggregatedData = aggregateBySubjectLine(communicationDetails.data.marketingData);
+        const communicationDetails = await getSentCommunicationData();
+        const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {
-        console.error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ', err)
+        throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
     }
 }
 
-const aggregateBySubjectLine = (data) => {
+const aggregateByComuunicationId = (data) => {
     const result = {};
     data.forEach((item) => {
-        const subject = item.subjectLine;
-        if (subject in result) {
-            result[subject].delivered += parseInt(item.delivered);
-            result[subject].opened += parseInt(item.opened);
+        const id = item.comuunicationId;
+        if (id in result) {
+            result[id].delivered += parseInt(item.delivered);
+            result[id].opened += parseInt(item.opened);
         } else {
-            result[subject] = {
+            result[id] = {
                 sent_date: item.sent_date,
                 delivered: parseInt(item.delivered),
                 opened: parseInt(item.opened),
