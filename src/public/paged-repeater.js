@@ -53,13 +53,11 @@ export class PagedRepeater {
 
     setPageData(page) {
         const pageData = this.getPageData(page);
-        console.log({ pageData });
         this.repeater.data = pageData;
         this.page = page;
     }
 
     numPages() {
-        //console.log("numPages: ", this.activeData.length)
         return Math.ceil(this.activeData.length / this.options.page_size);
     }
 
@@ -129,86 +127,11 @@ export class PagedRepeater {
         return true;
     }
 
-    getButtonState(index, numButtons) {
-        if (index == this.page) {
-            return ButtonInfo.SELECTED;
-        } else if ((index == 1) && (numButtons < this.numPages()) && (this.page > numButtons / 2)) {
-            return ButtonInfo.RANGE;
-        } else if ((index == numButtons - 2) && (numButtons < this.numPages()) && (this.page < numButtons / 2)) {
-            return ButtonInfo.RANGE;
-        }
-        return ButtonInfo.NORMAL;
-    }
-
-    getButtonText(index, buttonState, numButtons) {
-        const numPages = this.numPages();
-        if (numButtons == numPages) {
-            return (index + 1).toString();
-        }
-        let result = 0;
-        // first page
-        if (index == 0) {
-            result = 1;
-            // second page - check buttonState != ButtonInfo.RANGE
-        } else if ((index == 1) && (buttonState != ButtonInfo.RANGE)) {
-            result = 2;
-            // second from the last - check buttonState != ButtonInfo.RANGE
-        } else if ((index == numButtons - 2) && (buttonState != ButtonInfo.RANGE)) {
-            result = numPages - 1;
-            // last page
-        } else if (index == numButtons - 1) {
-            result = numPages;
-            // in between 
-        } else {
-            const midButton = Math.ceil(numButtons / 2);
-            // [1,2,3,4,5,...,43]
-            // [1,...,49,50,51,...,43]
-            const val = index + 1;
-            if (this.page <= midButton) {
-                console.log(`this page ${this.page} <= ${midButton}`);
-                result = val;
-                // if (index <= midButton) {
-                //     result = index + 1;
-                // } else {
-                //     result = 99;
-                // }
-            }
-            else if (this.page > midButton) {
-                result = numPages - 1;
-
-            }
-            else {
-                const offset = index - midButton;
-                result = this.page + offset;
-            }
-
-        }
-        return result.toString();
-    }
-
-    getButtonInfo(index, numButtons) {
-        const buttonState = this.getButtonState(index, numButtons);
-        const buttonText = this.getButtonText(index, buttonState, numButtons);
-        console.log({ index, buttonState, numButtons, buttonText });
-        return new ButtonInfo(buttonText, buttonState);
-    }
-
-    getPaginationOld(numButtons) {
-        const len = Math.min(numButtons, this.numPages());
-        const result = new Array(len);
-
-        for (let i = 0; i < len; i++) {
-            result[i] = this.getButtonInfo(i, numButtons);
-            //console.log(`Selected page ${i}:`, this.getPaginatioNew(i, numButtons));
-        }
-        return result;
-    }
-
-    setPaginator(numButtons) {
-        const pagination = this.getPagination(this.page, this.numPages());
-        return pagination.map((value, index) => {
+    setPaginator() {
+        const pagination = this.getPagination(this.page , this.numPages());
+        return pagination.map(value => {
             let state = ButtonInfo.NORMAL;
-            if (this.page === index) {
+            if (this.page === (value - 1)) {
                 state = ButtonInfo.SELECTED;
             }
             if (value === '...') {
@@ -258,7 +181,6 @@ export class PagedRepeater {
             pages = pages.concat(withDots(pageCount, ['...', pageCount]))
         }
         
-        console.log({currentPage, pageCount, pages});
         return pages;
     }
 }

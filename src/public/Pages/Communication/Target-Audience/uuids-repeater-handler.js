@@ -44,19 +44,18 @@ const getLinkHTML = (url) => {
 
 export const initRepeatersActions = () => {
     $w("#next").onClick((event) => {
-        nextPage();
+        nextPage(getReapeater());
     });
     $w("#back").onClick((event) => {
-        prevPage();
+        prevPage(getReapeater());
     });
     for (let i = 1; i < 8; i++) {
         let button = getPaginationButton(i);
         button.onClick((event) => {
-            console.log({ event });
             if (event.target.label == '...') {
                 return;
             } else {
-                gotoPage(Number(event.target.label) - 1);
+                gotoPage((Number(event.target.label) - 1), getReapeater());
             }
         });
     }
@@ -64,7 +63,7 @@ export const initRepeatersActions = () => {
     $w("#input15").onInput((event) => {
         filterData(
             $w('#searchCol').value,
-            $w('#searchVal').value);
+            $w('#searchVal').value, getReapeater());
     });
 }
 
@@ -133,19 +132,6 @@ const setAllRepeatersAudienceData = async () => {
     }
 }
 
-const getAllData = async () => {
-    console.log("GetAllData");
-    try {
-        const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
-        const audienceData = await getAudienceDetails(uuidsAndMsidsList);
-        // console.log("AudienceData : ", JSON.stringify(audienceData));
-        return audienceData.approved;
-
-    } catch (error) {
-        throw new Error('Failed to fetch repeater data: ' + error);
-    }
-}
-
 export const reciveLatestApprovedUsers = async () => {
     const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)))
     const audienceData = await getAudienceDetails(uuidsAndMsidsList);
@@ -170,13 +156,13 @@ function filter(row, value) {
     return false;
 }
 
-const setApprovedRepeater = async (data) => {
+const setApprovedRepeater = (data) => {
     fedopsLogger.interactionStarted('set-approved-repeater');
-    approvedRepeater = new PagedRepeater($w('#approvedRepeater'), getAllData, filter, null, null, repeaterOptions);
-    await approvedRepeater.initRepeater();
+    approvedRepeater = new PagedRepeater($w('#approvedRepeater'), () => data, filter, null, null, repeaterOptions);
+    approvedRepeater.initRepeater();
     fedopsLogger.interactionEnded('set-approved-repeater');
 
-    setPagination();
+    setPagination(approvedRepeater);
 
     targetAudienceState.setApprovalCounter(data.length)
 
@@ -186,25 +172,13 @@ function getPaginationButton(i) {
     return $w('#toggle' + (i).toString());
 }
 
-function getButtonByPage(page) {
-    console.log("getByPage:", page)
-    const pageStr = page.toString();
-    for (let i = 1; i < 8; i++) {
-        let button = getPaginationButton(i);
-        if (button.label == pageStr) {
-            return button;
-        }
-    }
-    return null;
-}
+function setPagination(repeater) {
 
-function setPagination() {
-    
     for (let i = 1; i <= NUM_BUTTONS; i++) {
         let button = getPaginationButton(i);
         button.hide();
     }
-    const buttonsInfo = approvedRepeater.setPaginator(NUM_BUTTONS);
+    const buttonsInfo = repeater.setPaginator(NUM_BUTTONS);
 
     for (let i = 0; i < buttonsInfo.length; i++) {
         const buttonInfo = buttonsInfo[i];
@@ -212,17 +186,16 @@ function setPagination() {
         button.style.backgroundColor = "#ffffff";
         button.style.foregroundColor = "#000000";
         button.show();
+        button.label = buttonInfo.text;
         if (buttonInfo.state == ButtonInfo.RANGE) {
             button.label = '...';
         }
-        else if (buttonInfo.state == ButtonInfo.SELECTED) {
+        if (buttonInfo.state == ButtonInfo.SELECTED) {
             button.style.backgroundColor = "#166AEA";
         }
-        else {
-            button.label = buttonInfo.text;
-        }
+
     }
-    const state = approvedRepeater.getState();
+    const state = repeater.getState();
     if (state.currPage == 0) {
         $w('#back').disable();
     } else {
@@ -235,40 +208,43 @@ function setPagination() {
     }
 }
 
-
-function gotoPage(page) {
+function gotoPage(page, repeater) {
     console.log("Jumping to:", page);
-    approvedRepeater.goto(page);
-    setPagination();
+    repeater.goto(page);
+    setPagination(repeater);
 }
 
-
-export function nextPage() {
+export function nextPage(repeater) {
     console.log(`moving forward!`);
-    approvedRepeater.next();
-    setPagination();
+
+    repeater.next();
+    setPagination(repeater);
 }
 
-export function prevPage() {
+export function prevPage(repeater) {
     console.log("Back off!");
-    approvedRepeater.prev();
-    setPagination();
+    repeater.prev();
+    setPagination(repeater);
 }
 
-export function filterData(column, value) {
+export function filterData(column, value, repeater) {
     console.log("Looking for: ", value, " in: ", column);
-    approvedRepeater.search(value.trim());
+    repeater.search(value.trim());
 }
 
 const setNeedApprovaldRepeater = (data) => {
-    $w('#needApprovalReapter').data = data;
+    needApprovalRepeater = new PagedRepeater($w('#needApprovalReapter'), () => data, filter, null, null, repeaterOptions);
+    needApprovalRepeater.initRepeater();
+    setPagination(needApprovalRepeater);
     const numOfManuallyApproved = Object.values(state.communication.manuallyApprovedUsers).length;
     targetAudienceState.setNeedApprovalCounter(data.length - numOfManuallyApproved);
     autorun(() => $w('#numOfManuallyApprovedText').text = Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
 }
 
-const setRejectedRepeater = (data) => {
-    $w('#rejectedRepeater').data = data;
+const setRejectedRepeater = async (data) => {
+    rejectedRepeater = new PagedRepeater($w('#rejectedRepeater'), () => data, filter, null, null, repeaterOptions);
+    rejectedRepeater.initRepeater();
+    setPagination(rejectedRepeater);
     targetAudienceState.setRejectedCounter(data.length)
 }
 
@@ -409,4 +385,15 @@ const handleNotValidAudience = (uploadedCounter, allAudienceCounter) => {
         $w("#uploadCSVSuccessText").text = Text.USERS_WERE_UPLOADED(uploadedCounter);
         showToast('uploadCSVSuccessToast', 3000);
     }
+}
+
+function getReapeater(){
+    const stateToRepeaterMap = {
+        ApprovedUsersState: approvedRepeater,
+        rejectedUserState: rejectedRepeater,
+        needApprovalUsersState: needApprovalRepeater
+    }
+    const currentState = $w("#usersUuidsMultiState").currentState;
+    console.log(currentState.id);
+    return stateToRepeaterMap[currentState.id];
 }
