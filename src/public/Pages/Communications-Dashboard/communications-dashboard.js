@@ -138,7 +138,7 @@ export const prepareSentCommunicationsDetails = async () => {
         const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {
-        console.error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ', err)
+        throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
     }
 }
 
