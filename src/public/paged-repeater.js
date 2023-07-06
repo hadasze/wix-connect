@@ -159,8 +159,8 @@ export class PagedRepeater {
         }
 
         const range = {
-            start: Math.round(currentPage - delta / 2),
-            end: Math.round(currentPage + delta / 2)
+            start: Math.round(currentPage - delta / 2) + 1,
+            end: Math.round(currentPage + delta / 2) + 1
         }
 
         if (range.start - 1 === 1 || range.end + 1 === pageCount) {
