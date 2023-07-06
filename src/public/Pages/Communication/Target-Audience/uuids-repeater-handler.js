@@ -14,10 +14,19 @@ import { PagedRepeater, PagedRepeaterOptions, ButtonInfo } from '../../../paged-
 import { create } from 'wix-fedops';
 
 const fedopsLogger = create('wix-connect');
-let approvedRepeater, needApprovalRepeater, rejectedRepeater;
-let audienceData;
+
 const repeaterOptions = new PagedRepeaterOptions(10);
+
+const approvedRepeater = new PagedRepeater(filter, null, null, repeaterOptions);
+const needApprovalRepeater = new PagedRepeater(filter, null, null, repeaterOptions); 
+const rejectedRepeater = new PagedRepeater(filter, null, null, repeaterOptions);
 const NUM_BUTTONS = 7;
+
+const stateToRepeaterMap = {
+    'ApprovedUsersState': approvedRepeater,
+    'rejectedUserState': rejectedRepeater,
+    'needApprovalUsersState': needApprovalRepeater
+}
 
 export const initRejectedStateActions = () => {
     setTooltipActions();
@@ -64,6 +73,11 @@ export const initRepeatersActions = () => {
         filterData(
             $w('#searchCol').value,
             $w('#searchVal').value, getReapeater());
+    });
+
+    $w('#usersUuidsMultiState').onChange(event => {
+        let currentState = event.target.currentState.id;
+        setPagination(stateToRepeaterMap[currentState]);
     });
 }
 
@@ -158,8 +172,8 @@ function filter(row, value) {
 
 const setApprovedRepeater = (data) => {
     fedopsLogger.interactionStarted('set-approved-repeater');
-    approvedRepeater = new PagedRepeater($w('#approvedRepeater'), () => data, filter, null, null, repeaterOptions);
-    approvedRepeater.initRepeater();
+    approvedRepeater.setRepeater($w('#approvedRepeater'));
+    approvedRepeater.setData(data);
     fedopsLogger.interactionEnded('set-approved-repeater');
 
     setPagination(approvedRepeater);
@@ -233,8 +247,8 @@ export function filterData(column, value, repeater) {
 }
 
 const setNeedApprovaldRepeater = (data) => {
-    needApprovalRepeater = new PagedRepeater($w('#needApprovalReapter'), () => data, filter, null, null, repeaterOptions);
-    needApprovalRepeater.initRepeater();
+    needApprovalRepeater.setRepeater($w('#needApprovalReapter'));
+    needApprovalRepeater.setData(data);
     setPagination(needApprovalRepeater);
     const numOfManuallyApproved = Object.values(state.communication.manuallyApprovedUsers).length;
     targetAudienceState.setNeedApprovalCounter(data.length - numOfManuallyApproved);
@@ -242,8 +256,8 @@ const setNeedApprovaldRepeater = (data) => {
 }
 
 const setRejectedRepeater = async (data) => {
-    rejectedRepeater = new PagedRepeater($w('#rejectedRepeater'), () => data, filter, null, null, repeaterOptions);
-    rejectedRepeater.initRepeater();
+    rejectedRepeater.setRepeater($w('#rejectedRepeater'));
+    rejectedRepeater.setData(data);
     setPagination(rejectedRepeater);
     targetAudienceState.setRejectedCounter(data.length)
 }
@@ -388,12 +402,6 @@ const handleNotValidAudience = (uploadedCounter, allAudienceCounter) => {
 }
 
 function getReapeater(){
-    const stateToRepeaterMap = {
-        ApprovedUsersState: approvedRepeater,
-        rejectedUserState: rejectedRepeater,
-        needApprovalUsersState: needApprovalRepeater
-    }
     const currentState = $w("#usersUuidsMultiState").currentState;
-    console.log(currentState.id);
     return stateToRepeaterMap[currentState.id];
 }

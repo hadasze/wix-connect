@@ -22,9 +22,7 @@ export class ButtonInfo {
 }
 
 export class PagedRepeater {
-    constructor(repeater, getData, filter, onItemReady, logger = null, options = null) {
-        this.repeater = repeater;
-        this.getData = getData;
+    constructor(filter, onItemReady, logger = null, options = null) {
         this.filter = filter;
         this.page = 0;
         this.onItemReady = onItemReady
@@ -37,9 +35,17 @@ export class PagedRepeater {
         return this.repeater.data
     }
 
-    async setData(data) {
+    setData(data) {
+        if(!this.repeater) {
+            throw new Error('paged-repeater -> repeater is not defined')
+        }
+
         this.repeater.data = data;
-        await this.initRepeater();
+        this.initRepeater(data);
+    }
+
+    setRepeater(repeater){
+        this.repeater = repeater;
     }
 
     getState() {
@@ -103,9 +109,6 @@ export class PagedRepeater {
         else {
             this.activeData = this.allData;
         }
-
-
-        console.log('this.activeData: ', this.activeData);
     }
 
     log(message) {
@@ -113,10 +116,10 @@ export class PagedRepeater {
             this.logger.log(message);
         }
     }
-    async initRepeater() {
+    async initRepeater(data) {
         this.repeater.data = [];
         try {
-            this.allData = await this.getData();
+            this.allData = data;
             this.setActiveData();
             this.setPageData(0);
 
@@ -124,7 +127,6 @@ export class PagedRepeater {
         } catch (error) {
             return false;
         }
-        return true;
     }
 
     setPaginator() {
