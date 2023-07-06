@@ -8,3 +8,4 @@ export function isEmpty(obj) {
 
     return JSON.stringify(obj) === JSON.stringify({});
 }
+
