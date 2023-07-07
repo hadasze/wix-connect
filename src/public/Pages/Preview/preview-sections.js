@@ -1,4 +1,4 @@
-import wixLocation from 'wix-location';
+import { redirectToMyCommunications } from 'public/_utils.js';
 import wixWindow from 'wix-window';
 import { reuseCommunication } from 'public/Pages/Communications-Dashboard/communication-actions.js';
 import { Text, Urls } from 'public/consts.js';
@@ -35,7 +35,7 @@ const setHeadlineEvents = () => {
     });
 
     $w('#backButton').onClick((event) => {
-        wixLocation.to(Urls.MY_COMMUNICATIONS_DASHOBOARD);
+        redirectToMyCommunications();
     });
     setBodyEvents();
 }

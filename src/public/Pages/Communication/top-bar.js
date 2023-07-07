@@ -9,6 +9,7 @@ import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, Urls, Comm
 import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
 import { create } from 'wix-fedops';
 import { sendBi } from '../../BI/biModule.js';
+import { redirectToMyCommunications } from 'public/_utils.js';
 
 const fedopsLogger = create('wix-connect');
 
@@ -109,7 +110,7 @@ const setOnClickStepsEvents = () => {
     $w('#backToDashboardButton').onClick((event) => {
         sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' })
         if (state.communication.sent) {
-            wixLocation.to(Urls.MY_COMMUNICATIONS_DASHOBOARD);
+            redirectToMyCommunications();
         } else {
             wixWindow.openLightbox('Edit Email - Exit Warning Popup');
         }

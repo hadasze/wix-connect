@@ -9,7 +9,7 @@ export function communication_SiteMap(sitemapRequest) {
 }
 
 export function my_communications_Router(request) {
-    return setMyCommunications()
+    return setMyCommunications(request)
 }
 
 export function my_communications_SiteMap(request) {

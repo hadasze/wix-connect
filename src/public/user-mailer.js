@@ -2,15 +2,15 @@ import wixWindow from 'wix-window';
 import * as TargetAudience from 'backend/target-audience-handler-wrapper.jsw';
 import { Email } from './Email.js'
 import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
-import { getTokenset } from './login.js';
 import { state } from 'public/Pages/Communication/state-management.js';
 import { DynamicFieldsOptions, TemplatesTypes } from 'public/consts.js';
 import { getMustHaveFieldsOfCommunication } from 'public/Pages/helpers.js';
 import { getAudienceDetails } from 'public/audience-handler.js';
+import { getUserJWTToken } from './_utils.js';
 import { toJS } from 'mobx';
 
-export async function sendEmails(communicationn) {
-    const communication = state.communication
+export async function sendEmails() {
+    const communication = state.communication;
     try {
         const userJWT = await getUserJWTToken();
         const allApprovedUsers = await reciveAllApprovedUsers(communication);
@@ -116,10 +116,4 @@ const adjustTemplateType = (emailTitle) => {
     } else {
         state.setTemplateType(TemplatesTypes.DefaultTempalte)
     }
-}
-
-const getUserJWTToken = async () => {
-    const tokenset = await getTokenset();
-    const userJWT = tokenset.access_token;
-    return userJWT;
 }

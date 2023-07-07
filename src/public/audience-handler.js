@@ -5,7 +5,7 @@ import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
-import { getTokenset } from './login.js';
+
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
 import { csvErrors } from './consts.js';
 
@@ -21,8 +21,8 @@ export async function getAudienceDetails(payload) {
 
     if (validateRes.valid) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
-        const tokenset = await getTokenset();
-        const userJWT = tokenset.access_token;
+       
+        const userJWT = await Utils.getUserJWTToken();
         if ($w('#rejectedRepeater').hidden)
             $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
 
@@ -57,8 +57,7 @@ export async function getAudienceDetails(payload) {
 }
 
 export async function getSentCommunicationData() {
-    const tokenset = await getTokenset();
-    const userJWT = tokenset.access_token;
+    const userJWT = await Utils.getUserJWTToken();
     const filters = { "sent": true };
     const getAllUserCommunicationsRes = await DataHandler.getAllUserCommunications(filters);
     const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];

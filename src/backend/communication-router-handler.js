@@ -18,7 +18,8 @@ export async function setCommunication(routerRequest) {
     }
 }
 
-export async function setMyCommunications() {
+export async function setMyCommunications(routerRequest) {
+    console.log({routerRequest});
     try {
         const [all, draft, archive, sent, templates] = await countAllUserCommunications();
         return ok("my-communications-page", { all, draft, archive, sent, templates });
