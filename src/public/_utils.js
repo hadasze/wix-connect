@@ -1,4 +1,5 @@
 import wixLocation from 'wix-location';
+import { authentication } from 'wix-members-frontend';
 import { Urls } from 'public/consts.js';
 import { getTokenset } from './login.js';
 
