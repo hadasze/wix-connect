@@ -59,9 +59,9 @@ export async function validateAccessToken() {
                 const tokenset = JSON.parse(tokensetSTR);
                 const userInfo = JSON.parse(userInfoSTR);
                 if (tokenset.access_token && tokenset.refresh_token && userInfo.groups) {
-                    const introspectAccessTokenRes = await Login.introspect(tokenset.access_token);
-
-                    if (introspectAccessTokenRes.active) {
+                    const introspectAccessTokenRes = Login.introspect(tokenset.access_token);
+                    const introspectRefreshTokenRes = Login.introspect(tokenset.refresh_token);
+                    if ((await introspectAccessTokenRes).active) {
                         if (userInfo.groups.includes('ero-wix-connect')) {
                             if (wixSite.currentPage?.url === '/guide-ask-page') {
                                 wixLocation.to('/')
@@ -72,8 +72,7 @@ export async function validateAccessToken() {
                             return wixLocation.to('/guide-ask-page')
                         }
                     } else {
-                        const introspectRefreshTokenRes = await Login.introspect(tokenset.refresh_token);
-                        if (introspectRefreshTokenRes.active) {
+                        if ((await introspectRefreshTokenRes).active) {
                             await refreshToken();
                             return validateAccessToken();
                         }

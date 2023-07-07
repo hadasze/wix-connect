@@ -45,7 +45,7 @@ const setNavigeationBtnsData = () => {
 }
 
 const setMyCommunicationsRepeater = async () => {
-    $w('#myCommunicationsRepeater').hide()
+    $w('#myCommunicationsRepeater').hide();
     const communicationDetails = await prepareSentCommunicationsDetails();
     const filters = { "sent": true, "draft": true };
     const itemReadyFun = ($item, itemData, index) => {
@@ -63,7 +63,7 @@ const setMyCommunicationsRepeater = async () => {
     smartCommunictionsRepeater.initRepeater();
 
     setNavigeationBtnsEvents(smartCommunictionsRepeater);
-    $w('#myCommunicationsRepeater').show()
+    $w('#myCommunicationsRepeater').show();
 
 }
 

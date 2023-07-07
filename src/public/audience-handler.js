@@ -21,7 +21,7 @@ export async function getAudienceDetails(payload) {
 
     if (validateRes.valid) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
-       
+
         const userJWT = await Utils.getUserJWTToken();
         if ($w('#rejectedRepeater').hidden)
             $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
@@ -57,9 +57,8 @@ export async function getAudienceDetails(payload) {
 }
 
 export async function getSentCommunications() {
-    const userJWT = await Utils.getUserJWTToken();
     const filters = { "sent": true };
-    const getAllUserCommunicationsRes = await DataHandler.getAllUserCommunications(filters);
+    const [userJWT, getAllUserCommunicationsRes] = await Promise.all([Utils.getUserJWTToken(), DataHandler.getAllUserCommunications(filters)]);
     const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
     const results = await MarketingAPI.getSentCommunications(uniqueIds, userJWT);
     return results;
