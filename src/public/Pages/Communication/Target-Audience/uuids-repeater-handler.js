@@ -1,17 +1,18 @@
 import wixWindow from 'wix-window';
-import wixLocation from 'wix-location';
+import { create } from 'wix-fedops';
+
 import { autorun, toJS } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
-import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import { getAudienceDetails } from 'public/audience-handler.js';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import { showToast } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
-import { disbaleCurrentButton, contains } from 'public/Pages/helpers.js';
-import { AllAudienceRepeaterButtons, Text } from 'public/consts.js';
+import { state } from '../state-management.js';
+import * as roles from './filters-roles.js';
+import { getAudienceDetails } from '../../../audience-handler.js';
+import { targetAudienceState } from './target-audience.js';
+import { showToast } from './csv-file-handler.js';
+import { disbaleCurrentButton, contains } from '../../helpers.js';
+import { AllAudienceRepeaterButtons, Text } from '../../../consts.js';
 import { sendBi } from '../../../BI/biModule.js';
 import * as Helpers from './helpers.js';
 import { PagedRepeater, PagedRepeaterOptions, ButtonInfo } from '../../../paged-repeater';
-import { create } from 'wix-fedops';
+
 
 const fedopsLogger = create('wix-connect');
 

@@ -1,8 +1,7 @@
 import wixData from 'wix-data';
 import wixUsersBackend from 'wix-users-backend';
-import { fetch, getJSON } from 'wix-fetch';
+import { getJSON } from 'wix-fetch';
 import { Communication } from './Communication.js';
-import * as EROAPI from './ero-api.js';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -68,34 +67,6 @@ export async function getUuidByEmail(email) {
     return uuid;
 }
 
-export async function getSentCommunicationData(comuunicationIds, userJWT) {
-    try {
-        if (!comuunicationIds)
-            throw new Error('comuunicationIds is mandetory');
-        if (!userJWT)
-            throw new Error('userJWT is mandetory');
-
-        const getMarketingCampaignsDataUrl = EROAPI.ERO_BASE_URL.PROD + '/tools/getMarketingCampaignsData';
-
-        const res = await fetch(getMarketingCampaignsDataUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${userJWT}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ "UUIDs": comuunicationIds })
-        });
-        
-        if (res.ok)
-            return await res.json();
-
-        throw new Error(res.statusText);
-
-    } catch (error) {
-        return Promise.reject('backend -> data-methdos.js -> getSentCommunicationData failed - origin error - ' + error);
-    }
-}
-
 export async function clearOldSentUsers() {
     try {
         const currentDate = new Date();
@@ -120,4 +91,14 @@ export async function getContactedEmailByMemberID(memberID) {
     } catch (error) {
         return Promise.reject('backend -> data-methods.js -> getContactedEmailByMemberID failed - origin error - ' + error);
     }
+}
+
+export const countAllUserCommunications = () => {
+    const options = { count: true }
+    const getDraftCommunicationsPromise = getAllUserCommunications({ draft: true }, options);
+    const getArchiveCommunicationsPromise = getAllUserCommunications({ archive: true }, options);
+    const getSentCommunicationsPromise = getAllUserCommunications({ sent: true }, options);
+    const getAllCommunicationsPromise = getAllUserCommunications({ "sent": true, "draft": true }, options);
+    const getAllTemplatesCommunications = getAllUserCommunications({ isTemplate: true }, options);
+    return Promise.all([getAllCommunicationsPromise, getDraftCommunicationsPromise, getArchiveCommunicationsPromise, getSentCommunicationsPromise, getAllTemplatesCommunications]);
 }

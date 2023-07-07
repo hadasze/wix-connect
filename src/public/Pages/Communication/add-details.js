@@ -1,5 +1,5 @@
 import { autorun } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js'
+import { state } from './state-management.js'
 
 export const initAddDetailsActions = () => {
     setAddDetailsEvents();

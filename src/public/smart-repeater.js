@@ -1,4 +1,4 @@
-import { SmartRepeaterConsts } from 'public/consts.js'
+import { SmartRepeaterConsts } from './consts.js'
 export class SmartRepeater {
 
     constructor(repeater, container, getData, filters, onItemReady) {

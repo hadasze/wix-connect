@@ -1,6 +1,6 @@
 import { ok, sendStatus, redirect } from "wix-router";
 import { getCommunication } from './data-methods.js';
-import { countAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
+import { countAllUserCommunications } from './data-methods.js';
 
 export async function setCommunication(routerRequest) {
     try {

@@ -1,8 +1,8 @@
 import wixWindow from 'wix-window';
-import { local } from 'wix-storage';
 
 import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
+import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
 
@@ -56,12 +56,12 @@ export async function getAudienceDetails(payload) {
     }
 }
 
-export async function getSentCommunicationData() {
+export async function getSentCommunications() {
     const userJWT = await Utils.getUserJWTToken();
     const filters = { "sent": true };
     const getAllUserCommunicationsRes = await DataHandler.getAllUserCommunications(filters);
     const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
-    const results = await DataHandler.getSentCommunicationData(uniqueIds, userJWT);
+    const results = await MarketingAPI.getSentCommunications(uniqueIds, userJWT);
     return results;
 }
 

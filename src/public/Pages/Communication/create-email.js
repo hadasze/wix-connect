@@ -1,9 +1,9 @@
 import wixWindow from 'wix-window';
 import { autorun } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import { addDynamicValue } from 'public/Pages/helpers.js';
-import { Text } from 'public/consts.js';
+import { state } from './state-management.js';
+import { targetAudienceState } from '../Communication/Target-Audience/target-audience.js';
+import { addDynamicValue } from '../helpers.js';
+import { Text } from '../../consts.js';
 import { sendBi } from '../../BI/biModule.js';
 
 let focusedElement = $w('#communicationInputTextBox');

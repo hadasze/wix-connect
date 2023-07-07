@@ -1,15 +1,18 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import { autorun } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
-import * as previewHandler from 'public/Pages/Communication/preview.js';
-import { disbaleCurrentButton } from 'public/Pages/helpers.js';
-import { sendEmails, sendTestEmail } from 'public/user-mailer';
-import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, Urls, CommunicationStatesByOrder } from 'public/consts.js';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
 import { create } from 'wix-fedops';
+
+import { autorun } from 'mobx';
+
+import { state } from './state-management.js';
+import { disbaleCurrentButton } from '../helpers.js';
+import { sendEmails, sendTestEmail } from '../../user-mailer';
+import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, CommunicationStatesByOrder } from '../../consts.js';
+import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
-import { redirectToMyCommunications } from 'public/_utils.js';
+import { redirectToMyCommunications } from '../../_utils.js';
+
+import * as previewHandler from './preview.js';
 
 const fedopsLogger = create('wix-connect');
 
@@ -147,7 +150,7 @@ const setStepsOfCreationMultistateBox = () => {
         let currentState = event.target.currentState.id;
         addStateToParam(currentState);
     });
-    
+
     if (wixLocation.query?.stepOfCreation) {
         $w("#stepsOfCreationMultistateBox").changeState(wixLocation.query.stepOfCreation);
     } else {

@@ -1,11 +1,11 @@
-import { getAudienceDetailsFromPeopleDataAPI, getAudienceDetailsFromPeopleDataAPIV2 } from './people-data-api.js';
+import { getAudienceDetails as _getAudienceDetails } from './marketing-api.js';
 import * as UserMailer from './user-mailer-api.js';
 import * as TargetAudienceDataHelper from './target-audience-handler.js'
 
 export const getAudienceDetails = async (uuidsAndMsidsList, userJWT) => {
     try {
 
-        const audienceDetailsReal = await getAudienceDetailsFromPeopleDataAPIV2(uuidsAndMsidsList, userJWT);
+        const audienceDetailsReal = await _getAudienceDetails(uuidsAndMsidsList, userJWT);
      
         const filteredAudience = await TargetAudienceDataHelper.filterAudience(Object.values(audienceDetailsReal));
      

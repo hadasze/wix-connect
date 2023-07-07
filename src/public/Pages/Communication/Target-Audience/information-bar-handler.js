@@ -1,9 +1,9 @@
-import {autorun, toJS} from 'mobx';
-import {targetAudienceState} from 'public/Pages/Communication/Target-Audience/target-audience.js';
-import {state} from 'public/Pages/Communication/state-management.js';
-import {reciveLatestApprovedUsers} from 'public/Pages/Communication/Target-Audience/uuids-repeater-handler.js';
-import {disbaleCurrentButton} from 'public/Pages/helpers.js';
-import {AllAudienceRepeaterButtons, FileNameLength} from 'public/consts.js';
+import { autorun, toJS } from 'mobx';
+import { targetAudienceState } from './target-audience.js';
+import { state } from '../state-management.js';
+import { reciveLatestApprovedUsers } from './uuids-repeater-handler.js';
+import { disbaleCurrentButton } from '../../helpers.js';
+import { AllAudienceRepeaterButtons, FileNameLength } from '../../../consts.js';
 
 export const initAudienceInformationBarActions = () => {
     setInfoBarButtonsOnClickActions();
