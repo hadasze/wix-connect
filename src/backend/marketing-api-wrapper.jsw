@@ -1,0 +1,3 @@
+import * as MarketingAPI from './marketing-api.js';
+
+export const getSentCommunications = (comuunicationIds, userJWT) => MarketingAPI.getSentCommunications(comuunicationIds, userJWT);

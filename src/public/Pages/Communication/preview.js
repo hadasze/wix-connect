@@ -1,7 +1,7 @@
 import { HTMLgenerator } from 'backend/templates-helper/generate-html-handler.jsw';
-import { state } from 'public/Pages/Communication/state-management.js';
+import { state } from './state-management.js';
 import { autorun } from 'mobx';
-import { targetAudienceState } from 'public/Pages/Communication/Target-Audience/target-audience.js';
+import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { Text } from 'public/consts.js';
 
 export const initPreviewActions = () => {

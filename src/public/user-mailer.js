@@ -1,13 +1,17 @@
 import wixWindow from 'wix-window';
-import * as TargetAudience from 'backend/target-audience-handler-wrapper.jsw';
-import { Email } from './Email.js'
+
 import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { DynamicFieldsOptions, TemplatesTypes } from 'public/consts.js';
-import { getMustHaveFieldsOfCommunication } from 'public/Pages/helpers.js';
-import { getAudienceDetails } from 'public/audience-handler.js';
-import { getUserJWTToken } from './_utils.js';
+import * as TargetAudience from 'backend/target-audience-handler-wrapper.jsw';
+
 import { toJS } from 'mobx';
+
+import { Email } from './Email.js'
+import { state } from './Pages/Communication/state-management.js';
+import { DynamicFieldsOptions, TemplatesTypes } from './consts.js';
+import { getMustHaveFieldsOfCommunication } from './Pages/helpers.js';
+import { getAudienceDetails } from './audience-handler.js';
+import { getUserJWTToken } from './_utils.js';
+
 
 export async function sendEmails() {
     const communication = state.communication;

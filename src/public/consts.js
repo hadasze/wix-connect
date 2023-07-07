@@ -1,4 +1,4 @@
-import * as filterRoles from 'public/Pages/Communication/Target-Audience/filters-roles.js'
+import * as filterRoles from './Pages/Communication/Target-Audience/filters-roles.js'
 
 export const TIME = {
     AUTO_SAVE: 1000,

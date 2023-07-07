@@ -1,13 +1,15 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from 'public/consts.js';
-import { disbaleCurrentButton } from 'public/Pages/helpers.js'
-import { SmartRepeater } from 'public/smart-repeater.js';
-import { getSentCommunicationData } from 'public/audience-handler.js';
-import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
-import { setCommunicationMoreActionsEvents } from 'public/Pages/Communications-Dashboard/communication-actions.js';
-import { sendBi } from '../../BI/biModule.js';
 import { create } from 'wix-fedops';
+
+import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
+import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from '../../consts.js';
+import { disbaleCurrentButton } from '../helpers.js'
+import { SmartRepeater } from '../../smart-repeater.js';
+import { getSentCommunications } from '../../audience-handler.js';
+import { setCommunicationMoreActionsEvents } from './communication-actions.js';
+import { sendBi } from '../../BI/biModule.js';
+
 const fedopsLogger = create('wix-connect');
 
 const routerData = wixWindow.getRouterData();
@@ -134,7 +136,7 @@ const setCommunicationMoreActionsUI = ($item) => {
 
 export const prepareSentCommunicationsDetails = async () => {
     try {
-        const communicationDetails = await getSentCommunicationData();
+        const communicationDetails = await getSentCommunications();
         const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {
