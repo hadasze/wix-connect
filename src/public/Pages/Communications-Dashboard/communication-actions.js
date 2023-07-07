@@ -2,68 +2,57 @@ import wixLocation from 'wix-location';
 import { updateCommunication, saveCommunication } from 'backend/data-methods-wrapper.jsw';
 import { Urls } from 'public/consts.js';
 import { sendBi } from '../../BI/biModule.js';
+import { removeItemFromRepeater } from '../../_utils.js';
+import { state } from './communications-dashboard.js';
 
-export const setCommunicationMoreActionsEvents = ($item, itemData) => {
-    $item('#editCommunicationButton').onClick((event) => {
-        sendBi('campainOptions', { 'campaignId': itemData._id, 'button_name': 'edit' })
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + itemData._id)
-    })
-    $item('#reuseCommunicationButton').onClick(async (event) => {
-        await reuseCommunication(itemData)
+const $item = (event) => $w.at(event.context);
+const itemData = (event, repeater) => {
+    const data = repeater.data;
+    return data.find(item => item._id === event.context.itemId);
+}
+
+export const setCommunicationMoreActionsEvents = () => {
+    const repeater = $w('#myCommunicationsRepeater');
+
+    $w('#editCommunicationButton').onClick((event) => {
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' })
+        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId)
+    });
+
+    $w('#reuseCommunicationButton').onClick(async (event) => {
+        await reuseCommunication(itemData(event, repeater))
     })
 
-    $item('#saveAsTempalteButton').onClick(async (event) => {
-        $item('#saveAsTempalteButton').disable();
-        const template = resetCommunication(itemData)
+    $w('#saveAsTempalteButton').onClick(async (event) => {
+        $item(event)('#saveAsTempalteButton').disable();
+        const template = resetCommunication(itemData(event, repeater))
         template.isTemplate = true;
-        try {
-            await saveCommunication(template);
-            sendBi('campainOptions', { 'campaignId': itemData._id, 'button_name': 'reusave_as_templatese' });
-            wixLocation.to(wixLocation.url);
-            $item('#saveAsTempalteButton').enable();
-        } catch (err) {
-            console.error('public/communications-dashboard save as template communication ', err);
-            $item('#saveAsTempalteButton').enable();
-        }
+        saveCommunication(template);
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
+        $item(event)('#saveAsTempalteButton').enable();
     })
 
-    // Binyaminm CR: added debounce in case the user want to archive more then one at a time
-    let archiveCommunicationButtonDebounceTimer;
-    $item('#archiveCommunicationButton').onClick(async (event) => {
-        itemData.archive = true;
-        try {
-            await updateCommunication(itemData);
-            sendBi('campainOptions', { 'campaignId': itemData._id, 'button_name': 'archive' });
-            if (archiveCommunicationButtonDebounceTimer) {
-                clearTimeout(archiveCommunicationButtonDebounceTimer);
-                archiveCommunicationButtonDebounceTimer = undefined;
-            }
+    $w('#archiveCommunicationButton').onClick(async (event) => {
+        $item(event)('#archiveCommunicationButton').disable();
+        itemData(event,repeater).archive = true;
+        updateCommunication(itemData(event, repeater));
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
+        removeItemFromRepeater(repeater, event.context.itemId);
+        state.communicationsCounts.archive++;
+        state.communicationsCounts.all--;
+        $item(event)('#archiveCommunicationButton').enable();
 
-            archiveCommunicationButtonDebounceTimer = setTimeout(() => {
-                wixLocation.to(wixLocation.url);
-            }, 3000)
-        } catch (err) {
-            console.error('public/communications-dashboard archive communication ', err);
-        }
     })
 
-    let uarchiveCommunicationButtonDebounceTimer;
-    $item('#uarchiveCommunicationButton').onClick(async (event) => {
-        itemData.archive = false;
-        try {
-            await updateCommunication(itemData);
-            sendBi('campainOptions', { 'campaignId': itemData._id, 'button_name': 'unarchive' })
-            if (uarchiveCommunicationButtonDebounceTimer) {
-                clearTimeout(uarchiveCommunicationButtonDebounceTimer);
-                uarchiveCommunicationButtonDebounceTimer = undefined;
-            }
-
-            uarchiveCommunicationButtonDebounceTimer = setTimeout(() => {
-                wixLocation.to(wixLocation.url);
-            }, 3000)
-        } catch (err) {
-            console.error('public/communications-dashboard unarchive communication ', err);
-        }
+    $w('#uarchiveCommunicationButton').onClick(async (event) => {
+        $item(event)('#uarchiveCommunicationButton').disable();
+        itemData(event, repeater).archive = false;
+        updateCommunication(itemData(event, repeater));
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'unarchive' });
+        removeItemFromRepeater(repeater, event.context.itemId);
+        state.communicationsCounts.archive--;
+        state.communicationsCounts.all++;
+        $item(event)('#uarchiveCommunicationButton').disable();
     })
 }
 
@@ -79,14 +68,16 @@ export const reuseCommunication = async (communication) => {
     }
 }
 
+//toDo : import from communication constructor
 const resetCommunication = (communication) => {
-    delete communication._id;
-    communication.sent = false;
-    communication.draft = false;
-    communication.archive = false;
-    communication.isTemplate = false;
-    communication.targetAudienceCsv = null;
-    communication.targetAudience = null;
-    communication.manuallyApprovedUsers = [];
-    return communication;
+    const toReturn = { ...communication };
+    delete toReturn._id;
+    toReturn.sent = false;
+    toReturn.draft = false;
+    toReturn.archive = false;
+    toReturn.isTemplate = false;
+    toReturn.targetAudienceCsv = null;
+    toReturn.targetAudience = null;
+    toReturn.manuallyApprovedUsers = [];
+    return toReturn;
 }
