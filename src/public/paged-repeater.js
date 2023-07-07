@@ -22,10 +22,9 @@ export class ButtonInfo {
 }
 
 export class PagedRepeater {
-    constructor(filter, onItemReady, logger = null, options = null) {
+    constructor(filter, logger = null, options = null) {
         this.filter = filter;
         this.page = 0;
-        this.onItemReady = onItemReady
         this.logger = logger;
         this.options = options;
         this.activeData = [];
@@ -40,7 +39,7 @@ export class PagedRepeater {
             throw new Error('paged-repeater -> repeater is not defined')
         }
 
-        this.repeater.data = data;
+       
         this.initRepeater(data);
     }
 
@@ -53,11 +52,12 @@ export class PagedRepeater {
     }
 
     getPageData(page) {
-        // use pagination NPM?
+      
         return this.activeData.slice(page * this.options.page_size, (page + 1) * this.options.page_size);
     }
 
     setPageData(page) {
+        this.repeater.data = [];
         const pageData = this.getPageData(page);
         this.repeater.data = pageData;
         this.page = page;

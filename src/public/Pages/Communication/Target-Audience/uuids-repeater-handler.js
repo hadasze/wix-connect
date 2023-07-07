@@ -17,9 +17,9 @@ const fedopsLogger = create('wix-connect');
 
 const repeaterOptions = new PagedRepeaterOptions(10);
 
-const approvedRepeater = new PagedRepeater(filter, null, null, repeaterOptions);
-const needApprovalRepeater = new PagedRepeater(filter, null, null, repeaterOptions); 
-const rejectedRepeater = new PagedRepeater(filter, null, null, repeaterOptions);
+const approvedRepeater = new PagedRepeater(filter, null, repeaterOptions);
+const needApprovalRepeater = new PagedRepeater(filter, null, repeaterOptions); 
+const rejectedRepeater = new PagedRepeater(filter, null, repeaterOptions);
 const NUM_BUTTONS = 7;
 
 const stateToRepeaterMap = {
@@ -83,6 +83,7 @@ export const initRepeatersActions = () => {
 
 const setTargetAudienceData = () => {
     $w('#approvedRepeater').onItemReady(($item, itemData, index) => {
+       
         $item('#approvedUuidButton').label = itemData.uuid || '';
         $item('#approvedUuidTooltipText').text = itemData.uuid || '';
         $item('#approvedUserNameText').text = itemData.site_display_name || '';
@@ -223,26 +224,21 @@ function setPagination(repeater) {
 }
 
 function gotoPage(page, repeater) {
-    console.log("Jumping to:", page);
     repeater.goto(page);
     setPagination(repeater);
 }
 
 export function nextPage(repeater) {
-    console.log(`moving forward!`);
-
     repeater.next();
     setPagination(repeater);
 }
 
 export function prevPage(repeater) {
-    console.log("Back off!");
     repeater.prev();
     setPagination(repeater);
 }
 
 export function filterData(column, value, repeater) {
-    console.log("Looking for: ", value, " in: ", column);
     repeater.search(value.trim());
 }
 
