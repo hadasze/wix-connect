@@ -16,8 +16,7 @@ export async function createCommunication() {
         const _id = uuidv4();
         const communication = new Communication(_id);
         const insertRes = await wixData.insert("Communications", communication, dataOptions);
-        //Quick win -> need to investigate further
-        return new Promise(resolve => setTimeout(resolve, 300, insertRes));
+       return insertRes;
 
     } catch (error) {
         return Promise.reject('backend -> data-methdos.js -> createCommunication failed - origin error - ' + error);
