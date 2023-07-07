@@ -15,15 +15,26 @@ export const setCommunicationMoreActionsEvents = () => {
     const repeater = $w('#myCommunicationsRepeater');
 
     $w('#communicationClickbaleArea').onClick((event) => {
-        wixLocation.to(Urls.PREVIEW + event.context.itemId);
+
+        const data = itemData(event, repeater)
+        if (data.archive)
+            return
+
+        if (data.sent)
+            wixLocation.to(Urls.PREVIEW + event.context.itemId);
+
+        if (data.draft)
+            wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
+
     });
 
     $w('#seeMoreActionsButton').onClick((event) => {
         $item(event)('#communicationActionsbox').expand();
-    })
+    });
+
     $w('#myCommunicationItemBox').onMouseOut((event) => {
         $item(event)('#communicationActionsbox').collapse();
-    })
+    });
 
     $w('#editCommunicationButton').onClick((event) => {
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' });
@@ -41,7 +52,7 @@ export const setCommunicationMoreActionsEvents = () => {
         saveCommunication(template);
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
         $item(event)('#saveAsTempalteButton').enable();
-    })
+    });
 
     $w('#archiveCommunicationButton').onClick(async (event) => {
         $item(event)('#archiveCommunicationButton').disable();
@@ -52,8 +63,7 @@ export const setCommunicationMoreActionsEvents = () => {
         state.communicationsCounts.archive++;
         state.communicationsCounts.all--;
         $item(event)('#archiveCommunicationButton').enable();
-
-    })
+    });
 
     $w('#uarchiveCommunicationButton').onClick(async (event) => {
         $item(event)('#uarchiveCommunicationButton').disable();
@@ -64,7 +74,7 @@ export const setCommunicationMoreActionsEvents = () => {
         state.communicationsCounts.archive--;
         state.communicationsCounts.all++;
         $item(event)('#uarchiveCommunicationButton').disable();
-    })
+    });
 }
 
 export const reuseCommunication = async (communication) => {
