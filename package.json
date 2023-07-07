@@ -12,6 +12,7 @@
     "jwt-decode": "2.2.0",
     "lodash": "4.17.21",
     "mobx": "6.6.1",
+    "node-cache": "^5.1.2",
     "openid-client": "5.1.8",
     "p-limit": "3.1.0",
     "request-promise-node": "1.0.1",

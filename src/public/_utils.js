@@ -11,7 +11,6 @@ export function lowerize(obj) {
 
 export const isArray = (obj) => Array.isArray(obj);
 
-
 export function isUUID(str) {
     const regexExp = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi;
     return regexExp.test(str);
@@ -24,6 +23,8 @@ export async function redirectToMyCommunications() {
     if (wixLocation.query.branchId)
         url.searchParams.append('branchId', wixLocation.query.branchId);
     const userJWT = await getUserJWTToken();
+    if (userJWT)
+        return authentication.promptLogin();
     url.searchParams.append('token', userJWT);
     const relativeURL = url.toString().replace(wixLocation.baseUrl, '');
     wixLocation.to(relativeURL);

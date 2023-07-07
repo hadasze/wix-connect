@@ -7,7 +7,7 @@ import { local } from 'wix-storage';
 import * as Login from 'backend/Login/login.jsw';
 
 const { baseUrl, path, prefix } = wixLocation;
-const redirectUri = baseUrl + (prefix ? '/' + prefix + '/' + path : '/' + path[0]);
+const redirectUri = baseUrl + (prefix ? "/" + prefix + "/" + path : path[0] ? "/" + path[0] : "/");
 
 const query = wixLocation.query;
 
@@ -52,6 +52,7 @@ wixMembers.authentication.onLogout((event) => {
 export async function validateAccessToken() {
 
     try {
+        console.log('wixWindow.rendering.env: ' + wixWindow.rendering.env);
         if (wixWindow.rendering.env === 'browser') {
             const tokensetSTR = local.getItem('tokenset');
             const userInfoSTR = local.getItem('userInfo');
