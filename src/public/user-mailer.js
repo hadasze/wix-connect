@@ -80,7 +80,8 @@ export const sendTestEmail = async (emailAddress, communication) => {
         }
 
     } catch (error) {
-        wixWindow.openLightbox('Setup & Publish - Error sending');
+        console.log("hereeee")
+        wixWindow.openLightbox('Edit Email - Exit Warning Popup');
         return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error)
     }
 }
