@@ -1,16 +1,16 @@
 import wixSite from 'wix-site';
 import { redirectToMyCommunications } from 'public/_utils.js'
-import {validateAccessToken, clearQueryParams} from '../login.js';
+import { validateAccessToken, clearQueryParams } from '../login.js';
 
 // redirect from blank home page
 if (wixSite.currentPage.isHomePage) {
     redirectToMyCommunications();
+} else {
+    $w.onReady(function () {
+        clearQueryParams();
+        refreshTokenTimeout();
+    });
 }
-
-$w.onReady(function () {
-    clearQueryParams();
-    refreshTokenTimeout();
-});
 
 let tokenExpire;
 
