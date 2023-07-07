@@ -17,7 +17,7 @@ export function isUUID(str) {
     return regexExp.test(str);
 }
 
-export async function redirectToMyCommunications() {
+export async function redirectToMyCommunications(withBaseURL) {
     const url = new URL(wixLocation.baseUrl + Urls.MY_COMMUNICATIONS_DASHOBOARD);
     if (wixLocation.query.siteRevision)
         url.searchParams.append('siteRevision', wixLocation.query.siteRevision);
@@ -27,8 +27,8 @@ export async function redirectToMyCommunications() {
     // if (userJWT)
     //     return authentication.promptLogin();
     // url.searchParams.append('token', userJWT);
-    const relativeURL = url.toString().replace(wixLocation.baseUrl, '');
-    wixLocation.to(relativeURL);
+    const redirectURL = withBaseURL ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
+    wixLocation.to(redirectURL);
 }
 
 export async function getUserJWTToken() {
