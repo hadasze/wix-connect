@@ -1,4 +1,5 @@
 import { getSecret } from 'wix-secrets-backend';
+// @ts-ignore
 import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
 import { Issuer } from 'openid-client';
 
@@ -14,6 +15,7 @@ const IDPConfig = {
 
 const client_secretPromise = getSecret(IDPConfig.client_secret_manager_key);
 const wixIssuerPromise = Issuer.discover(IDPConfig.discovery_uri);
+const clientPromise = getClient();
 
 export async function getClient(redirectURI) {
     try {
@@ -37,6 +39,7 @@ export async function getAuthorizationEndpoint(redirectURI) {
         const [client, wixIssuer] = await Promise.all([getClient(redirectURI), wixIssuerPromise]);
         const authorization_endpoint = client.authorizationUrl({
             scope: IDPConfig.scope,
+            // @ts-ignore
             resource: wixIssuer.resource_registration_endpoint,
         });
         return decodeURIComponent(authorization_endpoint);
@@ -66,10 +69,10 @@ export async function getUserinfo(accessToken, client) {
         if (!accessToken) {
             throw new Error('Missing accessToken');
         }
-        if (!client) client = await getClient();
+        if (!client) client = await clientPromise;
         const userInfo = await client.userinfo(accessToken);
         const uuid = await getUuidByEmail(userInfo.email);
-        return { ...userInfo, uuid }
+        return { ...userInfo, uuid };
     } catch (error) {
         return Promise.reject('backend/Login/openid-client.js -> getUserinfo failed - origin error - ' + error);
     }
@@ -80,7 +83,7 @@ export async function introspect(token) {
         if (!token) {
             throw new Error('Missing token');
         }
-        const client = await getClient();
+        const client = await clientPromise;
         return client.introspect(token);
     } catch (error) {
         return Promise.reject('backend/Login/openid-client.js -> introspect failed - origin error - ' + error);
@@ -92,7 +95,7 @@ export async function refreshToken(refreshToken) {
         if (!refreshToken) {
             throw new Error('Missing refreshToken');
         }
-        const client = await getClient();
+        const client = await clientPromise;
         return client.refresh(refreshToken);
     } catch (error) {
         return Promise.reject('backend/Login/openid-client.js -> refreshToken failed - origin error - ' + error);
@@ -101,7 +104,7 @@ export async function refreshToken(refreshToken) {
 
 export async function getLogoutURI() {
     try {
-        const client = await getClient();
+        const client = await clientPromise;
         return client.endSessionUrl();
     } catch (error) {
         return Promise.reject('backend/Login/openid-client.js -> getLogoutURI failed - origin error - ' + error);

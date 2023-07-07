@@ -1,7 +1,7 @@
 import wixData from 'wix-data';
 import wixUsersBackend from 'wix-users-backend';
 import { fetch, getJSON } from 'wix-fetch';
-import { Communication } from './Communication.js'
+import { Communication } from './Communication.js';
 import * as EROAPI from './ero-api.js';
 
 import { v4 as uuidv4 } from 'uuid';

@@ -14,17 +14,16 @@ export async function setCommunication(routerRequest) {
         return ok("communication-page", communication);
 
     } catch (error) {
-        return sendStatus(500, 'backend -> comunication-router-handler -> setCommunication failed - origin error - ' + error.message);
+        return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origin error - ' + error.message);
     }
 }
 
 export async function setMyCommunications(routerRequest) {
-    console.log({routerRequest});
     try {
         const [all, draft, archive, sent, templates] = await countAllUserCommunications();
         return ok("my-communications-page", { all, draft, archive, sent, templates });
     } catch (error) {
-        return sendStatus(500, 'backend -> comunication-router-handler -> setCommunication failed - origen error - ' + error.message);
+        return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origen error - ' + error.message);
     }
 }
 
@@ -34,6 +33,6 @@ export async function setPreview(routerRequest) {
         const communication = await getCommunication(communicationID);
         return ok("preview-page", communication);
     } catch (err) {
-        return sendStatus(500, 'backend -> comunication-router-handler -> setPreview failed - origen error - ' + err.message);
+        return sendStatus('500', 'backend -> comunication-router-handler -> setPreview failed - origen error - ' + err.message);
     }
 }
