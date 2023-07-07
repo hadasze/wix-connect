@@ -67,14 +67,13 @@ const setMyCommunicationsRepeater = async () => {
 
 }
 
+
+
 const setSentCommunicationUI = async ($item, itemData, communicationDetails) => {
     $item('#deliveredCountText, #openedCountText, #dateLabelText, #openedText, #deliveredText').hide();
     $item('#sentLabelBox').show() && $item('#sentDetailsBox').show() &&
         $item('#draftLabelBox').hide() && $item('#wasntSendText').hide();
 
-    $item('#communicationClickbaleArea').onClick(() => {
-        wixLocation.to(Urls.PREVIEW + itemData._id)
-    })
     const _id = itemData._id;
     const deliveredCount = communicationDetails[_id]?.delivered ? (communicationDetails[_id]?.delivered).toString() : '0';
     const openedCount = communicationDetails[_id]?.opened ? (communicationDetails[_id]?.opened).toString() : '0';
@@ -95,9 +94,7 @@ const setUnsentCommunicationUI = ($item, itemData) => {
     $item('#sentLabelBox').hide() && $item('#sentDetailsBox').hide() &&
         $item('#draftLabelBox').show() && $item('#wasntSendText').show();
 
-    $item('#communicationClickbaleArea').onClick(() => {
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + itemData._id)
-    })
+    
     $item('#dateLabelText').text = Text.EDITED_ON + new Date(itemData._updatedDate);
 }
 
@@ -144,12 +141,6 @@ const updateRepeater = (repeater, filters, buttonClicked) => {
 
 const setCommunicationMoreActionsUI = ($item) => {
     !$item('#communicationActionsbox').collapsed && $item('#communicationActionsbox').collapse();
-    $item('#seeMoreActionsButton').onClick((event) => {
-        $item('#communicationActionsbox').expand();
-    })
-    $item('#myCommunicationItemBox').onMouseOut((event) => {
-        $item('#communicationActionsbox').collapse();
-    })
 }
 
 export const prepareSentCommunicationsDetails = async () => {

@@ -14,18 +14,29 @@ const itemData = (event, repeater) => {
 export const setCommunicationMoreActionsEvents = () => {
     const repeater = $w('#myCommunicationsRepeater');
 
+    $w('#communicationClickbaleArea').onClick((event) => {
+        wixLocation.to(Urls.PREVIEW + event.context.itemId);
+    });
+
+    $w('#seeMoreActionsButton').onClick((event) => {
+        $item(event)('#communicationActionsbox').expand();
+    })
+    $w('#myCommunicationItemBox').onMouseOut((event) => {
+        $item(event)('#communicationActionsbox').collapse();
+    })
+
     $w('#editCommunicationButton').onClick((event) => {
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' })
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId)
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' });
+        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
     });
 
     $w('#reuseCommunicationButton').onClick(async (event) => {
-        await reuseCommunication(itemData(event, repeater))
+        await reuseCommunication(itemData(event, repeater));
     })
 
     $w('#saveAsTempalteButton').onClick(async (event) => {
         $item(event)('#saveAsTempalteButton').disable();
-        const template = resetCommunication(itemData(event, repeater))
+        const template = resetCommunication(itemData(event, repeater));
         template.isTemplate = true;
         saveCommunication(template);
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
@@ -34,7 +45,7 @@ export const setCommunicationMoreActionsEvents = () => {
 
     $w('#archiveCommunicationButton').onClick(async (event) => {
         $item(event)('#archiveCommunicationButton').disable();
-        itemData(event,repeater).archive = true;
+        itemData(event, repeater).archive = true;
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
         removeItemFromRepeater(repeater, event.context.itemId);
