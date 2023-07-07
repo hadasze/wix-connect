@@ -36,3 +36,9 @@ export async function getUserJWTToken() {
     const userJWT = tokenset?.access_token;
     return userJWT;
 }
+
+export function removeItemFromRepeater(repeater,itemID) {
+    const data = repeater.data;
+    const filteredItems = data.filter((item) => item._id !== itemID);
+    repeater.data = filteredItems;
+}

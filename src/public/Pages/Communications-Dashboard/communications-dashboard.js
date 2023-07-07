@@ -1,5 +1,6 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
+import { autorun } from 'mobx';
 import { create } from 'wix-fedops';
 
 import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
@@ -9,10 +10,25 @@ import { SmartRepeater } from '../../smart-repeater.js';
 import { getSentCommunications } from '../../audience-handler.js';
 import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
-
-const fedopsLogger = create('wix-connect');
+import { observable, configure, toJS } from 'mobx';
 
 const routerData = wixWindow.getRouterData();
+
+configure({
+    useProxies: "never"
+})
+
+export const state = observable({
+    communicationsCounts: routerData,
+    // setCreateEmailAvailable(isAvailible) {
+    //     state.createEmailAvailable = isAvailible;
+    // },
+});
+
+
+
+
+const fedopsLogger = create('wix-connect');
 
 export const initCommunicationsDashboardData = () => {
     setMyCommunicationsRepeater();
@@ -20,10 +36,12 @@ export const initCommunicationsDashboardData = () => {
 }
 
 const setNavigeationBtnsData = () => {
-    $w('#allButton').label = `${CommunicationDahboardStates.ALL} ${routerData.all}`;
-    $w('#sentButton').label = `${CommunicationDahboardStates.SENT} ${routerData.sent}`;
-    $w('#draftsButton').label = `${CommunicationDahboardStates.DRAFT} ${routerData.draft}`;
-    $w('#archiveButton').label = `${CommunicationDahboardStates.ARCHIVE} ${routerData.archive}`;
+    autorun((event) => {
+        $w('#allButton').label = `${CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
+        $w('#sentButton').label = `${CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
+        $w('#draftsButton').label = `${CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
+        $w('#archiveButton').label = `${CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
+    })
 }
 
 const setMyCommunicationsRepeater = async () => {
@@ -39,8 +57,8 @@ const setMyCommunicationsRepeater = async () => {
         setCommunicationActionsOptions($item, itemData)
         itemData.sent ? setSentCommunicationUI($item, itemData, communicationDetails) : setUnsentCommunicationUI($item, itemData);
         setCommunicationMoreActionsUI($item);
-        setCommunicationMoreActionsEvents($item, itemData);
-    }
+    };
+    setCommunicationMoreActionsEvents();
     const smartCommunictionsRepeater = new SmartRepeater($w('#myCommunicationsRepeater'), $w('#myCommunicationItemBox'), getAllUserCommunications, filters, itemReadyFun);
     smartCommunictionsRepeater.initRepeater();
 
