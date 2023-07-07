@@ -52,7 +52,6 @@ wixMembers.authentication.onLogout((event) => {
 export async function validateAccessToken() {
 
     try {
-        console.log('wixWindow.rendering.env: ' + wixWindow.rendering.env);
         if (wixWindow.rendering.env === 'browser') {
             const tokensetSTR = local.getItem('tokenset');
             const userInfoSTR = local.getItem('userInfo');

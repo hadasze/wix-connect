@@ -1,5 +1,5 @@
 import wixLocation from 'wix-location';
-import { authentication } from 'wix-members-frontend';
+// import { authentication } from 'wix-members-frontend';
 import { Urls } from 'public/consts.js';
 import { getTokenset } from './login.js';
 
@@ -23,10 +23,10 @@ export async function redirectToMyCommunications() {
         url.searchParams.append('siteRevision', wixLocation.query.siteRevision);
     if (wixLocation.query.branchId)
         url.searchParams.append('branchId', wixLocation.query.branchId);
-    const userJWT = await getUserJWTToken();
-    if (userJWT)
-        return authentication.promptLogin();
-    url.searchParams.append('token', userJWT);
+    // const userJWT = await getUserJWTToken();
+    // if (userJWT)
+    //     return authentication.promptLogin();
+    // url.searchParams.append('token', userJWT);
     const relativeURL = url.toString().replace(wixLocation.baseUrl, '');
     wixLocation.to(relativeURL);
 }
