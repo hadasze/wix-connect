@@ -6,13 +6,13 @@ import { validateAccessToken, clearQueryParams } from '../login.js';
 if (wixSite.currentPage.isHomePage) {
     const withBaseURL = true;
     redirectToMyCommunications(withBaseURL);
+} else {
+    $w.onReady(function () {
+        clearQueryParams();
+        refreshTokenTimeout();
+    });
 }
 
-$w.onReady(function () {
-    clearQueryParams();
-    refreshTokenTimeout();
-});
-// }
 
 let tokenExpire;
 

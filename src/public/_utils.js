@@ -23,16 +23,16 @@ export async function redirectToMyCommunications(withBaseURL) {
         url.searchParams.append('siteRevision', wixLocation.query.siteRevision);
     if (wixLocation.query.branchId)
         url.searchParams.append('branchId', wixLocation.query.branchId);
-    // const userJWT = await getUserJWTToken();
+    const userJWT = await getUserJWTToken();
     // if (userJWT)
     //     return authentication.promptLogin();
     // url.searchParams.append('token', userJWT);
-    const redirectURL = withBaseURL ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
+    const redirectURL = withBaseURL && !userJWT ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
     wixLocation.to(redirectURL);
 }
 
 export async function getUserJWTToken() {
     const tokenset = await getTokenset();
-    const userJWT = tokenset.access_token;
+    const userJWT = tokenset?.access_token;
     return userJWT;
 }
