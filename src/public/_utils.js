@@ -24,9 +24,7 @@ export async function redirectToMyCommunications(withBaseURL) {
     if (wixLocation.query.branchId)
         url.searchParams.append('branchId', wixLocation.query.branchId);
     const userJWT = await getUserJWTToken();
-    // if (userJWT)
-    //     return authentication.promptLogin();
-    // url.searchParams.append('token', userJWT);
+    url.searchParams.append('token', userJWT);
     const redirectURL = withBaseURL && !userJWT ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
     wixLocation.to(redirectURL);
 }
