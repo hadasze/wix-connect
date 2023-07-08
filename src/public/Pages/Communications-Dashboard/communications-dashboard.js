@@ -19,7 +19,7 @@ configure({
 })
 
 export const state = observable({
-    communicationsCounts: routerData,
+    communicationsCounts: routerData.count,
     // setCreateEmailAvailable(isAvailible) {
     //     state.createEmailAvailable = isAvailible;
     // },
@@ -46,7 +46,7 @@ const setNavigeationBtnsData = () => {
 
 const setMyCommunicationsRepeater = async () => {
     $w('#myCommunicationsRepeater').hide();
-    const communicationDetails = await prepareSentCommunicationsDetails();
+    const communicationDetails = await prepareSentCommunicationsDetails(routerData.communicationDetails);
     const filters = { "sent": true, "draft": true };
     const itemReadyFun = ($item, itemData, index) => {
         $item('#communicationTitleText').text = itemData.name || Text.NO_NAME;
@@ -94,7 +94,7 @@ const setUnsentCommunicationUI = ($item, itemData) => {
     $item('#sentLabelBox').hide() && $item('#sentDetailsBox').hide() &&
         $item('#draftLabelBox').show() && $item('#wasntSendText').show();
 
-    
+
     $item('#dateLabelText').text = Text.EDITED_ON + new Date(itemData._updatedDate);
 }
 
@@ -143,9 +143,10 @@ const setCommunicationMoreActionsUI = ($item) => {
     !$item('#communicationActionsbox').collapsed && $item('#communicationActionsbox').collapse();
 }
 
-export const prepareSentCommunicationsDetails = async () => {
+export const prepareSentCommunicationsDetails = async (communicationDetails) => {
     try {
-        const communicationDetails = await getSentCommunications();
+        if (!communicationDetails)
+            communicationDetails = await getSentCommunications();
         const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
         return aggregatedData;
     } catch (err) {

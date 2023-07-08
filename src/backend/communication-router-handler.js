@@ -1,6 +1,7 @@
 import { ok, sendStatus, redirect } from "wix-router";
-import { getCommunication } from './data-methods.js';
+import { getCommunication, getAllUserCommunications } from './data-methods.js';
 import { countAllUserCommunications } from './data-methods.js';
+import * as MarketingAPI from './marketing-api.js';
 
 export async function setCommunication(routerRequest) {
     try {
@@ -17,11 +18,22 @@ export async function setCommunication(routerRequest) {
         return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origin error - ' + error.message);
     }
 }
-
+//todo: make it faster
 export async function setMyCommunications(routerRequest) {
     try {
+        let communicationDetails;
+        if (routerRequest.query?.token) {
+            console.log('retrive with token');
+            const filters = { "sent": true };
+            const getAllUserCommunicationsRes = await getAllUserCommunications(filters);
+            const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
+            communicationDetails = await MarketingAPI.getSentCommunications(uniqueIds, routerRequest.query?.token);
+        } else {
+            console.log('not retrive with token');
+        }
+
         const [all, draft, archive, sent, templates] = await countAllUserCommunications();
-        return ok("my-communications-page", { all, draft, archive, sent, templates });
+        return ok("my-communications-page", { count: { all, draft, archive, sent, templates }, communicationDetails });
     } catch (error) {
         return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origen error - ' + error.message);
     }
