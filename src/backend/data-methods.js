@@ -16,7 +16,7 @@ export async function createCommunication() {
         const _id = uuidv4();
         const communication = new Communication(_id);
         const insertRes = await wixData.insert("Communications", communication, dataOptions);
-       return insertRes;
+        return insertRes;
 
     } catch (error) {
         return Promise.reject('backend -> data-methdos.js -> createCommunication failed - origin error - ' + error);
@@ -39,6 +39,7 @@ export async function getTargetAudience(id) {
 export const insertToSentUsers = (userId) => wixData.insert('SentUsers', { _id: userId }, dataOptions)
 
 export async function getAllUserCommunications(filters, options = {}, limit = 10, skip = 0) {
+    //toDo: user retrive all items in case of more then 1000 communications
     let query = wixData.query('Communications').eq('_owner', wixUsersBackend.currentUser.id).skip(limit * skip).limit(limit);
     if (filters.draft && filters.sent) {
         query = query.eq('draft', filters.draft).or(query.eq('sent', filters.sent)).and(query.ne('archive', true));
@@ -92,12 +93,23 @@ export async function getContactedEmailByMemberID(memberID) {
     }
 }
 
-export const countAllUserCommunications = () => {
+export const countAllUserCommunications = async () => {
     const options = { count: true }
-    const getDraftCommunicationsPromise = getAllUserCommunications({ draft: true }, options);
-    const getArchiveCommunicationsPromise = getAllUserCommunications({ archive: true }, options);
-    const getSentCommunicationsPromise = getAllUserCommunications({ sent: true }, options);
-    const getAllCommunicationsPromise = getAllUserCommunications({ "sent": true, "draft": true }, options);
-    const getAllTemplatesCommunications = getAllUserCommunications({ isTemplate: true }, options);
-    return Promise.all([getAllCommunicationsPromise, getDraftCommunicationsPromise, getArchiveCommunicationsPromise, getSentCommunicationsPromise, getAllTemplatesCommunications]);
+    const allCurrentUserCommunications = await getAllUserCommunications({}, {}, 1000, 0);
+    // all, draft, archive, sent, templates
+    const toReturn = [0, 0, 0, 0, 0];
+
+    allCurrentUserCommunications.items.forEach(item => {
+        if ((item.sent || item.draft) && !item.archive)
+            toReturn[0]++;
+        if ((item.draft) && !item.archive)
+            toReturn[1]++;
+        if (item.archive)
+            toReturn[2]++;
+        if ((item.sent) && !item.archive)
+            toReturn[3]++;
+        if (item.isTemplate)
+            toReturn[4]++;
+    });
+    return toReturn;
 }
