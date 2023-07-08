@@ -11,7 +11,7 @@ export class Communication {
             type: null,
             data: {
                 img: null,
-                title: 'Hey {User_First_Name}',
+                title: '',
                 body: null
             }
         };
