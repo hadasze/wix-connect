@@ -1,6 +1,7 @@
 import wixWindow from 'wix-window';
 import { sendBi } from 'public/BI/biModule.js';
 import { csvErrors } from 'public/consts.js';
+
 $w.onReady(function () {
     const { communication, reason } = wixWindow.lightbox.getContext();
 

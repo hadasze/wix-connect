@@ -91,7 +91,7 @@ const setUploadCSVEvent = () => {
             }
         } catch (error) {
             $w('#TargetAudienceContent').changeState('TargetAudienceContentUpload') && $w('#csvDetailsAndActionsBox').hide();
-            console.error('public -> pages->Communication ->Target-Audiance ->csv-file-handler.js -> uploadCSVButton onChange failed - origin error - ' + error);
+            console.error('public -> pages->Communication ->Target-Audiance ->csv-file-handler.js -> uploadCSVButton onChange failed - origin error - ' , error);
         }
         $w("#uploadCSVButton").enable();
     })
@@ -107,6 +107,7 @@ const customePolling = async (cycle) => {
         let audience;
         setTimeout(async () => {
             audience = await getTargetAudience(state.communication._id);
+           
             if (audience) {
                 state.setTargetAudience(audience);
                 return;

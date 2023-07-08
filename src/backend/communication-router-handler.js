@@ -23,13 +23,10 @@ export async function setMyCommunications(routerRequest) {
     try {
         let communicationDetails;
         if (routerRequest.query?.token) {
-            console.log('retrive with token');
             const filters = { "sent": true };
             const getAllUserCommunicationsRes = await getAllUserCommunications(filters);
             const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
             communicationDetails = await MarketingAPI.getSentCommunications(uniqueIds, routerRequest.query?.token);
-        } else {
-            console.log('not retrive with token');
         }
 
         const [all, draft, archive, sent, templates] = await countAllUserCommunications();

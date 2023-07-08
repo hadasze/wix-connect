@@ -5,7 +5,7 @@ import * as DataHandler from 'backend/data-methods-wrapper.jsw';
 import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
-
+import { csvFileLimit } from './consts.js'
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
 import { csvErrors } from './consts.js';
 
@@ -70,6 +70,10 @@ function validateFile(payload) {
 
     if (!Utils.isArray(payload)) {
         return { valid: false, reason: csvErrors.notValidFile };
+    }
+
+    if (payload.length > csvFileLimit) {
+        return { valid: false, reason: csvErrors.moreThenLimitItems };
     }
 
     for (let index = 0; index < payload.length; index++) {
