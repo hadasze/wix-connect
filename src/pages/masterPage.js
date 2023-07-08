@@ -4,7 +4,7 @@ import { validateAccessToken, clearQueryParams } from '../login.js';
 
 // redirect from blank home page
 if (wixSite.currentPage.isHomePage) {
-    const withBaseURL = true;
+    const withBaseURL = false;
     redirectToMyCommunications(withBaseURL);
 } else {
     $w.onReady(function () {
