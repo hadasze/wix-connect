@@ -21,12 +21,13 @@ export async function setCommunication(routerRequest) {
 //todo: make it faster
 export async function setMyCommunications(routerRequest) {
     try {
-        let communicationDetails;
+        let communicationDetails = {};
         if (routerRequest.query?.token) {
             const filters = { "sent": true };
             const getAllUserCommunicationsRes = await getAllUserCommunications(filters);
             const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
-            communicationDetails = await MarketingAPI.getSentCommunications(uniqueIds, routerRequest.query?.token);
+            if (uniqueIds.length > 0)
+                communicationDetails = await MarketingAPI.getSentCommunications(uniqueIds, routerRequest.query?.token);
         }
 
         const [all, draft, archive, sent, templates] = await countAllUserCommunications();

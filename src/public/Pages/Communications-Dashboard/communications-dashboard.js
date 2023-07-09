@@ -147,14 +147,14 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
     try {
         if (!communicationDetails)
             communicationDetails = await getSentCommunications();
-        const aggregatedData = aggregateByComuunicationId(communicationDetails.data.marketingData);
+        const aggregatedData = aggregateByComuunicationId(communicationDetails?.data?.marketingData);
         return aggregatedData;
     } catch (err) {
         throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
     }
 }
 
-const aggregateByComuunicationId = (data) => {
+const aggregateByComuunicationId = (data = []) => {
     const result = {};
     data.forEach((item) => {
         const _id = item._id;

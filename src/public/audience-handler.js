@@ -60,7 +60,9 @@ export async function getSentCommunications() {
     const filters = { "sent": true };
     const [userJWT, getAllUserCommunicationsRes] = await Promise.all([Utils.getUserJWTToken(), DataHandler.getAllUserCommunications(filters)]);
     const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
-    const results = await MarketingAPI.getSentCommunications(uniqueIds, userJWT);
+    let results = {};
+    if (uniqueIds.length > 0)
+        results = await MarketingAPI.getSentCommunications(uniqueIds, userJWT);
     return results;
 }
 
