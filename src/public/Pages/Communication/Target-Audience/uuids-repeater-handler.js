@@ -84,7 +84,6 @@ export const initRepeatersActions = () => {
 
 const setTargetAudienceData = () => {
     $w('#approvedRepeater').onItemReady(($item, itemData, index) => {
-       
         $item('#approvedUuidButton').label = itemData.uuid || '';
         $item('#approvedUuidTooltipText').text = itemData.uuid || '';
         $item('#approvedUserNameText').text = itemData.site_display_name || '';

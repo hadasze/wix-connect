@@ -81,8 +81,8 @@ const setUploadCSVEvent = () => {
 
                 const uploadedFile = await uploadFileAndSetAudience();
 
-                state.setTargetAudienceCSVFileName(uploadedFile.originalFileName)
-                sendBi('uploadCSV', { 'campaignId': state.communication._id, 'button_name': 'upload_csv_file' })
+                state.setTargetAudienceCSVFileName(uploadedFile.originalFileName);
+                sendBi('uploadCSV', { 'campaignId': state.communication._id, 'button_name': 'upload_csv_file' });
                 await customePolling();
                 fedopsLogger.interactionEnded('upload-csv');
 

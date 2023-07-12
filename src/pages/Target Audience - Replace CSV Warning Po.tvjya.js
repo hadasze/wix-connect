@@ -11,7 +11,7 @@ $w.onReady(function () {
             $w('#uploadCSVButton').disable();
             if (isValidFileBeforeUpload(event)) {
                 const recivedData = await $w("#uploadCSVButton").uploadFiles();
-                sendBi('replaceCSV', { 'campaignId': communication._id, 'button_name': 'replace_CSV_file' })
+                sendBi('replaceCSV', { 'campaignId': communication._id, 'button_name': 'replace_CSV_file' });
                 wixWindow.lightbox.close({ uploadedFiles: recivedData });
             } else {
                 wixWindow.openLightbox('CSV File Error', { communication, reason: csvErrors.notValidFile });

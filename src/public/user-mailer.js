@@ -115,7 +115,7 @@ const evaluateDynamicVariabels = (user, emailTitle, emailContent, subjectLine, p
 }
 
 const adjustTemplateType = (emailTitle) => {
-    if (emailTitle.includes(DynamicFieldsOptions.UserFirstName)) {
+    if (emailTitle?.includes(DynamicFieldsOptions.UserFirstName)) {
         state.setTemplateType(TemplatesTypes.UserNameTemaplate)
     } else {
         state.setTemplateType(TemplatesTypes.DefaultTempalte)
