@@ -15,10 +15,12 @@ export class SmartRepeater {
                 try {
                     const options = {};
                     const moreData = await this.getData(this.filters, options, this.defaultLimit, this.skip);
+                    if (!moreData)
+                        console.warn('no more data!');
                     const currData = this.repeater.data;
-                    this.repeater.data = currData.concat(moreData.items);
+                    this.repeater.data = currData.concat(moreData?.items || []);
                     this.skip++;
-                    if (moreData.items.length < this.defaultLimit) {
+                    if (moreData?.items?.length < this.defaultLimit) {
                         this.finishLoad = true;
                     }
                 } catch (err) {
