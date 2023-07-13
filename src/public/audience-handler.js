@@ -84,7 +84,6 @@ function validateFile(payload) {
 }
 
 export function clearAudiance(payload) {
-    console.log({ payload });
     const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
