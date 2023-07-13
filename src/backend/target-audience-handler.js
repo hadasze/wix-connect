@@ -55,6 +55,7 @@ export async function filterAudience(audienceDetails) {
                 const currUser = stringToBoolean(_currUser);
 
                 if (await noDataForThisUser(currUser)) {
+                    currUser.unqualified_for_emails_ind = true;
                     rejected.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
                     needAprroval.push(currUser);
