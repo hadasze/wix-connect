@@ -1,9 +1,12 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import { Text, CommunicationDahboardStates, Urls } from 'public/consts.js'
-import { SmartRepeater } from 'public/smart-repeater.js'
-import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw'
-import { setTemplateActionsEvents } from 'public/Pages/Communications-Dashboard/templates-actions.js'
+
+import { Text, CommunicationDahboardStates, Urls } from '../../consts.js';
+import { SmartRepeater } from '../../smart-repeater.js';
+import { setTemplateActionsEvents } from './templates-actions.js';
+
+import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
+
 
 const routerData = wixWindow.getRouterData();
 

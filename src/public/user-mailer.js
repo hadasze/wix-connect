@@ -1,7 +1,7 @@
 import wixWindow from 'wix-window';
 
-import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
 import * as TargetAudience from 'backend/target-audience-handler-wrapper.jsw';
+import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
 
 import { toJS } from 'mobx';
 

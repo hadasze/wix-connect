@@ -17,11 +17,4 @@ export const getAudienceDetails = async (uuidsAndMsidsList, userJWT) => {
 
 export const getDownloadFileUrlFromArray = (array, fileName) => TargetAudienceDataHelper.getDownloadCsvUrlFromArray(array, fileName);
 
-export function sendEmailToWixUsers(arrayOfEmails, userJWT,isTestEmail) {
-    // try {
-    return arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT,isTestEmail));
-    // } catch (error) {
-    //     return Promise.reject('backend -> target-audience-handler-wrapper.js -> sendEmailToWixUsers failed -origin error - ' + error);
-    // }
-}
-
+export const sendEmailToWixUsers = (arrayOfEmails, userJWT,isTestEmail) => arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT,isTestEmail));

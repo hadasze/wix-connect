@@ -1,5 +1,5 @@
 export const setUuidProperties = (user, $item, repeaterType) => {
-    
+
     isTopUser(user, $item, repeaterType);
     isPartnerUser(user, $item, repeaterType);
     isVeloUser(user, $item, repeaterType);
@@ -37,26 +37,26 @@ const isSentTopUser = (user, $item, repeaterType) => {
 }
 
 const isPartnerUser = (user, $item, repeaterType) => {
-    user.partner_ind === true ?
+    user.partner_ind ?
         $item(`#V${repeaterType}Partner`).show() && $item(`#X${repeaterType}Partner`).hide() :
         $item(`#V${repeaterType}Partner`).hide() && $item(`#X${repeaterType}Partner`).show();
 }
 
 const isVeloUser = (user, $item, repeaterType) => {
-    user.velo_ind === true ?
+    user.velo_ind ?
         $item(`#V${repeaterType}Velo`).show() && $item(`#X${repeaterType}Velo`).hide() :
         $item(`#V${repeaterType}Velo`).hide() && $item(`#X${repeaterType}Velo`).show();
 }
 
 const isPremiumUser = (user, $item, repeaterType) => {
-    user.premium_ind === true ?
+    user.premium_ind ?
         $item(`#V${repeaterType}Premium`).show() && $item(`#X${repeaterType}Premium`).hide() :
         $item(`#V${repeaterType}Premium`).hide() && $item(`#X${repeaterType}Premium`).show();
 }
 
 const isAccountManaged = (user, $item, repeaterType = 'NeedApprove') => {
     if ($item(`#V${repeaterType}Managed`).isVisible) {
-        user.managed_ind === true ?
+        user.managed_ind ?
             $item(`#V${repeaterType}Managed`).show() && $item(`#X${repeaterType}Managed`).hide() :
             $item(`#V${repeaterType}Managed`).hide() && $item(`#X${repeaterType}Managed`).show();
     }
@@ -64,7 +64,7 @@ const isAccountManaged = (user, $item, repeaterType = 'NeedApprove') => {
 
 const isContacted = async (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#seeDetails${repeaterType}Contacted`).isVisible) {
-        user.contacted_lately_ind === true ?
+        user.contacted_lately_ind ?
             $item(`#seeDetails${repeaterType}Contacted`).show() && $item(`#X${repeaterType}Contacted`).hide() && $item(`#V${repeaterType}Contacted`).hide() :
             $item(`#V${repeaterType}Contacted`).hide() && $item(`#X${repeaterType}Contacted`).show() && $item(`#seeDetails${repeaterType}Contacted`).hide();
     }
@@ -72,21 +72,21 @@ const isContacted = async (user, $item, repeaterType = 'Rejected') => {
 
 const isChannels = (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#V${repeaterType}Channels`).isVisible) {
-        user.channels_ind === true ?
+        user.channels_ind ?
             $item(`#V${repeaterType}Channels`).show() && $item(`#X${repeaterType}Channels`).hide() :
             $item(`#V${repeaterType}Channels`).hide() && $item(`#X${repeaterType}Channels`).show();
     }
 }
 const isB2B = (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#V${repeaterType}B2B`).isVisible) {
-        user.b2b_ind === true ?
+        user.b2b_ind ?
             $item(`#V${repeaterType}B2B`).show() && $item(`#X${repeaterType}B2B`).hide() :
             $item(`#V${repeaterType}B2B`).hide() && $item(`#X${repeaterType}B2B`).show();
     }
 }
 const isUnsubscribed = (user, $item, repeaterType = 'Rejected') => {
     if ($item(`#X${repeaterType}Unsubscribe`).isVisible) {
-        user.unqualified_for_emails_ind === false ?
+        user.unqualified_for_emails_ind ?
             $item(`#V${repeaterType}Unsubscribe`).show() && $item(`#X${repeaterType}Unsubscribe`).hide() :
             $item(`#V${repeaterType}Unsubscribe`).hide() && $item(`#X${repeaterType}Unsubscribe`).show();
     }

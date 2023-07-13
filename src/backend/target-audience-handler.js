@@ -53,9 +53,9 @@ export async function filterAudience(audienceDetails) {
             for (const key in users[user]) {
                 const _currUser = users[user][key];
                 const currUser = stringToBoolean(_currUser);
-               
-                if (await noDataForThisUser (currUser)) {
-                     noData.push(currUser);
+
+                if (await noDataForThisUser(currUser)) {
+                    rejected.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
                     needAprroval.push(currUser);
                 } else if (isRejectedUser(currUser)) {
@@ -76,34 +76,28 @@ export function isRejectedUser(user) {
     return unSubscribed(user) || isB2B(user) || isChannels(user) || contactedLately(user);
 }
 
-function isWaitingForApproval(user) {
-    return isManaged(user);
-}
+const isWaitingForApproval = (user) => isManaged(user);
 
-function noDataForThisUser(user) {
-    return isNotExistUser(user)
-}
+const noDataForThisUser = (user) => isNotExistUser(user);
 
-const unSubscribed = (user) => user?.unqualified_for_emails_ind === true;
-const isChannels = (user) => user?.channels_ind === true;
-const isB2B = (user) => user?.b2b_ind === true;
-const isManaged = (user) => user?.managed_ind === true;
+const unSubscribed = (user) => user?.unqualified_for_emails_ind;
+const isChannels = (user) => user?.channels_ind;
+const isB2B = (user) => user?.b2b_ind;
+const isManaged = (user) => user?.managed_ind;
 
-const contactedLately = (user) => user?.contacted_lately_ind === true;
+const contactedLately = (user) => user?.contacted_lately_ind;
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
-
-
 
 
 function stringToBoolean(obj) {
     const toReturn = { ...obj };
     for (const property in toReturn) {
-        if (toReturn[property] === 'true')
+        if (toReturn[property] === 'true' || toReturn[property] === 'Yes')
             toReturn[property] = true;
-        if (toReturn[property] === 'false')
+        if (toReturn[property] === 'false' || toReturn[property] === 'No')
             toReturn[property] = false;
     }
-    
+
     return toReturn;
 
 }

@@ -1,13 +1,16 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { toJS } from 'mobx';
-import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
-import { getAudienceDetails } from 'public/audience-handler.js';
-import { getTargetAudience } from 'backend/data-methods-wrapper.jsw';
-import { AllAudienceRepeaterButtons, csvErrors } from 'public/consts.js';
-import { sendBi } from '../../../BI/biModule.js';
 import { create } from 'wix-fedops';
+
+import { toJS } from 'mobx';
+
+import { state } from '../state-management.js';
+import { getAudienceDetails } from '../../../audience-handler.js';
+import { AllAudienceRepeaterButtons, csvErrors } from '../../../consts.js';
+import { sendBi } from '../../../BI/biModule.js';
+
+import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
+import { getTargetAudience } from 'backend/data-methods-wrapper.jsw';
 
 
 const fedopsLogger = create('wix-connect');
@@ -44,7 +47,7 @@ const replaceCsvFileEvent = async () => {
             fedopsLogger.interactionEnded('replace-csv');
 
         } catch (error) {
-            console.error('public/Pages/Communication/Target-Audience/csv-file-handler.js -> replaceCsvFileEvent failed - origin error -' + error);
+            console.error('public/Pages/Communication/Target-Audience/csv-file-handler.js -> replaceCsvFileEvent failed - origin error - ' + error);
             $w('#replaceCsvFile').enable();
         }
     })
@@ -91,7 +94,7 @@ const setUploadCSVEvent = () => {
             }
         } catch (error) {
             $w('#TargetAudienceContent').changeState('TargetAudienceContentUpload') && $w('#csvDetailsAndActionsBox').hide();
-            console.error('public -> pages->Communication ->Target-Audiance ->csv-file-handler.js -> uploadCSVButton onChange failed - origin error - ' , error);
+            console.error('public -> pages->Communication ->Target-Audiance ->csv-file-handler.js -> uploadCSVButton onChange failed - origin error - ', error);
         }
         $w("#uploadCSVButton").enable();
     })
@@ -107,7 +110,7 @@ const customePolling = async (cycle) => {
         let audience;
         setTimeout(async () => {
             audience = await getTargetAudience(state.communication._id);
-           
+
             if (audience) {
                 state.setTargetAudience(audience);
                 return;
@@ -127,12 +130,14 @@ const downloadReportEvent = () => {
             $w('#downloadReportButton').disable();
             const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
             const audienceData = await getAudienceDetails(uuidsAndMsidsList);
-            const dataForFile = [...audienceData.approved, ...audienceData.needAprroval, ...audienceData.rejected];
-            const url = await getDownloadFileUrlFromArray(dataForFile, "targetAudienceReport")
-            wixLocation.to(url);
-            sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' })
-            showToast('csvFileDownloadedBanner', 2000);
-            $w('#downloadReportButton').enable();
+            if (audienceData) {
+                const dataForFile = [...audienceData.approved, ...audienceData.needAprroval, ...audienceData.rejected];
+                const url = await getDownloadFileUrlFromArray(dataForFile, "targetAudienceReport")
+                wixLocation.to(url);
+                sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' })
+                showToast('csvFileDownloadedBanner', 2000);
+                $w('#downloadReportButton').enable();
+            }
         } catch (err) {
             console.error("downloadReportEvent error, original error: ", err);
         }

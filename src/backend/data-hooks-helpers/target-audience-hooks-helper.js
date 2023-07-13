@@ -7,12 +7,17 @@ export async function updateTargetAudience(item) {
         if (shouldUpadteAudienceCSV(item)) {
             try {
                 const publicUrl = await getPublicFileUrl(item.targetAudienceCsv);
-                item.targetAudience = await convertUrlToCsvData(publicUrl);
+                const csvItems = await convertUrlToCsvData(publicUrl);
+                const targetAudience = [];
+                for (let index = 0; index < csvItems.length; index++) {
+                    const item = csvItems[index];
+                    if (item.uuid.length > 1 || item.msid.length > 1)
+                        targetAudience.push()
+                }
+                item.targetAudience = csvItems;
             } catch (error) {
                 console.error('backend/data-hooks-helpers/target-audience-hooks-helper.js -> updateTargetAudience -> shouldUpadteAudienceCSV failed - origin error - ' + error)
             }
-            // const channel = { "name": item._id };
-            // wixRealtimeBackend.publish(channel, "done upload");
         }
         return item
     } catch (error) {

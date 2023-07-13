@@ -5,9 +5,8 @@ import * as DataHandler from 'backend/data-methods-wrapper.jsw';
 import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
-import { csvFileLimit } from './consts.js'
+import { csvFileLimit, csvErrors } from './consts.js'
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
-import { csvErrors } from './consts.js';
 
 import * as Utils from './_utils.js';
 
@@ -52,7 +51,6 @@ export async function getAudienceDetails(payload) {
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
         wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
-        return;
     }
 }
 
@@ -68,8 +66,6 @@ export async function getSentCommunications() {
 
 function validateFile(payload) {
 
-    const uuidsAndMsidsList = [];
-
     if (!Utils.isArray(payload)) {
         return { valid: false, reason: csvErrors.notValidFile };
     }
@@ -78,6 +74,18 @@ function validateFile(payload) {
         return { valid: false, reason: csvErrors.moreThenLimitItems };
     }
 
+    const uuidsAndMsidsList = clearAudiance(payload);
+
+    if (uuidsAndMsidsList.length > 0) {
+        return { valid: true, uuidsAndMsidsList };
+    }
+
+    return { valid: false, reason: csvErrors.missingUUIDMSID };
+}
+
+export function clearAudiance(payload) {
+    console.log({ payload });
+    const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
         if (item.uuid && item.msid) {
@@ -85,12 +93,7 @@ function validateFile(payload) {
                 uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
         }
     }
-
-    if (uuidsAndMsidsList.length > 0) {
-        return { valid: true, uuidsAndMsidsList };
-    }
-
-    return { valid: false, reason: csvErrors.missingUUIDMSID };
+    return uuidsAndMsidsList;
 }
 
 const setNotValidFileUI = () => {

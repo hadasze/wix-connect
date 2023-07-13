@@ -16,6 +16,5 @@ export const updateCommunication = (communication) => DataMethods.updateCommunic
 
 export const getUuidByEmail = (email) => DataMethods.getUuidByEmail(email);
 
-export const getIsContactedUser = (userId) => DataMethods.getIsContactedUser(userId);
 export const getContactedEmailByMemberID = (memberID) => DataMethods.getContactedEmailByMemberID(memberID);
 

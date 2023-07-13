@@ -1,5 +1,6 @@
 import wixWindow from 'wix-window';
 import { observable, configure, toJS } from 'mobx';
+import { clearAudiance } from '../../audience-handler.js';
 
 let routerData = wixWindow.getRouterData();
 
@@ -22,13 +23,13 @@ export const state = observable({
         state.communication.targetAudienceCsvFileName = fileName;
     },
     setTargetAudience(audienceData) {
-        state.communication.targetAudience = audienceData;
+        state.communication.targetAudience = audienceData ? clearAudiance(audienceData) : audienceData;
     },
     setManuallyApprovedUsers(approvedUsers) {
         state.communication.manuallyApprovedUsers = approvedUsers;
     },
-    setFinalAudience(approvedUsers){
-    state.communication.finalSentToAudience = approvedUsers;
+    setFinalAudience(approvedUsers) {
+        state.communication.finalSentToAudience = approvedUsers;
     },
     addApprovedUser(user) {
         const manuallyApproveArray = (Object.values(toJS(state.communication.manuallyApprovedUsers)))
@@ -100,7 +101,7 @@ export const state = observable({
     setDraftStatus(isDraft) {
         state.communication.draft = isDraft;
     },
-     setSentToCounter(counter) {
+    setSentToCounter(counter) {
         state.communication.sentToCounter = counter;
     },
 });

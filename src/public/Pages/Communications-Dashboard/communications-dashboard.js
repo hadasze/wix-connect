@@ -144,7 +144,6 @@ const setCommunicationMoreActionsUI = ($item) => {
 }
 
 export const prepareSentCommunicationsDetails = async (communicationDetails) => {
-    console.log('prepareSentCommunicationsDetails communicationDetails: ' ,communicationDetails);
     try {
         if (!communicationDetails)
             communicationDetails = await getSentCommunications();
