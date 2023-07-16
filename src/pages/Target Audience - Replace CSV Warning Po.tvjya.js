@@ -17,7 +17,13 @@ $w.onReady(function () {
                 wixWindow.openLightbox('CSV File Error', { communication, reason: csvErrors.notValidFile });
             }
         } catch (error) {
-            console.error('Target Audiance - Replace CSV Warning Po -> uploadFiles failed - origin error - ' + error);
+            let reason = csvErrors.uploadFail;
+            if (error.errorCode == -7750) {
+                reason = csvErrors.fileIsEmpty;
+            } else {
+                console.error('Target Audiance - Replace CSV Warning Po -> uploadFiles failed - origin error - ' + error);
+            }
+            await wixWindow.openLightbox('CSV File Error', { communication, reason });
             $w('#uploadCSVButton').enable();
         }
     })
