@@ -230,7 +230,9 @@ export const csvErrors = {
     notValidFile: 'Please upload a valid CSV file.',
     missingUUIDMSID: 'Your CSV file is missing UUID or MSID column.',
     moreThenLimitItems: 'Your CSV file contain more then 2000 UUID MSID',
-    generalMSG: (error) => `<p class="p1 wixui-rich-text__text">${error} <br class="p1 wixui-rich-text__text">If you haven&#39;t already, <span style="text-decoration:underline;" class="wixui-rich-text__text"><a href="https://docs.google.com/spreadsheets/d/1vHd0hkn2jv4w6mtGzAlUaDzIlmw0wKmk_E9WIrXWOP8/edit#gid=1675989783" target="_blank" rel="noreferrer noopener" class="wixui-rich-text__text">download the template CSV</a></span> file and follow the instructions inside.</p>`
+    generalMSG: (error) => `<p class="p1 wixui-rich-text__text">${error} <br class="p1 wixui-rich-text__text">If you haven&#39;t already, <span style="text-decoration:underline;" class="wixui-rich-text__text"><a href="https://docs.google.com/spreadsheets/d/1vHd0hkn2jv4w6mtGzAlUaDzIlmw0wKmk_E9WIrXWOP8/edit#gid=1675989783" target="_blank" rel="noreferrer noopener" class="wixui-rich-text__text">download the template CSV</a></span> file and follow the instructions inside.</p>`,
+    uploadFail: 'ERROR 500. Sorry, it\'s us, not you. Try again or contact our slack channel #wix-connect - support.',
+    fileIsEmpty: 'Your CSV file is empty.'
 }
 
 export const csvFileLimit = 2000;
