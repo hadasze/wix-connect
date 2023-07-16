@@ -234,3 +234,18 @@ export const csvErrors = {
 }
 
 export const csvFileLimit = 2000;
+
+export const fedopsEvents = {
+    previewEmail: 'preview-email',
+    sendEmail: 'send-email',
+    sendTestEmail: 'send-test-email',
+    replaceCSV: 'replace-csv',
+    uploadCSV: 'upload-csv',
+    setApprovedRepeater: 'set-approved-repeater',
+    createNewCommunication: 'create-new-communication',
+    myCommunicationsArchive: 'my-communications-archive',
+    myCommunicationsDraft: 'my-communications-draft',
+    myCommunicationsSent: 'my-communications-sent',
+    myCommunicationsAll: 'my-communications-all',
+
+}

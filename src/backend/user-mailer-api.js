@@ -1,6 +1,5 @@
 import * as EROAPI from './ero-api.js';
 import { fetch } from 'wix-fetch';
-import { insertToSentUsers } from './data-methods.js';
 
 export const templates = {
     defaultTemplate: 'blast_marketing_templates_em-marketing-tool-template-1_25122022_en'
@@ -28,9 +27,7 @@ export async function sendEmailToWixUsers(uuid, body, userJWT, isTestEmail) {
         });
         
         if (res.ok) {
-            if (!isTestEmail) {
-                insertToSentUsers(uuid);
-            }
+           
             return await res.json();
         }
         throw new Error(await res.text());

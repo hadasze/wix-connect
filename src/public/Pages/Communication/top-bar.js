@@ -1,6 +1,7 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
+// @ts-ignore
 import wixLocation from 'wix-location';
-import { create } from 'wix-fedops';
 
 import { autorun } from 'mobx';
 
@@ -13,8 +14,7 @@ import { sendBi } from '../../BI/biModule.js';
 import { redirectToMyCommunications } from '../../_utils.js';
 
 import * as previewHandler from './preview.js';
-
-const fedopsLogger = create('wix-connect');
+import * as Fedops from '../../wix-fedops-api.js';
 
 export const initTopBarActions = () => {
     setOnClickStepsEvents();
@@ -99,10 +99,10 @@ const setOnClickStepsEvents = () => {
         handleNextButton('testAndSendButton');
     })
     $w('#previewEmailButton').onClick((event) => {
-        fedopsLogger.interactionStarted('preview-email');
+        Fedops.interactionStarted(Fedops.events.previewEmail);
         $w('#mainMultiStateBox').changeState('PreviewState');
         previewHandler.initPreviewData();
-        fedopsLogger.interactionEnded('preview-email');
+        Fedops.interactionEnded(Fedops.events.previewEmail);
         sendBi('upperMenu', { 'button_name': 'preview_email' })
     })
     $w('#backToEditButton').onClick((event) => {
@@ -119,23 +119,23 @@ const setOnClickStepsEvents = () => {
         }
     });
     $w('#sendStepButton').onClick(async (event) => {
-        fedopsLogger.interactionStarted('send-email');
+        Fedops.interactionStarted(Fedops.events.sendEmail);
         sendBi('upperMenu', { 'button_name': 'send_emails' })
         const recivedData = await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { 'communication': state.communication, 'approvedCounter': targetAudienceState.approvedCounter });
         if (recivedData?.buttonName === Text.SEND) {
-            await sendEmails(state.communication);
-            fedopsLogger.interactionEnded('send-email');
+            await sendEmails();
+            Fedops.interactionEnded(Fedops.events.sendEmail);
         }
     })
 
     $w('#sendTestButton').onClick(async (event) => {
-        fedopsLogger.interactionStarted('send-test-email');
+        Fedops.interactionStarted(Fedops.events.sendTestEmail);
         sendBi('upperMenu', { 'button_name': 'send_test_email' })
         const recivedData = await wixWindow.openLightbox('Setup & Publish - Send Test Email Popup', { 'communication': state.communication });
         if (recivedData?.email) {
             sendTestEmail(recivedData.email, state.communication);
             $w('#hoverZoneSendTooltip').hide();
-            fedopsLogger.interactionEnded('send-test-email');
+            Fedops.interactionEnded(Fedops.events.sendTestEmail);
         }
     })
 }

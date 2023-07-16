@@ -36,8 +36,6 @@ export async function getTargetAudience(id) {
     return communication.targetAudience;
 }
 
-export const insertToSentUsers = (userId) => wixData.insert('SentUsers', { _id: userId }, dataOptions)
-
 export async function getAllUserCommunications(filters, options = {}, limit = 10, skip = 0) {
     //toDo: user retrive all items in case of more then 1000 communications
     let query = wixData.query('Communications').eq('_owner', wixUsersBackend.currentUser.id).skip(limit * skip).limit(limit);
@@ -65,23 +63,6 @@ export function updateCommunication(communication) {
 export async function getUuidByEmail(email) {
     const uuid = (await getJSON('https://users.wix.com/_api/v1/userAccountsByEmail?email=' + email)).accountsData[0].accountId;
     return uuid;
-}
-
-export async function clearOldSentUsers() {
-    try {
-        const currentDate = new Date();
-        const numberOfDaysToRemove = 2;
-        const dateBeforeTwoDays = new Date(currentDate.setDate(currentDate.getDate() - numberOfDaysToRemove));
-        const queryRes = await wixData.query('SentUsers').lt('_createdDate', dateBeforeTwoDays).find(dataOptions);
-        const itemsToRemove = queryRes.items.map((item) => item._id);
-
-        if (itemsToRemove.length > 0)
-            return wixData.bulkRemove('SentUsers', itemsToRemove, dataOptions);
-        return
-
-    } catch (error) {
-        return Promise.reject('backend -> data-methods.js -> clearOldSentUsers failed - origin error - ' + error);
-    }
 }
 
 export async function getContactedEmailByMemberID(memberID) {
