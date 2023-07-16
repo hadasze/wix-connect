@@ -22,6 +22,9 @@ export async function getAudienceDetails(payload) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
 
         const userJWT = await Utils.getUserJWTToken();
+        if (!userJWT) {
+            console.warn('public -> audiance-handler.js userJWT is missing');
+        }
         if ($w('#rejectedRepeater').hidden)
             $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
 
