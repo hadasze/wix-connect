@@ -1,16 +1,17 @@
 import wixWindow from 'wix-window';
-import wixLocation from 'wix-location';
-import { autorun } from 'mobx';
-import { create } from 'wix-fedops';
+import { autorun, observable, configure, toJS } from 'mobx';
 
-import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
 import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from '../../consts.js';
 import { disbaleCurrentButton } from '../helpers.js'
 import { SmartRepeater } from '../../smart-repeater.js';
 import { getSentCommunications } from '../../audience-handler.js';
 import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
-import { observable, configure, toJS } from 'mobx';
+
+import * as Fedops from '../../wix-fedops-api.js';
+
+import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
+
 
 const routerData = wixWindow.getRouterData();
 
@@ -20,15 +21,7 @@ configure({
 
 export const state = observable({
     communicationsCounts: routerData.count,
-    // setCreateEmailAvailable(isAvailible) {
-    //     state.createEmailAvailable = isAvailible;
-    // },
 });
-
-
-
-
-const fedopsLogger = create('wix-connect');
 
 export const initCommunicationsDashboardData = () => {
     setMyCommunicationsRepeater();
@@ -108,28 +101,28 @@ const setCommunicationActionsOptions = ($item, itemData) => {
 
 const setNavigeationBtnsEvents = (repeater) => {
     $w('#allButton').onClick((event) => {
-        fedopsLogger.interactionStarted('my-communications-all');
+        Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
         updateRepeater(repeater, { "sent": true, "draft": true }, 'allButton');
         sendBi('thirdMenu', { 'button_name': 'all_button' })
-        fedopsLogger.interactionEnded('my-communications-all');
+        Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
     })
     $w('#sentButton').onClick((event) => {
-        fedopsLogger.interactionStarted('my-communications-sent');
+        Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
         updateRepeater(repeater, { 'sent': true }, 'sentButton');
         sendBi('thirdMenu', { 'button_name': 'sent_button' })
-        fedopsLogger.interactionEnded('my-communications-sent');
+        Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
     })
     $w('#draftsButton').onClick((event) => {
-        fedopsLogger.interactionStarted('my-communications-draft');
+        Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
         updateRepeater(repeater, { 'draft': true }, 'draftsButton');
         sendBi('thirdMenu', { 'button_name': 'drafts_button' })
-        fedopsLogger.interactionEnded('my-communications-draft');
+        Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
     })
     $w('#archiveButton').onClick((event) => {
-        fedopsLogger.interactionStarted('my-communications-archive');
+        Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
         updateRepeater(repeater, { 'archive': true }, 'archiveButton');
         sendBi('thirdMenu', { 'button_name': 'archive_button' })
-        fedopsLogger.interactionEnded('my-communications-archive');
+        Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
     })
 }
 
