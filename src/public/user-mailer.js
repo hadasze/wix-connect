@@ -18,12 +18,11 @@ export async function sendEmails() {
     try {
         const userJWT = await getUserJWTToken();
         const allApprovedUsers = await reciveAllApprovedUsers(communication);
-
+        state.setTemplateType(TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = allApprovedUsers.map((user) => {
-            let { title, emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+            let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
 
-            ({ title, emailContent, subjectLine, previewText } = evaluateDynamicVariabels(user, title, emailContent, subjectLine, previewText));
-            adjustTemplateType(title);
+            ({ emailContent, subjectLine, previewText } = evaluateDynamicVariabels(user, emailContent, subjectLine, previewText));
 
             const email = new Email({
                 templateName: communication.template.type,
@@ -31,7 +30,6 @@ export async function sendEmails() {
                 replyTo: replyToAddress,
                 subjectLine,
                 previewText,
-                title,
                 emailContent: emailContent,
                 emailcontent2: finalGreeting || '',
                 firstLastName: fullName || '',
@@ -60,18 +58,16 @@ export async function sendEmails() {
 
 export const sendTestEmail = async (emailAddress, communication) => {
     try {
+        state.setTemplateType(TemplatesTypes.DefaultTempalte);
         const uuid = await getUuidByEmail(emailAddress);
         const userJWT = await getUserJWTToken();
-        let { title, emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
-        adjustTemplateType(title);
-
+        let { emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
         const email = new Email({
             templateName: communication.template.type,
             senderName,
             replyTo: replyToAddress,
             subjectLine,
             previewText,
-            title,
             emailContent: emailContent,
             emailcontent2: finalGreeting || '',
             firstLastName: fullName || '',
@@ -83,6 +79,7 @@ export const sendTestEmail = async (emailAddress, communication) => {
 
         if (res) {
             state.setIsTested(true);
+
             wixWindow.openLightbox('Setup & Publish - Send Test Toast');
         }
 
@@ -102,25 +99,17 @@ export const reciveAllApprovedUsers = async (communication) => {
     }
 }
 
-const evaluateDynamicVariabels = (user, emailTitle, emailContent, subjectLine, previewText) => {
+const evaluateDynamicVariabels = (user, emailContent, subjectLine, previewText) => {
     try {
-        const strings = [emailTitle, emailContent, subjectLine, previewText];
+        const strings = [emailContent, subjectLine, previewText];
         const evaluetedStrings = strings.map(string => {
             if (!string) return;
             string = string.replace(new RegExp('{' + DynamicFieldsOptions.BusinessName + '}', "g"), user.site_display_name || state.communication.dynamicVaribels.businessName);
             string = string.replace(new RegExp('{' + DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
             return string;
         });
-        return { title: evaluetedStrings[0], emailContent: evaluetedStrings[1], subjectLine: evaluetedStrings[2], previewText: evaluetedStrings[3] }
+        return { emailContent: evaluetedStrings[1], subjectLine: evaluetedStrings[2], previewText: evaluetedStrings[3] }
     } catch (error) {
         throw new Error('public -> user-mailer.js -> evaluateDynamicVariabels failed - origin error - ' + error);
-    }
-}
-
-const adjustTemplateType = (emailTitle) => {
-    if (emailTitle?.includes(DynamicFieldsOptions.UserFirstName)) {
-        state.setTemplateType(TemplatesTypes.UserNameTemaplate)
-    } else {
-        state.setTemplateType(TemplatesTypes.DefaultTempalte)
     }
 }

@@ -5,7 +5,6 @@ export class Email {
                     replyTo,
                     subjectLine,
                     previewText,
-                    title,
                     emailContent,
                     emailcontent2,
                     firstLastName,
@@ -17,7 +16,6 @@ export class Email {
         this.replyTo = this.isValid('replyTo', replyTo);
         this.subjectLine = this.isValid('subjectLine', subjectLine);
         this.previewText = previewText;
-        this.title = title;
         this.emailContent = this.isValid('emailContent', emailContent);
         this.emailcontent2 = emailcontent2;
         this.firstLastName = firstLastName;
@@ -36,7 +34,6 @@ export class Email {
             'senderName': this.senderName,
             'replyTo': this.replyTo,
             'subjectLine': this.subjectLine,
-            'title': this.title,
             'emailContent': this.emailContent,
             'emailcontent2': this.emailcontent2,
             'firstLastName': this.firstLastName,
@@ -57,7 +54,6 @@ export class Email {
                     'firstLastName',
                     'emailcontent2',
                     'positionTitle',
-                    'title',
                     'communicationId'
                 ]
             }
