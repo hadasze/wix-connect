@@ -9,6 +9,9 @@ export async function setCommunication(routerRequest) {
         let communication;
         if (communicationID) {
             communication = await getCommunication(communicationID);
+            if (communication.sent) {
+                return redirect("/preview/" + communicationID, "301")
+            }
         } else {
             return redirect("/", "301")
         }
