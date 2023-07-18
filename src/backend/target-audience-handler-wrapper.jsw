@@ -2,14 +2,15 @@ import { getAudienceDetails as _getAudienceDetails } from './marketing-api.js';
 import * as UserMailer from './user-mailer-api.js';
 import * as TargetAudienceDataHelper from './target-audience-handler.js'
 
-export const getAudienceDetails = async (uuidsAndMsidsList, userJWT) => {
+export const getAudienceDetails = async (uuidsAndMsidsList, userJWT, filter = true) => {
     try {
 
         const audienceDetailsReal = await _getAudienceDetails(uuidsAndMsidsList, userJWT);
-     
-        const filteredAudience = await TargetAudienceDataHelper.filterAudience(Object.values(audienceDetailsReal));
-     
-        return filteredAudience;
+        if (filter) {
+            const filteredAudience = await TargetAudienceDataHelper.filterAudience(Object.values(audienceDetailsReal));
+            return filteredAudience;
+        }
+        return audienceDetailsReal;
     } catch (error) {
         return Promise.reject('backend/target-audience-handler-wrapper.jsw -> getAudienceDetails failed - origin error - ' + error);
     }
@@ -17,4 +18,4 @@ export const getAudienceDetails = async (uuidsAndMsidsList, userJWT) => {
 
 export const getDownloadFileUrlFromArray = (array, fileName) => TargetAudienceDataHelper.getDownloadCsvUrlFromArray(array, fileName);
 
-export const sendEmailToWixUsers = (arrayOfEmails, userJWT,isTestEmail) => arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT,isTestEmail));
+export const sendEmailToWixUsers = (arrayOfEmails, userJWT, isTestEmail) => arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT, isTestEmail));
