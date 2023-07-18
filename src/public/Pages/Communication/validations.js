@@ -29,10 +29,8 @@ export const sendButtonValidations = () => {
 }
 
 const allRequiredFieldsForSendToUsers = (communication) => {
-
     const response = allRequiredFieldsForSendTestEmail(communication) && communication.tested;
     return response;
-
 }
 
 const allRequiredFieldsForSendTestEmail = (communication) => {
