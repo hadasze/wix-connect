@@ -89,12 +89,18 @@ const initPreviewDetailsRepeaterData = async () => {
     try {
         $w('#sentEmailUsersRepeater').data = [];
         let finalSentToAudience = currCommunication.finalSentToAudience;
+
         if (!Array.isArray(finalSentToAudience)) {
-            const userJWT = await getUserJWTToken();
-            const getAudienceDetailsBERes = await getAudienceDetailsBE(Object.values(currCommunication.finalSentToAudience), userJWT, false);
-            finalSentToAudience = getAudienceDetailsBERes.data.marketing;
+            finalSentToAudience = Object.values(currCommunication.finalSentToAudience);
         }
-        $w('#sentEmailUsersRepeater').data = finalSentToAudience;
+
+        const userJWT = await getUserJWTToken();
+        const toCheck = finalSentToAudience.map((item) => {
+            const { uuid, msid } = item;
+            return { uuid, msid };
+        })
+        const getAudienceDetailsBERes = await getAudienceDetailsBE(toCheck, userJWT, false);
+        $w('#sentEmailUsersRepeater').data = getAudienceDetailsBERes.data.marketing;
         $w('#sentEmailUsersRepeater').onItemReady(($item, itemData, index) => {
             $item('#userUUIDButton').label = itemData.uuid;
             $item('#userNameText').text = itemData.site_display_name || '';

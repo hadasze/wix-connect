@@ -56,9 +56,7 @@ export const state = observable({
     setTemplateImg(img) {
         state.communication.template.data.img = img;
     },
-    setTemplateTitle(title) {
-        state.communication.template.data.title = title;
-    },
+   
     setTemplateBody(text) {
         state.communication.template.data.body = text;
     },

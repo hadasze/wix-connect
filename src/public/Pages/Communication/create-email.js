@@ -18,7 +18,6 @@ export const initCreateEmailData = () => {
 }
 
 const setCommunicationData = () => {
-    autorun(() => $w('#titleInput').value = `${state.communication?.template?.data?.title || ''}`);
     autorun(() => $w('#communicationInputTextBox').value = `${state.communication?.template?.data?.body || ''}`);
     autorun(() => $w('#finalGreetingInput').value = `${state.communication?.signature?.finalGreeting || $w('#finalGreetingInput').value}`);
     autorun(() => $w('#fullNameInput').value = `${state.communication?.signature?.fullName || $w('#fullNameInput').value }`);
@@ -61,9 +60,7 @@ const setLeftSidePannelEvents = () => {
         const recievdData = await wixWindow.openLightbox('Setup & Publish – Add Dynamic Value', { 'communication': state.communication, 'BIorigin': 'createEmail' });
         if (recievdData) {
             const value = addDynamicValue(focusedElement, recievdData?.dynamicValue, recievdData?.fallBackValue);
-            if (focusedElement.id === 'titleInput')
-                state.setTemplateTitle(value);
-            else if (focusedElement.id === 'communicationInputTextBox')
+           if (focusedElement.id === 'communicationInputTextBox')
                 state.setTemplateBody(value);
             sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'add_dynamic_values' })
         }
@@ -83,23 +80,14 @@ const setLeftSidePannelEvents = () => {
 }
 
 const setCommunicationTemplateEvents = () => {
-    // $w("#uploadImageButton").onChange(() => {
-    //     uploadImageEvent();
-    // });
-
-    $w('#titleInput').onInput((event) => {
-        state.setTemplateTitle(event.target.value);
-    });
+   
     $w('#communicationInputTextBox').onChange((event) => {
         state.setTemplateBody(event.target.value);
         if (event.target.value === '<p> </p>') {
             state.setTemplateBody(null);
         }
     });
-    $w('#titleInput').onFocus((event) => {
-        focusedElement = $w('#titleInput');
-    });
-
+   
     $w('#communicationInputTextBox').onFocus((event) => {
         focusedElement = $w('#communicationInputTextBox');
     });

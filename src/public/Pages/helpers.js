@@ -51,7 +51,7 @@ export function contains(array, item) {
 }
 
 export const getMustHaveFieldsOfCommunication = (communication) => {
-    const title = communication?.template?.data?.title;
+
     const emailContent = communication?.template?.data?.body;
     const subjectLine = communication?.finalDetails?.subjectLine;
     const previewText = communication?.finalDetails?.previewText;
@@ -61,5 +61,5 @@ export const getMustHaveFieldsOfCommunication = (communication) => {
     const senderName = communication?.finalDetails?.senderName;
     const replyToAddress = communication?.finalDetails?.replyToAddress;
 
-    return { title, emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress }
+    return { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress }
 }

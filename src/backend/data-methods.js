@@ -94,3 +94,10 @@ export const countAllUserCommunications = async () => {
     });
     return toReturn;
 }
+
+export async function duplicateCommunication(communicationID) {
+    const getRes = await wixData.get('Communications', communicationID, dataOptions);
+    const { _id, _owner, _createdDate, _updatedDate, ...rest } = getRes;
+    const insertRes = await wixData.insert('Communications', rest, dataOptions);
+    return insertRes;
+}
