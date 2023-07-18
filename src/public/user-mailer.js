@@ -18,7 +18,6 @@ export async function sendEmails() {
     try {
         const userJWT = await getUserJWTToken();
         const allApprovedUsers = await reciveAllApprovedUsers(communication);
-        state.setSentToCounter(allApprovedUsers.length);
 
         const arrayOfEmails = allApprovedUsers.map((user) => {
             let { title, emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
@@ -44,8 +43,12 @@ export async function sendEmails() {
         const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
         if (res) {
             state.setIsSent(true);
-            state.setFinalAudience(allApprovedUsers);
             state.setDraftStatus(false);
+            state.setSentToCounter(allApprovedUsers.length);
+            state.setFinalAudience(allApprovedUsers.map((item) => {
+                const { uuid, msid } = item;
+                return { uuid, msid };
+            }));
             wixWindow.openLightbox('Setup & Publish – Sent Communication ');
         }
         return res
