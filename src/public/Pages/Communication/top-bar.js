@@ -119,12 +119,15 @@ const setOnClickStepsEvents = () => {
         }
     });
     $w('#sendStepButton').onClick(async (event) => {
+        $w('#sendStepButton').disable();
         Fedops.interactionStarted(Fedops.events.sendEmail);
         sendBi('upperMenu', { 'button_name': 'send_emails' })
         const recivedData = await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { 'communication': state.communication, 'approvedCounter': targetAudienceState.approvedCounter });
         if (recivedData?.buttonName === Text.SEND) {
             await sendEmails();
             Fedops.interactionEnded(Fedops.events.sendEmail);
+        } else {
+            $w('#sendStepButton').enable();
         }
     })
 

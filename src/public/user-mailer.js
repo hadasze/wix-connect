@@ -47,12 +47,13 @@ export async function sendEmails() {
                 const { uuid, msid } = item;
                 return { uuid, msid };
             }));
-            wixWindow.openLightbox('Setup & Publish – Sent Communication ');
+            wixWindow.openLightbox('Setup & Publish – Sent Communication');
         }
-        return res
+        return res;
     } catch (error) {
         console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
-        wixWindow.openLightbox('Setup & Publish - Error sending');
+        await wixWindow.openLightbox('Setup & Publish - Error sending');
+        $w('#sendStepButton').enable();
     }
 }
 
