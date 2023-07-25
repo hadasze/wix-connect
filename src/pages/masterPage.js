@@ -1,6 +1,6 @@
 import wixSite from 'wix-site';
 import { redirectToMyCommunications } from 'public/_utils.js'
-import { validateAccessToken, clearQueryParams } from '../login.js';
+import { validateAccessToken, clearQueryParams } from 'public/login.js';
 
 // redirect from blank home page
 if (wixSite.currentPage.isHomePage) {
