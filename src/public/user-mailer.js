@@ -17,7 +17,7 @@ import { Email } from './Email.js'
 import { DynamicFieldsOptions, TemplatesTypes } from './consts.js';
 import { getMustHaveFieldsOfCommunication } from './Pages/helpers.js';
 import { getAudienceDetails } from './audience-handler.js';
-import { getUserJWTToken } from './_utils.js';
+import { getUserJWTToken, redirectToMyCommunications } from './_utils.js';
 
 
 export async function sendEmails(state) {
@@ -48,8 +48,8 @@ export async function sendEmails(state) {
         const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
         console.log('sendEmails res:', res);
         Fedops.interactionEnded(Fedops.events.sendEmail);
-        wixWindow.openLightbox('Setup & Publish – Sent Communication');
-
+        await wixWindow.openLightbox('Setup & Publish – Sent Communication');
+        await redirectToMyCommunications();
     } catch (error) {
         console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
         await wixWindow.openLightbox('Setup & Publish - Error sending');
