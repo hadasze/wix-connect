@@ -2,10 +2,13 @@ import wixData from 'wix-data';
 import wixUsersBackend from 'wix-users-backend';
 import { getJSON } from 'wix-fetch';
 import { Communication } from './Communication.js';
+import * as Constants from './constants.js';
+import * as Utils from './_utils.js';
 
 import { v4 as uuidv4 } from 'uuid';
 
-const dataOptions = { suppressAuth: true, consistentRead: true }
+const dataOptions = { suppressAuth: true, consistentRead: true };
+const defaultLimit = 1000;
 
 export function getCommunication(id) {
     return wixData.get('Communications', id, dataOptions);
@@ -75,8 +78,7 @@ export async function getContactedEmailByMemberID(memberID) {
 }
 
 export const countAllUserCommunications = async () => {
-    const options = { count: true }
-    const allCurrentUserCommunications = await getAllUserCommunications({}, {}, 1000, 0);
+    const allCurrentUserCommunications = await getAllUserCommunications({}, {}, defaultLimit, 0);
     // all, draft, archive, sent, templates
     const toReturn = [0, 0, 0, 0, 0];
 
@@ -100,4 +102,56 @@ export async function duplicateCommunication(communicationID) {
     const { _id, _owner, _createdDate, _updatedDate, ...rest } = getRes;
     const insertRes = await wixData.insert('Communications', rest, dataOptions);
     return insertRes;
+}
+
+export async function getAllRecentlySentUsers(filters) {
+    let query = wixData.query(Constants.Collections.SentUsers);
+    if (filters?.date?.lt) {
+        query = query.lt('_createdDate', filters.date.lt);
+    }
+
+    return await retriveAllItems(query, defaultLimit);
+}
+
+export async function clearSentUsers() {
+    const currentDate = new Date();
+    const dateBeforeXDays = currentDate.setDate(currentDate.getDate() - Constants.DELETE_SENT_USERS_AFTER_X_DAYS);
+
+    const filters = {
+        date: {
+            lt: new Date(dateBeforeXDays)
+        }
+    }
+    const allRecentlySentUsers = await getAllRecentlySentUsers(filters);
+
+    const toDelete = allRecentlySentUsers.map(item => item._id);
+    if (toDelete.length > 0) {
+
+        const chunks = Utils.chunkArray(toDelete, defaultLimit);
+        const promises = chunks.map(chunk => bulkRemoveSentUsers(chunk));
+        return await Promise.all(promises);
+    }
+
+    return;
+}
+
+export const bulkRemoveSentUsers = (array) => wixData.bulkRemove(Constants.Collections.SentUsers, array);
+
+export async function addUsersToSentList(array) {
+    const chunks = Utils.chunkArray(array, defaultLimit);
+    const promises = chunks.map(chunk => wixData.bulkInsert(Constants.Collections.SentUsers, chunk, dataOptions));
+    return await Promise.all(promises);
+}
+
+async function retriveAllItems(query, limit) {
+
+    const queryRes = await query.limit(limit).find(dataOptions);
+
+    const queryPromise = [];
+    for (let index = 1; index < queryRes.totalPages; index++)
+        queryPromise.push(query.skip(limit * index).find(dataOptions));
+    const queryPromiseRes = await Promise.all(queryPromise);
+
+    const allItems = queryPromiseRes.map(queryRes => queryRes.items)
+    return [...queryRes.items, ...allItems].flat();
 }

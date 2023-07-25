@@ -5,7 +5,7 @@ export const templates = {
     defaultTemplate: 'blast_marketing_templates_em-marketing-tool-template-1_25122022_en'
 }
 
-export async function sendEmailToWixUsers(uuid, body, userJWT, isTestEmail) {
+export async function sendEmailToWixUsers(uuid, body, userJWT) {
     try {
 
         if (!uuid)
@@ -27,7 +27,6 @@ export async function sendEmailToWixUsers(uuid, body, userJWT, isTestEmail) {
         });
         
         if (res.ok) {
-           
             return await res.json();
         }
         throw new Error(await res.text());

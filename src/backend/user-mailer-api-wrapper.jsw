@@ -1,0 +1,62 @@
+import * as UserMailer from './user-mailer-api.js';
+import * as DataMethods from './data-methods.js';
+import * as Utils from './_utils.js';
+
+export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) => {
+    try {
+
+        let doNotSendList = [];
+
+        if (!isTestEmail) {
+            const allRecentlySentUsers = await DataMethods.getAllRecentlySentUsers();
+            doNotSendList = allRecentlySentUsers.map((item) => item._id);
+            arrayOfEmails = Utils.uniqueArrayOfObjByKey(arrayOfEmails, 'userId');
+        }
+
+        const usersIds = arrayOfEmails.map((email) => {
+            return { _id: email.userId }
+        });
+
+        if (!isTestEmail) {
+            await DataMethods.addUsersToSentList(usersIds);
+        }
+
+        const communicationId = arrayOfEmails[0].body.template.params.communicationId;
+        const communication = await DataMethods.getCommunication(communicationId);
+
+        if (!isTestEmail) {
+            if (communication.sent || communication.processing)
+                throw new Error('Communication already sent');
+            else {
+                communication.processing = true;
+                DataMethods.updateCommunication(communication);
+            }
+        }
+
+        console.log(`Sending emails to users, communicationId: ${communicationId}, arrayOfEmails: ${JSON.stringify(arrayOfEmails)}`);
+        arrayOfEmails.forEach((email) => !(doNotSendList.includes(email.userId)) && UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT));
+
+        if (!isTestEmail) {
+            communication.sent = true;
+            communication.draft = false;
+            communication.processing = false;
+            communication.sentToCounter = usersIds.length;
+            const onlyMSIDUUID = arrayOfEmails.map((email) => {
+                const { userId, msid } = email;
+                return { uuid: userId, msid };
+            });
+            communication.finalSentToAudience = onlyMSIDUUID;
+        } else {
+            communication.tested = true;
+        }
+
+        const updatedCommunication = await DataMethods.updateCommunication(communication);
+        return updatedCommunication;
+
+    } catch (error) {
+        const communication = await DataMethods.getCommunication(communicationId);
+        communication.processing = true;
+        DataMethods.updateCommunication(communication);
+        return Promise.reject('backend -> user-mailer-api-wrapper.jsw -> sendEmailToWixUsers failed -origin error- ' + error);
+    }
+}
