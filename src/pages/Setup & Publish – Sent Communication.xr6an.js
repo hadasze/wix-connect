@@ -1,4 +1,3 @@
-import wixLocation from "wix-location";
 import { redirectToMyCommunications } from 'public/_utils.js';
 
 $w.onReady(function () {
