@@ -11,6 +11,7 @@ $w.onReady(function () {
     const communication = state.communication;
     $w('#sendBtn').onClick((event) => {
         $w('#cancelBtn').disable();
+        $w('#sendBtn').disable();
         if ($w('#testEmailsInput').valid) {
             $w('#emailIsNotValidToast').hide();
             const email = $w('#testEmailsInput').value;
@@ -19,6 +20,7 @@ $w.onReady(function () {
             sendTestEmail(state, email);
         } else {
             $w('#emailIsNotValidToast').show();
+            $w('#sendBtn').enable();
         }
     })
     $w('#cancelBtn').onClick((event) => {
