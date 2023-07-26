@@ -1,5 +1,9 @@
 import { mediaManager } from 'wix-media-backend';
+
+import { getAllRecentlySentUsers} from './data-methods.js';
+
 const { Parser } = require('json2csv');
+const allRecentlySentUsersPromise = getAllRecentlySentUsers();
 
 export async function getDownloadCsvUrlFromArray(array, fileName) {
     const fields = Object.keys(array[0]);
@@ -59,7 +63,7 @@ export async function filterAudience(audienceDetails) {
                     rejected.push(currUser);
                 } else if (isWaitingForApproval(currUser)) {
                     needAprroval.push(currUser);
-                } else if (isRejectedUser(currUser)) {
+                } else if (await isRejectedUser(currUser)) {
                     rejected.push(currUser);
                 } else {
                     approved.push(currUser);
@@ -73,8 +77,8 @@ export async function filterAudience(audienceDetails) {
 
 }
 
-export function isRejectedUser(user) {
-    return unSubscribed(user) || isB2B(user) || isChannels(user) || contactedLately(user);
+export async function isRejectedUser(user) {
+    return unSubscribed(user) || isB2B(user) || isChannels(user) || await contactedLately(user);
 }
 
 const isWaitingForApproval = (user) => isManaged(user);
@@ -86,7 +90,7 @@ const isChannels = (user) => user?.channels_ind;
 const isB2B = (user) => user?.b2b_ind;
 const isManaged = (user) => user?.managed_ind;
 
-const contactedLately = (user) => user?.contacted_lately_ind;
+const contactedLately = async (user) => user?.contacted_lately_ind || await userExistInSentUsersCollection(user.uuid);
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
 
 
@@ -101,4 +105,9 @@ function stringToBoolean(obj) {
 
     return toReturn;
 
+}
+
+async function userExistInSentUsersCollection(uuid) {
+    const allRecentlySentUsers = await allRecentlySentUsersPromise;
+    return allRecentlySentUsers.includes(uuid);
 }

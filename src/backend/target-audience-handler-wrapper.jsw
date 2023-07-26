@@ -1,5 +1,4 @@
 import { getAudienceDetails as _getAudienceDetails } from './marketing-api.js';
-import * as UserMailer from './user-mailer-api.js';
 import * as TargetAudienceDataHelper from './target-audience-handler.js'
 
 export const getAudienceDetails = async (uuidsAndMsidsList, userJWT, filter = true) => {
