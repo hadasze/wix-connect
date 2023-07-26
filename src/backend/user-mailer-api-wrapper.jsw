@@ -6,18 +6,19 @@ export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) =
     try {
 
         let doNotSendList = [];
+        let usersIds = [];
 
         if (!isTestEmail) {
             const allRecentlySentUsers = await DataMethods.getAllRecentlySentUsers();
             doNotSendList = allRecentlySentUsers.map((item) => item._id);
             arrayOfEmails = Utils.uniqueArrayOfObjByKey(arrayOfEmails, 'userId');
-        }
 
-        const usersIds = arrayOfEmails.map((email) => {
-            return { _id: email.userId }
-        });
 
-        if (!isTestEmail) {
+            usersIds = arrayOfEmails.map((email) => {
+                return { _id: email.userId }
+            });
+
+
             await DataMethods.addUsersToSentList(usersIds);
         }
 

@@ -26,6 +26,7 @@ export async function sendEmails(state) {
     try {
 
         const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers(communication)]);
+        console.log({ allApprovedUsers });
         state.setTemplateType(TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = allApprovedUsers.map((user) => {
             let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
@@ -46,6 +47,7 @@ export async function sendEmails(state) {
             });
             return { userId: user.uuid, msid: user.msid, body: email.createBody() };
         });
+        console.log({ arrayOfEmails });
         const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
         console.log('sendEmails res:', res);
         Fedops.interactionEnded(Fedops.events.sendEmail);
