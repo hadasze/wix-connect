@@ -32,7 +32,7 @@ export async function sendEmails(state) {
             let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
 
             ({ emailContent, subjectLine, previewText } = evaluateDynamicVariabels(state, user, emailContent, subjectLine, previewText));
-
+            console.log('sendEmails:', { emailContent, subjectLine, previewText });
             const email = new Email({
                 templateName: communication.template.type,
                 senderName,
@@ -113,7 +113,7 @@ const evaluateDynamicVariabels = (state, user, emailContent, subjectLine, previe
             string = string.replace(new RegExp('{' + DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
             return string;
         });
-        return { emailContent: evaluetedStrings[1], subjectLine: evaluetedStrings[2], previewText: evaluetedStrings[3] }
+        return { emailContent: evaluetedStrings[0], subjectLine: evaluetedStrings[1], previewText: evaluetedStrings[2] }
     } catch (error) {
         throw new Error('public -> user-mailer.js -> evaluateDynamicVariabels failed - origin error - ' + error);
     }
