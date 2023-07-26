@@ -21,6 +21,7 @@ import { getUserJWTToken, redirectToMyCommunications } from './_utils.js';
 
 
 export async function sendEmails(state) {
+    console.log('sendEmails state: ', state);
     const communication = state.communication;
     try {
 

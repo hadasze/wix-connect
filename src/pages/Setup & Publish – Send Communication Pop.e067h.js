@@ -9,6 +9,7 @@ import { sendEmails } from 'public/user-mailer';
 
 $w.onReady(function () {
     const { state, approvedCounter } = wixWindow.lightbox.getContext();
+    console.log({ state, approvedCounter });
     $w('#sendCommunicationTitleText').text = Text.SEND_POPUP_TITLE(approvedCounter);
 
     if (+approvedCounter == 0) {
