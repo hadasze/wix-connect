@@ -25,13 +25,13 @@ export async function updateTargetAudience(item) {
     }
 }
 
-const shouldUpadteAudienceCSV = (item) => item.targetAudienceCsv && !item.targetAudience
+const shouldUpadteAudienceCSV = (item) => item.targetAudienceCsv && !item.targetAudience;
 
 async function convertUrlToCsvData(url) {
     try {
         const reqRes = await request(url);
         const body = reqRes.body;
-        const csvRes = await csv().fromString(body)
+        const csvRes = await csv().fromString(body);
         return csvRes
     } catch (error) {
         return Promise.reject('backend/data-hooks-helpers/target-audience-hooks-helper.js -> convertUrlToCsvData failed - origin error - ' + error);

@@ -17,3 +17,15 @@ export function replaceID(array) {
         return { _id: uuidv4(), uuid: _id, ...rest };
     })
 }
+
+export function chunkArray(array, chunkSize) {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+
+export function uniqueArrayOfObjByKey(arrayOfObj, key) {
+    return [...new Map(arrayOfObj.map(item => [item[key], item])).values()];
+}

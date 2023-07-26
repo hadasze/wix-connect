@@ -7,7 +7,6 @@ import { autorun } from 'mobx';
 
 import { state } from './state-management.js';
 import { disbaleCurrentButton } from '../helpers.js';
-import { sendEmails, sendTestEmail } from '../../user-mailer';
 import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, CommunicationStatesByOrder } from '../../consts.js';
 import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
@@ -120,26 +119,23 @@ const setOnClickStepsEvents = () => {
     });
     $w('#sendStepButton').onClick(async (event) => {
         $w('#sendStepButton').disable();
-        Fedops.interactionStarted(Fedops.events.sendEmail);
+        
         sendBi('upperMenu', { 'button_name': 'send_emails' })
-        const recivedData = await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { 'communication': state.communication, 'approvedCounter': targetAudienceState.approvedCounter });
-        if (recivedData?.buttonName === Text.SEND) {
-            await sendEmails();
-            Fedops.interactionEnded(Fedops.events.sendEmail);
-        } else {
-            $w('#sendStepButton').enable();
-        }
+        await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { state, 'approvedCounter': targetAudienceState.approvedCounter });
+        $w('#sendStepButton').enable();
     })
 
     $w('#sendTestButton').onClick(async (event) => {
-        Fedops.interactionStarted(Fedops.events.sendTestEmail);
+
         sendBi('upperMenu', { 'button_name': 'send_test_email' })
-        const recivedData = await wixWindow.openLightbox('Setup & Publish - Send Test Email Popup', { 'communication': state.communication });
-        if (recivedData?.email) {
-            sendTestEmail(recivedData.email, state.communication);
-            $w('#hoverZoneSendTooltip').hide();
-            Fedops.interactionEnded(Fedops.events.sendTestEmail);
-        }
+
+        // const recivedData =
+        await wixWindow.openLightbox('Setup & Publish - Send Test Email Popup', state);
+        // if (recivedData?.email) {
+        //     sendTestEmail(recivedData.email, state.communication);
+        //     $w('#hoverZoneSendTooltip').hide();
+        //     Fedops.interactionEnded(Fedops.events.sendTestEmail);
+        // }
     })
 }
 

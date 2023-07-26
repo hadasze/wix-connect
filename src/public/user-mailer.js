@@ -1,28 +1,35 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
 
-import * as TargetAudience from 'backend/target-audience-handler-wrapper.jsw';
+import * as Fedops from './wix-fedops-api.js';
+
+// @ts-ignore
 import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
+// @ts-ignore
+import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
+
+
 
 import { toJS } from 'mobx';
 
 import { Email } from './Email.js'
-import { state } from './Pages/Communication/state-management.js';
+// import { state } from './Pages/Communication/state-management.js';
 import { DynamicFieldsOptions, TemplatesTypes } from './consts.js';
 import { getMustHaveFieldsOfCommunication } from './Pages/helpers.js';
 import { getAudienceDetails } from './audience-handler.js';
-import { getUserJWTToken } from './_utils.js';
+import { getUserJWTToken, redirectToMyCommunications } from './_utils.js';
 
 
-export async function sendEmails() {
+export async function sendEmails(state) {
     const communication = state.communication;
     try {
-        const userJWT = await getUserJWTToken();
-        const allApprovedUsers = await reciveAllApprovedUsers(communication);
+
+        const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers(communication)]);
         state.setTemplateType(TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = allApprovedUsers.map((user) => {
             let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
 
-            ({ emailContent, subjectLine, previewText } = evaluateDynamicVariabels(user, emailContent, subjectLine, previewText));
+            ({ emailContent, subjectLine, previewText } = evaluateDynamicVariabels(state, user, emailContent, subjectLine, previewText));
 
             const email = new Email({
                 templateName: communication.template.type,
@@ -36,35 +43,29 @@ export async function sendEmails() {
                 positionTitle: positionTitle || '',
                 communicationId: communication._id
             });
-            return { userId: user.uuid, body: email.createBody() };
+            return { userId: user.uuid, msid: user.msid, body: email.createBody() };
         });
-        const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
-        if (res) {
-            state.setIsSent(true);
-            state.setDraftStatus(false);
-            state.setSentToCounter(allApprovedUsers.length);
-            state.setFinalAudience(allApprovedUsers.map((item) => {
-                const { uuid, msid } = item;
-                return { uuid, msid };
-            }));
-            wixWindow.openLightbox('Setup & Publish – Sent Communication');
-        }
-        return res;
+        const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
+        console.log('sendEmails res:', res);
+        Fedops.interactionEnded(Fedops.events.sendEmail);
+        await wixWindow.openLightbox('Setup & Publish – Sent Communication');
+        await redirectToMyCommunications();
     } catch (error) {
         console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
         await wixWindow.openLightbox('Setup & Publish - Error sending');
+        // @ts-ignore
         $w('#sendStepButton').enable();
     }
 }
 
-export const sendTestEmail = async (emailAddress, communication) => {
+export const sendTestEmail = async (state, emailAddress) => {
+    console.log('sendTestEmail', { state });
     try {
         state.setTemplateType(TemplatesTypes.DefaultTempalte);
-        const uuid = await getUuidByEmail(emailAddress);
-        const userJWT = await getUserJWTToken();
-        let { emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+        const [userJWT, uuid] = await Promise.all([getUserJWTToken(), getUuidByEmail(emailAddress)]);
+        let { emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(state.communication);
         const email = new Email({
-            templateName: communication.template.type,
+            templateName: state.communication.template.type,
             senderName,
             replyTo: replyToAddress,
             subjectLine,
@@ -73,20 +74,20 @@ export const sendTestEmail = async (emailAddress, communication) => {
             emailcontent2: finalGreeting || '',
             firstLastName: fullName || '',
             positionTitle: positionTitle || '',
-            communicationId: communication._id
+            communicationId: state.communication._id
         });
         const arrayOfEmail = [{ userId: uuid, body: email.createBody() }];
-        const res = await TargetAudience.sendEmailToWixUsers(arrayOfEmail, userJWT, true);
+        const res = await UserMailer.sendEmailToWixUsers(arrayOfEmail, userJWT, true);
+        Fedops.interactionEnded(Fedops.events.sendTestEmail);
+        console.log('sendTestEmail res:', res);
 
-        if (res) {
-            state.setIsTested(true);
+        state.setIsTested(true);
 
-            wixWindow.openLightbox('Setup & Publish - Send Test Toast');
-        }
+        wixWindow.openLightbox('Setup & Publish - Send Test Toast');
 
     } catch (error) {
         wixWindow.openLightbox('Edit Email - Exit Warning Popup');
-        return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error)
+        return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error);
     }
 }
 
@@ -100,7 +101,7 @@ export const reciveAllApprovedUsers = async (communication) => {
     }
 }
 
-const evaluateDynamicVariabels = (user, emailContent, subjectLine, previewText) => {
+const evaluateDynamicVariabels = (state, user, emailContent, subjectLine, previewText) => {
     try {
         const strings = [emailContent, subjectLine, previewText];
         const evaluetedStrings = strings.map(string => {

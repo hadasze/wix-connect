@@ -80,6 +80,7 @@ export const setCommunicationMoreActionsEvents = () => {
 export const reuseCommunication = async (communication) => {
     const reused = resetCommunication(communication);
     reused.draft = true;
+    reused.tested = false;
     try {
         const saved = await saveCommunication(reused);
         sendBi('campainOptions', { 'campaignId': communication._id, 'button_name': 'reuse' })

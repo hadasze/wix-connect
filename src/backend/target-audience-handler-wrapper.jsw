@@ -18,4 +18,3 @@ export const getAudienceDetails = async (uuidsAndMsidsList, userJWT, filter = tr
 
 export const getDownloadFileUrlFromArray = (array, fileName) => TargetAudienceDataHelper.getDownloadCsvUrlFromArray(array, fileName);
 
-export const sendEmailToWixUsers = (arrayOfEmails, userJWT, isTestEmail) => arrayOfEmails.map((email) => UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT, isTestEmail));

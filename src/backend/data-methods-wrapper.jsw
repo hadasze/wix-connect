@@ -18,3 +18,4 @@ export const getUuidByEmail = (email) => DataMethods.getUuidByEmail(email);
 
 export const getContactedEmailByMemberID = (memberID) => DataMethods.getContactedEmailByMemberID(memberID);
 
+export const getAllRecentlySentUsers = (filters) => DataMethods.getAllRecentlySentUsers(filters);
