@@ -149,7 +149,7 @@ async function retriveAllItems(query, limit) {
 
     const queryPromise = [];
     for (let index = 1; index < queryRes.totalPages; index++)
-        queryPromise.push(query.skip(limit * index).find(dataOptions));
+        queryPromise.push(query.skip(limit * index).limit(limit).find(dataOptions));
     const queryPromiseRes = await Promise.all(queryPromise);
 
     const allItems = queryPromiseRes.map(queryRes => queryRes.items)
