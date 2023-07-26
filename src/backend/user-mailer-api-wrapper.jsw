@@ -54,6 +54,7 @@ export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) =
         return updatedCommunication;
 
     } catch (error) {
+        const communicationId = arrayOfEmails[0].body.template.params.communicationId;
         const communication = await DataMethods.getCommunication(communicationId);
         communication.processing = true;
         DataMethods.updateCommunication(communication);
