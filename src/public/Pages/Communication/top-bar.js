@@ -7,13 +7,14 @@ import { autorun } from 'mobx';
 
 import { state } from './state-management.js';
 import { disbaleCurrentButton } from '../helpers.js';
-import { AllCompuseEmailTopBarButton, AllEditTemplateBarButton, Text, CommunicationStatesByOrder } from '../../consts.js';
 import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
 import { redirectToMyCommunications } from '../../_utils.js';
 
 import * as previewHandler from './preview.js';
 import * as Fedops from '../../wix-fedops-api.js';
+import * as constants from '../../consts.js';
+
 
 export const initTopBarActions = () => {
     setOnClickStepsEvents();
@@ -75,7 +76,7 @@ const setDisabledSendButtonTooltip = () => {
 }
 
 const setOnClickStepsEvents = () => {
-    const buttonslist = state.communication?.isTemplate ? AllEditTemplateBarButton : AllCompuseEmailTopBarButton;
+    const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
     $w('#addDetailsButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('AddDetailsState');
         disbaleCurrentButton('addDetailsButton', buttonslist);
@@ -114,28 +115,19 @@ const setOnClickStepsEvents = () => {
         if (state.communication.sent) {
             redirectToMyCommunications();
         } else {
-            wixWindow.openLightbox('Edit Email - Exit Warning Popup');
+            wixWindow.openLightbox(constants.Lightboxs.exitWarning);
         }
     });
     $w('#sendStepButton').onClick(async (event) => {
         $w('#sendStepButton').disable();
-        
         sendBi('upperMenu', { 'button_name': 'send_emails' })
-        await wixWindow.openLightbox('Setup & Publish – Send Communication Pop', { state, 'approvedCounter': targetAudienceState.approvedCounter });
+        await wixWindow.openLightbox(constants.Lightboxs.sendCommunication, { state, 'approvedCounter': targetAudienceState.approvedCounter });
         $w('#sendStepButton').enable();
     })
 
     $w('#sendTestButton').onClick(async (event) => {
-
         sendBi('upperMenu', { 'button_name': 'send_test_email' })
-
-        // const recivedData =
-        await wixWindow.openLightbox('Setup & Publish - Send Test Email Popup', state);
-        // if (recivedData?.email) {
-        //     sendTestEmail(recivedData.email, state.communication);
-        //     $w('#hoverZoneSendTooltip').hide();
-        //     Fedops.interactionEnded(Fedops.events.sendTestEmail);
-        // }
+        await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);       
     })
 }
 
@@ -153,15 +145,15 @@ const setStepsOfCreationMultistateBox = () => {
     if (wixLocation.query?.stepOfCreation) {
         $w("#stepsOfCreationMultistateBox").changeState(wixLocation.query.stepOfCreation);
     } else {
-        addStateToParam(CommunicationStatesByOrder[0]);
+        addStateToParam(constants.CommunicationStatesByOrder[0]);
     }
 }
 
 const setClickNextButton = () => {
-    const buttonslist = state.communication?.isTemplate ? AllEditTemplateBarButton : AllCompuseEmailTopBarButton;
+    const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
     $w('#nextStepButton').onClick((event) => {
         const nextStepIndex = getNextStepIndex();
-        $w('#stepsOfCreationMultistateBox').changeState(CommunicationStatesByOrder[nextStepIndex]);
+        $w('#stepsOfCreationMultistateBox').changeState(constants.CommunicationStatesByOrder[nextStepIndex]);
         disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist);
         handleNextButton(buttonslist[nextStepIndex]);
         sendBi('upperMenu', { 'button_name': 'next' });
@@ -186,8 +178,8 @@ const handleNextButton = (currStep) => {
 
 const getNextStepIndex = () => {
     const currentStep = $w('#stepsOfCreationMultistateBox').currentState.id;
-    for (let i = 0; i < CommunicationStatesByOrder.length - 1; i++) {
-        if (CommunicationStatesByOrder[i] === currentStep) {
+    for (let i = 0; i < constants.CommunicationStatesByOrder.length - 1; i++) {
+        if (constants.CommunicationStatesByOrder[i] === currentStep) {
             return i + 1
         }
     }

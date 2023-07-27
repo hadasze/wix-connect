@@ -1,24 +1,19 @@
 // @ts-ignore
 import wixWindow from 'wix-window';
-
-import * as Fedops from './wix-fedops-api.js';
-
 // @ts-ignore
 import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
 // @ts-ignore
 import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
 
-
-
 import { toJS } from 'mobx';
 
 import { Email } from './Email.js'
-// import { state } from './Pages/Communication/state-management.js';
-import { DynamicFieldsOptions, TemplatesTypes } from './consts.js';
 import { getMustHaveFieldsOfCommunication } from './Pages/helpers.js';
 import { getAudienceDetails } from './audience-handler.js';
 import { getUserJWTToken, redirectToMyCommunications } from './_utils.js';
 
+import * as constants from './consts.js';
+import * as Fedops from './wix-fedops-api.js';
 
 export async function sendEmails(state) {
     console.log('sendEmails state: ', state);
@@ -27,7 +22,7 @@ export async function sendEmails(state) {
 
         const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers(communication)]);
         console.log({ allApprovedUsers });
-        state.setTemplateType(TemplatesTypes.DefaultTempalte);
+        state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = allApprovedUsers.map((user) => {
             let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
 
@@ -51,11 +46,11 @@ export async function sendEmails(state) {
         const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
         console.log('sendEmails res:', res);
         Fedops.interactionEnded(Fedops.events.sendEmail);
-        await wixWindow.openLightbox('Setup & Publish – Sent Communication');
+        await wixWindow.openLightbox(constants.Lightboxs.sentCommunication);
         await redirectToMyCommunications();
     } catch (error) {
         console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
-        await wixWindow.openLightbox('Setup & Publish - Error sending');
+        await wixWindow.openLightbox(constants.Lightboxs.errorSending);
         // @ts-ignore
         $w('#sendStepButton').enable();
     }
@@ -64,7 +59,7 @@ export async function sendEmails(state) {
 export const sendTestEmail = async (state, emailAddress) => {
     console.log('sendTestEmail', { state });
     try {
-        state.setTemplateType(TemplatesTypes.DefaultTempalte);
+        state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
         const [userJWT, uuid] = await Promise.all([getUserJWTToken(), getUuidByEmail(emailAddress)]);
         let { emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(state.communication);
         const email = new Email({
@@ -86,10 +81,10 @@ export const sendTestEmail = async (state, emailAddress) => {
 
         state.setIsTested(true);
 
-        wixWindow.openLightbox('Setup & Publish - Send Test Toast');
+        wixWindow.openLightbox(constants.Lightboxs.sendTestToast);
 
     } catch (error) {
-        wixWindow.openLightbox('Edit Email - Exit Warning Popup');
+        wixWindow.openLightbox(constants.Lightboxs.exitWarning);
         return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error);
     }
 }
@@ -109,8 +104,8 @@ const evaluateDynamicVariabels = (state, user, emailContent, subjectLine, previe
         const strings = [emailContent, subjectLine, previewText];
         const evaluetedStrings = strings.map(string => {
             if (!string) return;
-            string = string.replace(new RegExp('{' + DynamicFieldsOptions.BusinessName + '}', "g"), user.site_display_name || state.communication.dynamicVaribels.businessName);
-            string = string.replace(new RegExp('{' + DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
+            string = string.replace(new RegExp('{' + constants.DynamicFieldsOptions.BusinessName + '}', "g"), user.site_display_name || state.communication.dynamicVaribels.businessName);
+            string = string.replace(new RegExp('{' + constants.DynamicFieldsOptions.UserWebsiteURL + '}', "g"), user.url || state.communication.dynamicVaribels.userWebsiteUrl);
             return string;
         });
         return { emailContent: evaluetedStrings[0], subjectLine: evaluetedStrings[1], previewText: evaluetedStrings[2] }

@@ -1,10 +1,13 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
+
 import { autorun } from 'mobx';
 import { state } from './state-management.js';
-import { targetAudienceState } from '../Communication/Target-Audience/target-audience.js';
+import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { addDynamicValue } from '../helpers.js';
-import { Text } from '../../consts.js';
 import { sendBi } from '../../BI/biModule.js';
+
+import * as constants from '../../consts.js';
 
 let focusedElement = $w('#communicationInputTextBox');
 
@@ -20,11 +23,11 @@ export const initCreateEmailData = () => {
 const setCommunicationData = () => {
     autorun(() => $w('#communicationInputTextBox').value = `${state.communication?.template?.data?.body || ''}`);
     autorun(() => $w('#finalGreetingInput').value = `${state.communication?.signature?.finalGreeting || $w('#finalGreetingInput').value}`);
-    autorun(() => $w('#fullNameInput').value = `${state.communication?.signature?.fullName || $w('#fullNameInput').value }`);
+    autorun(() => $w('#fullNameInput').value = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
     autorun(() => $w('#jobTitleInput').value = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
-    autorun(() => $w('#signatureFullName').text = `${state.communication?.signature?.fullName || $w('#fullNameInput').value }`);
+    autorun(() => $w('#signatureFullName').text = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
     autorun(() => $w('#signatureJobTitle').text = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
-    autorun(() => $w('#overviewCountMailText').text = Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter));
+    autorun(() => $w('#overviewCountMailText').text = constants.Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter));
 }
 
 const setLeftSidePannelEvents = () => {
@@ -57,10 +60,10 @@ const setLeftSidePannelEvents = () => {
     });
 
     $w('#addDynamicValueButton').onClick(async (event) => {
-        const recievdData = await wixWindow.openLightbox('Setup & Publish – Add Dynamic Value', { 'communication': state.communication, 'BIorigin': 'createEmail' });
+        const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'createEmail' });
         if (recievdData) {
             const value = addDynamicValue(focusedElement, recievdData?.dynamicValue, recievdData?.fallBackValue);
-           if (focusedElement.id === 'communicationInputTextBox')
+            if (focusedElement.id === 'communicationInputTextBox')
                 state.setTemplateBody(value);
             sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'add_dynamic_values' })
         }
@@ -80,34 +83,15 @@ const setLeftSidePannelEvents = () => {
 }
 
 const setCommunicationTemplateEvents = () => {
-   
+
     $w('#communicationInputTextBox').onChange((event) => {
         state.setTemplateBody(event.target.value);
         if (event.target.value === '<p> </p>') {
             state.setTemplateBody(null);
         }
     });
-   
+
     $w('#communicationInputTextBox').onFocus((event) => {
         focusedElement = $w('#communicationInputTextBox');
     });
 }
-
-// ---------------------- helpers ----------------------
-
-// function uploadImageEvent() {
-//     if ($w("#uploadImageButton").value.length > 0) {
-//         $w("#uploadImageButton").uploadFiles()
-//             .then((uploadedFiles) => {
-//                 uploadedFiles.forEach(uploadedFile => {
-//                     $w('#headerImage').src = uploadedFile.fileUrl;
-//                     state.setTemplateImg(uploadedFile.fileUrl)
-//                 })
-//             })
-//             .catch((uploadError) => {
-//                 console.error(uploadError.errorCode, uploadError.errorDescription);
-//             });
-//     } else { // Site visitor clicked button but didn't choose a file
-//         console.warn("Please choose a file to upload.")
-//     }
-// }

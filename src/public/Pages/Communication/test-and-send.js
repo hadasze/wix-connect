@@ -1,8 +1,12 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
 import { observable, autorun } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { addDynamicValue } from 'public/Pages/helpers.js';
+
+import { state } from './state-management.js';
+import { addDynamicValue } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
+
+import * as constants from '../../consts.js';
 
 const counters = observable({
     subjectLineCounter: $w('#subjectLineInput').value.length,
@@ -70,7 +74,7 @@ const setSubjectLineActions = () => {
         if ($w('#subjectLineOptionsBox').collapsed && clicked) $w('#subjectLineOptionsBox').expand();
     })
     $w('#addDynamicValueToSubjectLineBtn').onClick(async (event) => {
-        const recievdData = await wixWindow.openLightbox('Setup & Publish – Add Dynamic Value', { 'communication': state.communication, 'BIorigin': 'testAndSend' });
+        const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#subjectLineInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setSubjectLine(value);
         sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'button_name': 'add_dynamic_value' })
@@ -92,7 +96,7 @@ const setPreviewTextActions = () => {
         if ($w('#previewTextOptionsBox').collapsed && clicked) $w('#previewTextOptionsBox').expand();
     })
     $w('#addDynamicValuePreviewTextBtn').onClick(async (event) => {
-        const recievdData = await wixWindow.openLightbox('Setup & Publish – Add Dynamic Value', { 'communication': state.communication, 'BIorigin': 'testAndSend' });
+        const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#previewTextInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setPreviewText(value);
         sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'button_name': 'add_dynamic_value' })

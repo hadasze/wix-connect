@@ -7,11 +7,11 @@ import { toJS } from 'mobx';
 
 import { state } from '../state-management.js';
 import { getAudienceDetails } from '../../../audience-handler.js';
-import { AllAudienceRepeaterButtons, csvErrors } from '../../../consts.js';
 import { sendBi } from '../../../BI/biModule.js';
 import { CommunicationPage as Comp, WC } from '../../../components.js';
 
 import * as Fedops from '../../../wix-fedops-api.js';
+import * as constants from '../../../consts.js';
 
 // @ts-ignore
 import { getDownloadFileUrlFromArray } from 'backend/target-audience-handler-wrapper.jsw';
@@ -41,7 +41,7 @@ const replaceCsvFileEvent = async () => {
     Comp.replaceCsvFile.onClick(async (event) => {
         Fedops.interactionStarted(Fedops.events.replaceCSV);
         try {
-            const recivedData = await wixWindow.openLightbox('Target Audience - Replace CSV Warning Po', { "communication": state.communication });
+            const recivedData = await wixWindow.openLightbox(constants.Lightboxs.replaceCSV, { "communication": state.communication });
             if (!recivedData?.uploadedFiles) {
                 return
             }
@@ -74,7 +74,7 @@ const replaceCsvFileEvent = async () => {
 
 const prepareUIAfterReplacingFile = (fileName) => {
     Comp.targetAudienceContent.changeState(Comp.States.TargetAudienceContentLoading) && Comp.csvDetailsAndActionsBox.hide();
-    AllAudienceRepeaterButtons.forEach((button) => {
+    constants.AllAudienceRepeaterButtons.forEach((button) => {
         WC(button).enable();
     })
     state.setTargetAudienceCSVFileName(fileName)
@@ -99,7 +99,7 @@ const setUploadCSVEvent = () => {
 
 
             } else {
-                wixWindow.openLightbox('CSV File Error', { communication: state.communication, reason: csvErrors.notValidFile });
+                wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication: state.communication, reason: constants.csvErrors.notValidFile });
             }
         } catch (error) {
             Comp.targetAudienceContent.changeState(Comp.States.TargetAudienceContentUpload) && Comp.csvDetailsAndActionsBox.hide();

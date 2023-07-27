@@ -5,7 +5,7 @@ import * as DataHandler from 'backend/data-methods-wrapper.jsw';
 import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
-import { csvFileLimit, csvErrors } from './consts.js'
+import * as constants from './consts.js';
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
 
 import * as Utils from './_utils.js';
@@ -53,7 +53,7 @@ export async function getAudienceDetails(payload) {
     } else {
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
-        wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
+        wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { "communication": state.communication, reason: validateRes.reason });
     }
 }
 
@@ -70,11 +70,11 @@ export async function getSentCommunications() {
 function validateFile(payload) {
 
     if (!Utils.isArray(payload)) {
-        return { valid: false, reason: csvErrors.notValidFile };
+        return { valid: false, reason: constants.csvErrors.notValidFile };
     }
 
-    if (payload.length > csvFileLimit) {
-        return { valid: false, reason: csvErrors.moreThenLimitItems };
+    if (payload.length > constants.csvFileLimit) {
+        return { valid: false, reason: constants.csvErrors.moreThenLimitItems };
     }
 
     const uuidsAndMsidsList = clearAudiance(payload);
@@ -83,7 +83,7 @@ function validateFile(payload) {
         return { valid: true, uuidsAndMsidsList };
     }
 
-    return { valid: false, reason: csvErrors.missingUUIDMSID };
+    return { valid: false, reason: constants.csvErrors.missingUUIDMSID };
 }
 
 export function clearAudiance(payload) {

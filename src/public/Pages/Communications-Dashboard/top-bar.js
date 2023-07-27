@@ -1,12 +1,10 @@
-import wixLocation from 'wix-location';
+// @ts-ignore
 import wixWindow from 'wix-window';
 
-import { Urls, AllMainDashboardButtons } from '../../consts.js';
 import { disbaleCurrentButton } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
 import { createCommunicationClick } from './communications-dashboard.js';
-
-import * as Fedops from '../../wix-fedops-api.js';
+import * as constants from '../../consts.js';
 
 export const initTopBardActions = () => {
     setTopBarButtonsEvents();
@@ -15,13 +13,13 @@ export const initTopBardActions = () => {
 export const setTopBarButtonsEvents = () => {
     $w('#myCommunicationsButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myCommunicationsState');
-        disbaleCurrentButton('myCommunicationsButton', AllMainDashboardButtons);
+        disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
         sendBi('subMenu', { 'button_name': 'myCommunicationsButton' })
     });
 
     $w('#myTemplatesButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myTemplatesState');
-        disbaleCurrentButton('myTemplatesButton', AllMainDashboardButtons);
+        disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
         sendBi('subMenu', { 'button_name': 'myTemplatesButton' })
     });
 
@@ -32,16 +30,16 @@ export const setTopBarButtonsEvents = () => {
       
     });
     $w('#needHelpButton').onClick((event) => {
-        wixWindow.openLightbox('Need Help Sidebar');
+        wixWindow.openLightbox(constants.Lightboxs.needHelpSidebar);
     });
 }
 
 export const clickCommunicationButton = () => {
     $w('#dashboardMultiState').changeState('myCommunicationsState');
-    disbaleCurrentButton('myCommunicationsButton', AllMainDashboardButtons)
+    disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons)
 }
 
 export const clickTemplatesButton = () => {
     $w('#dashboardMultiState').changeState('myTemplatesState');
-    disbaleCurrentButton('myTemplatesButton', AllMainDashboardButtons)
+    disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons)
 }
