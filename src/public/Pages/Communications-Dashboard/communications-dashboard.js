@@ -1,4 +1,6 @@
 import wixWindow from 'wix-window';
+import wixLocation from 'wix-location';
+
 import { autorun, observable, configure, toJS } from 'mobx';
 
 import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from '../../consts.js';
@@ -7,11 +9,10 @@ import { SmartRepeater } from '../../smart-repeater.js';
 import { getSentCommunications } from '../../audience-handler.js';
 import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
-
+import { CommunicationDashboardPage as Comp } from '../../components.js';
 import * as Fedops from '../../wix-fedops-api.js';
 
-import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
-
+import { getAllUserCommunications, createCommunication } from 'backend/data-methods-wrapper.jsw';
 
 const routerData = wixWindow.getRouterData();
 
@@ -24,8 +25,40 @@ export const state = observable({
 });
 
 export const initCommunicationsDashboardData = () => {
-    setMyCommunicationsRepeater();
+    setMyCommunications();
     setNavigeationBtnsData();
+}
+
+export const setEmptyState = () => {
+    Comp.createCommunicationStateButton.onClick((event) => {
+        createCommunicationClick(event);
+    })
+}
+
+export async function createCommunicationClick(event) {
+    const clickedElement = event.target;
+    clickedElement.disable();
+    try {
+        Fedops.interactionStarted(Fedops.events.createNewCommunication);
+        const communication = await createCommunication();
+        Fedops.interactionEnded(Fedops.events.createNewCommunication);
+        sendBi('createCommunication', { 'button_name': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
+        wixLocation.to(Urls.EXISTS_COMMUNICATION + communication._id);
+    } catch (err) {
+        console.error('error in createCommunicationButton, original error: ' + err);
+        clickedElement.enable();
+    }
+}
+
+export const prepareSentCommunicationsDetails = async (communicationDetails) => {
+    try {
+        if (!communicationDetails)
+            communicationDetails = await getSentCommunications();
+        const aggregatedData = aggregateByComuunicationId(communicationDetails?.data?.marketingData);
+        return aggregatedData;
+    } catch (err) {
+        throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
+    }
 }
 
 const setNavigeationBtnsData = () => {
@@ -37,8 +70,21 @@ const setNavigeationBtnsData = () => {
     })
 }
 
-const setMyCommunicationsRepeater = async () => {
-    $w('#myCommunicationsRepeater').hide();
+const setMyCommunications = async () => {
+
+    const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
+    const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
+
+    const getData = (...arg) => getAllUserCommunications(...arg).then((res) => {
+        if (res.totalCount > 0) {
+            myCommunicationsState();
+        } else {
+            emptyState();
+        }
+        return res;
+    });
+
+    Comp.myCommunicationsRepeater.hide();
     const communicationDetails = await prepareSentCommunicationsDetails(routerData.communicationDetails);
     const filters = { "sent": true, "draft": true };
     const itemReadyFun = ($item, itemData, index) => {
@@ -52,15 +98,13 @@ const setMyCommunicationsRepeater = async () => {
         setCommunicationMoreActionsUI($item);
     };
     setCommunicationMoreActionsEvents();
-    const smartCommunictionsRepeater = new SmartRepeater($w('#myCommunicationsRepeater'), $w('#myCommunicationItemBox'), getAllUserCommunications, filters, itemReadyFun);
+    const smartCommunictionsRepeater = new SmartRepeater(Comp.myCommunicationsRepeater, Comp.myCommunicationItemBox, getData, filters, itemReadyFun);
     smartCommunictionsRepeater.initRepeater();
 
     setNavigeationBtnsEvents(smartCommunictionsRepeater);
-    $w('#myCommunicationsRepeater').show();
+    Comp.myCommunicationsRepeater.show();
 
 }
-
-
 
 const setSentCommunicationUI = async ($item, itemData, communicationDetails) => {
     $item('#deliveredCountText, #openedCountText, #dateLabelText, #openedText, #deliveredText').hide();
@@ -136,17 +180,6 @@ const setCommunicationMoreActionsUI = ($item) => {
     !$item('#communicationActionsbox').collapsed && $item('#communicationActionsbox').collapse();
 }
 
-export const prepareSentCommunicationsDetails = async (communicationDetails) => {
-    try {
-        if (!communicationDetails)
-            communicationDetails = await getSentCommunications();
-        const aggregatedData = aggregateByComuunicationId(communicationDetails?.data?.marketingData);
-        return aggregatedData;
-    } catch (err) {
-        throw new Error('initPreviewDetailsHeaderData, couldnt get sent communication Details, original error: ' + err)
-    }
-}
-
 const aggregateByComuunicationId = (data = []) => {
     const result = {};
     data.forEach((item) => {
@@ -165,3 +198,4 @@ const aggregateByComuunicationId = (data = []) => {
     });
     return result;
 }
+

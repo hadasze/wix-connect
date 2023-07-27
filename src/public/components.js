@@ -18,3 +18,17 @@ export const CommunicationPage = {
     }
     // teamBtn: ($i) => $i('#teamBtn'),
 }
+
+export const CommunicationDashboardPage = {
+
+    myCommunicationsRepeater: WC('myCommunicationsRepeater'),
+    dashboardMultiState: WC('dashboardMultiState'),
+    myCommunicationItemBox: WC('myCommunicationItemBox'),
+    createCommunicationStateButton: WC('createCommunicationStateButton'),
+    
+    States: {
+        myCommunicationsState: 'myCommunicationsState',
+        emptyState: 'emptyState'
+    }
+
+}

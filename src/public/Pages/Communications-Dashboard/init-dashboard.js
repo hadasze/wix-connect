@@ -4,6 +4,7 @@ import * as templatesDashboardHandler from './templates-dashboard.js'
 
 export function setEvents() {
     topBarHandler.initTopBardActions();
+    communicationsDashboardHandler.setEmptyState();
 }
 
 export function setData() {
