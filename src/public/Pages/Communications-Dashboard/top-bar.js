@@ -4,8 +4,8 @@ import wixWindow from 'wix-window';
 import { Urls, AllMainDashboardButtons } from '../../consts.js';
 import { disbaleCurrentButton } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
+import { createCommunicationClick } from './communications-dashboard.js';
 
-import { createCommunication } from 'backend/data-methods-wrapper.jsw';
 import * as Fedops from '../../wix-fedops-api.js';
 
 export const initTopBardActions = () => {
@@ -26,17 +26,10 @@ export const setTopBarButtonsEvents = () => {
     });
 
     $w('#createCommunicationButton').onClick(async (event) => {
-        $w('#createCommunicationButton').disable();
-        try {
-            Fedops.interactionStarted(Fedops.events.createNewCommunication);
-            const communication = await createCommunication();
-            Fedops.interactionEnded(Fedops.events.createNewCommunication);
-            sendBi('createCommunication', { 'button_name': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
-            wixLocation.to(Urls.EXISTS_COMMUNICATION + communication._id);
-        } catch (err) {
-            console.error('error in createCommunicationButton, original error: ' + err);
-            $w('#createCommunicationButton').enable();
-        }
+
+        createCommunicationClick(event);
+
+      
     });
     $w('#needHelpButton').onClick((event) => {
         wixWindow.openLightbox('Need Help Sidebar');
