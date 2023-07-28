@@ -1,8 +1,6 @@
 // @ts-ignore
 import wixWindow from 'wix-window';
 // @ts-ignore
-import { getUuidByEmail } from 'backend/data-methods-wrapper.jsw';
-// @ts-ignore
 import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
 
 import { toJS } from 'mobx';
@@ -53,39 +51,6 @@ export async function sendEmails(state) {
         await wixWindow.openLightbox(constants.Lightboxs.errorSending);
         // @ts-ignore
         $w('#sendStepButton').enable();
-    }
-}
-
-export const sendTestEmail = async (state, emailAddress) => {
-    console.log('sendTestEmail', { state });
-    try {
-        state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
-        const [userJWT, uuid] = await Promise.all([getUserJWTToken(), getUuidByEmail(emailAddress)]);
-        let { emailContent, subjectLine, fullName, previewText, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(state.communication);
-        const email = new Email({
-            templateName: state.communication.template.type,
-            senderName,
-            replyTo: replyToAddress,
-            subjectLine,
-            previewText,
-            emailContent: emailContent,
-            emailcontent2: finalGreeting || '',
-            firstLastName: fullName || '',
-            positionTitle: positionTitle || '',
-            communicationId: state.communication._id
-        });
-        const arrayOfEmail = [{ userId: uuid, body: email.createBody() }];
-        const res = await UserMailer.sendEmailToWixUsers(arrayOfEmail, userJWT, true);
-        Fedops.interactionEnded(Fedops.events.sendTestEmail);
-        console.log('sendTestEmail res:', res);
-
-        state.setIsTested(true);
-
-        wixWindow.openLightbox(constants.Lightboxs.sendTestToast);
-
-    } catch (error) {
-        wixWindow.openLightbox(constants.Lightboxs.exitWarning);
-        return console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error);
     }
 }
 
