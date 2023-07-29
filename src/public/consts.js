@@ -252,19 +252,18 @@ export const fedopsEvents = {
 }
 
 export const Lightboxs = {
-    errorSending: 'Setup & Publish - Error sending',
     contactedUserDetailsSidebar: 'Contacted User Details Sidebar',
     sendTestEmail: 'Setup & Publish - Send Test Email Popup',
-    filterTargetAudience: 'Target Audience - Filter',
     sendCommunication: 'Setup & Publish – Send Communication Pop',
+    filterTargetAudience: 'Target Audience - Filter',
     exitWarning: 'Edit Email - Exit Warning Popup',
     skipUsers: 'Skip Users Pop Up',
     replaceCSV: 'Target Audience - Replace CSV Warning Po',
     addDynamicValue: 'Setup & Publish – Add Dynamic Value',
-    sendTestToast: 'Setup & Publish - Send Test Toast',
     CSVFileError: 'CSV File Error',
-    sentCommunication: 'Setup & Publish – Sent Communication',
     needHelpSidebar: 'Need Help Sidebar',
     createRequests: 'Create Requests Pop Up',
-    topUser: 'Top user'
+    firstTimeApprove: 'First Time Approve Pop Up',
+    topUser: 'Top user',
+    CustomLogin: 'Custom-Login'
 }
