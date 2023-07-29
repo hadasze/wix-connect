@@ -1,5 +1,0 @@
-
-$w.onReady(function () {
-
-
-});
