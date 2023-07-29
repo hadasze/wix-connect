@@ -41,6 +41,9 @@ export const SendTestEmail = {
     emailIsNotValidBox: WC('emailIsNotValidBox'),
     testEmail: WC('testEmail'),
     sendMultiStateBox: WC('sendMultiStateBox'),
+    tryAgainButton: WC('tryAgainButton'),
+    errorMsgText: WC('errorMsgText'),
+    gotItButton: WC('gotItButton'),
     
     States: {
         Send: 'Send',

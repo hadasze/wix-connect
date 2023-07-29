@@ -33,7 +33,8 @@ export function setEvents() {
     })
 
     Comp.cancelBtn.onClick((event) => {
-        sendBi('testEmail', { 'campaignId': communication._id, 'button_name': 'cancel' })
+        sendBi('testEmail', { 'campaignId': communication._id, 'button_name': 'cancel' });
+        wixWindow.lightbox.close();
     })
 
     Comp.testEmailsInput.onInput((event) => {
@@ -43,10 +44,8 @@ export function setEvents() {
 }
 
 function enableSendBtn() {
-    //check email addresss - get ids
     Comp.testEmailsInput.updateValidityIndication();
     Comp.testEmailsInput.value.length > 0 ? Comp.sendBtn.enable() : Comp.sendBtn.disable();
-
 }
 
 function disable() {
@@ -122,5 +121,7 @@ async function onSuccess(results) {
 
 async function onError(error) {
     console.error('public/user-mailer.js sendTestEmail failed -origin error- ' + error);
+    Comp.errorMsgText.text = error.message;
     await Comp.sendMultiStateBox.changeState(Comp.States.Error);
+    enable();
 }
