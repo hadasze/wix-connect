@@ -62,6 +62,7 @@ export const SendCommunication = {
     closeButton: WC('closeButton'),
     gotItErrorButton: WC('gotItErrorButton'),
     errorMsgText: WC('errorMsgText'),
+    sendingLoadingBox: WC('sendingLoadingBox'),
     
     States: {
         Send: 'Send',

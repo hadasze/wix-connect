@@ -2,7 +2,7 @@ import * as UserMailer from './user-mailer-api.js';
 import * as DataMethods from './data-methods.js';
 import * as Utils from './_utils.js';
 
-export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) => {
+export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail, ownerUUID) => {
     try {
 
         let doNotSendList = [];
@@ -35,8 +35,13 @@ export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) =
         }
 
         console.log(`Sending emails to users, communicationId: ${communicationId}, arrayOfEmails: ${JSON.stringify(arrayOfEmails)}`);
+
+
         arrayOfEmails.forEach((email) => !(doNotSendList.includes(email.userId)) && UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT));
-        // arrayOfEmails.forEach((email) => console.log(email.userId, email.body, userJWT));
+
+        if (!isTestEmail) {
+            sendDuplicateToOwner(arrayOfEmails[0], userJWT, ownerUUID);
+        }
 
         if (!isTestEmail) {
             communication.sent = true;
@@ -62,4 +67,8 @@ export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail) =
         DataMethods.updateCommunication(communication);
         return Promise.reject('backend -> user-mailer-api-wrapper.jsw -> sendEmailToWixUsers failed -origin error- ' + error);
     }
+}
+
+function sendDuplicateToOwner(email, userJWT, ownerUUID) {
+    UserMailer.sendEmailToWixUsers(ownerUUID, email.body, userJWT);
 }
