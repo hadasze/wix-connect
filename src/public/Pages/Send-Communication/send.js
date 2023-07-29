@@ -17,21 +17,21 @@ import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
 
 
 const { state, approvedCounter } = wixWindow.lightbox.getContext();
-const communication = state.communication;
 
-console.log({ state, approvedCounter });
+
+console.log('send-communication: ', { state, approvedCounter });
 
 export function setEvents() {
 
     Comp.sendBtn.onClick(async (event) => {
         disable();
-        sendBi('sendCommunication', { 'campaignId': communication._id, 'button_name': 'send' });
+        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'button_name': 'send' });
         Fedops.interactionStarted(Fedops.events.sendEmail);
         await sendEmails();
     })
 
     Comp.cancelBtn.onClick((event) => {
-        sendBi('sendCommunication', { 'campaignId': communication._id, 'button_name': 'cancel' });
+        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'button_name': 'cancel' });
         wixWindow.lightbox.close({ buttonName: constants.Text.CANCEL });
     })
 }
@@ -64,7 +64,7 @@ async function onError(error) {
 async function sendEmails() {
     console.log('sendEmails state: ', state);
     try {
-        const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers(communication)]);
+        const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers()]);
         console.log({ allApprovedUsers });
         state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = allApprovedUsers.map((user) => {
@@ -82,10 +82,10 @@ async function sendEmails() {
 }
 
 function buildEmail(user) {
-    let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(communication);
+    let { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress } = getMustHaveFieldsOfCommunication(state.communication);
     ({ emailContent, subjectLine, previewText } = evaluateDynamicVariabels(state, user, emailContent, subjectLine, previewText));
     const email = new Email({
-        templateName: communication.template.type,
+        templateName: state.communication.template.type,
         senderName,
         replyTo: replyToAddress,
         subjectLine,
@@ -94,7 +94,7 @@ function buildEmail(user) {
         emailcontent2: finalGreeting || '',
         firstLastName: fullName || '',
         positionTitle: positionTitle || '',
-        communicationId: communication._id
+        communicationId: state.communication._id
     });
     return email;
 }
@@ -116,11 +116,13 @@ function evaluateDynamicVariabels(state, user, emailContent, subjectLine, previe
 }
 
 
-async function reciveAllApprovedUsers(communication) {
-    const uuidsAndMsidsList = (Object.values(toJS(communication.targetAudience)))
+async function reciveAllApprovedUsers() {
+
+    const uuidsAndMsidsList = (Object.values(state.communication.targetAudience.slice()));
     const audienceData = await getAudienceDetails(uuidsAndMsidsList);
+
     if (audienceData) {
-        const manuallyApproveArray = (Object.values(toJS(communication.manuallyApprovedUsers)))
+        const manuallyApproveArray = (Object.values(state.communication.manuallyApprovedUsers.slice()))
         const allApprovedUsers = (audienceData.approved).concat(manuallyApproveArray);
         return allApprovedUsers;
     }

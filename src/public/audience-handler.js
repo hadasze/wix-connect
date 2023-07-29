@@ -17,8 +17,8 @@ import * as Utils from './_utils.js';
 import pLimit from 'p-limit';
 
 export async function getAudienceDetails(payload) {
-
-    console.log({state});
+    console.log('getAudienceDetails payload: ', payload);
+    console.log('getAudienceDetails state: ', state);
     const limit = pLimit(10);
 
     const validateRes = validateFile(payload);
@@ -75,6 +75,8 @@ export async function getSentCommunications() {
 
 function validateFile(payload) {
 
+    console.log('validateFile payload: ', payload);
+
     if (!Utils.isArray(payload)) {
         return { valid: false, reason: constants.csvErrors.notValidFile };
     }
@@ -84,6 +86,8 @@ function validateFile(payload) {
     }
 
     const uuidsAndMsidsList = clearAudiance(payload);
+
+    console.log('uuidsAndMsidsList: ', uuidsAndMsidsList);
 
     if (uuidsAndMsidsList.length > 0) {
         return { valid: true, uuidsAndMsidsList };
@@ -96,6 +100,7 @@ export function clearAudiance(payload) {
     const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
+        console.log('clearAudiance item: ', item);
         if (item.uuid && item.msid) {
             if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
                 uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
