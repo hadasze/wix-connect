@@ -52,3 +52,11 @@ export const SendTestEmail = {
     }
 
 }
+
+export const SendCommunication = {
+    sendCommunicationTitleText: WC('sendCommunicationTitleText'),
+    sendBtn: WC('sendBtn'),
+    cancelBtn: WC('cancelBtn'),
+    
+
+}
