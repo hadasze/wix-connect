@@ -1,4 +1,4 @@
-import * as SentTestEmail from 'public/Pages/SendTestEmail';
+import * as SentTestEmail from 'public/Pages/Send-Test-Email';
 
 $w.onReady(function () {
 
