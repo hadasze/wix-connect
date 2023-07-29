@@ -1,10 +1,10 @@
 // @ts-ignore
 import wixWindow from 'wix-window';
-import { toJS } from 'mobx';
+import { isObservableArray, toJS } from 'mobx';
 
 import { sendBi } from '../../BI/biModule.js';
 import { SendCommunication as Comp } from '../../components.js';
-import { getUserJWTToken } from '../../_utils.js';
+import { getUserJWTToken, getOwnerUUID } from '../../_utils.js';
 import { Email } from '../../Email.js'
 import { getMustHaveFieldsOfCommunication } from '../helpers.js';
 import { getAudienceDetails } from '../../audience-handler.js';
@@ -58,7 +58,7 @@ async function onSuccess() {
 }
 
 async function onError(error) {
-    console.error('public/user-mailer.js sendEmails failed -origin error- ' + { error, state });
+    console.error('public/user-mailer.js sendEmails failed -origin error- ', error + ' state: ', state);
     Comp.errorMsgText.text = constants.SendCommunicationError;
     await Comp.sendMultiStateBox.changeState(Comp.States.Error);
 }
@@ -74,7 +74,9 @@ async function sendEmails() {
             return { userId: user.uuid, msid: user.msid, body: email.createBody() };
         });
         console.log({ arrayOfEmails });
-        const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false);
+        const ownerUUID = getOwnerUUID();
+        console.log({ ownerUUID });
+        const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false, ownerUUID);
         console.log('sendEmails res:', res);
 
         onSuccess();
@@ -119,12 +121,11 @@ function evaluateDynamicVariabels(state, user, emailContent, subjectLine, previe
 
 
 async function reciveAllApprovedUsers() {
-
-    const uuidsAndMsidsList = (Object.values(state.communication.targetAudience.slice()));
+    const uuidsAndMsidsList = typeof state.communication.targetAudience.slice === 'function' ? (Object.values(state.communication.targetAudience.slice())) : (Object.values(toJS(state.communication.targetAudience)));
     const audienceData = await getAudienceDetails(uuidsAndMsidsList);
 
     if (audienceData) {
-        const manuallyApproveArray = (Object.values(state.communication.manuallyApprovedUsers.slice()))
+        const manuallyApproveArray = typeof state.communication.manuallyApprovedUsers.slice === 'function' ? (Object.values(state.communication.manuallyApprovedUsers.slice())) : (Object.values(toJS(state.communication.manuallyApprovedUsers)));
         const allApprovedUsers = (audienceData.approved).concat(manuallyApproveArray);
         return allApprovedUsers;
     }

@@ -1,4 +1,7 @@
+// @ts-ignore
 import wixLocation from 'wix-location';
+// @ts-ignore
+import { local } from 'wix-storage';
 
 import { Urls } from './consts.js';
 import { getTokenset } from './login.js';
@@ -35,8 +38,14 @@ export async function getUserJWTToken() {
     return userJWT;
 }
 
-export function removeItemFromRepeater(repeater,itemID) {
+export function removeItemFromRepeater(repeater, itemID) {
     const data = repeater.data;
     const filteredItems = data.filter((item) => item._id !== itemID);
     repeater.data = filteredItems;
+}
+
+export function getOwnerUUID() {
+    const userInfoSTR = local.getItem('userInfo');
+    const userInfo = JSON.parse(userInfoSTR);
+    return userInfo.uuid;
 }
