@@ -1,7 +1,11 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
 
+// @ts-ignore
 import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
+// @ts-ignore
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
+// @ts-ignore
 import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
@@ -14,10 +18,11 @@ import pLimit from 'p-limit';
 
 export async function getAudienceDetails(payload) {
 
+    console.log({state});
     const limit = pLimit(10);
 
     const validateRes = validateFile(payload);
-
+    console.log({ validateRes });
     if (validateRes.valid) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
 
@@ -34,8 +39,9 @@ export async function getAudienceDetails(payload) {
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
             chunks.push(uuidsAndMsidsList.slice(i, i + chunkSize));
         }
-
+        console.log(chunks);
         let promises = chunks.map(chunk => {
+            console.log({ chunk });
             return limit(() => AudienceHandler.getAudienceDetails(chunk, userJWT));
         });
 
