@@ -1,7 +1,10 @@
 import wixWindow from 'wix-window';
+
 import { sendBi } from 'public/BI/biModule.js';
 import { isValidFileBeforeUpload } from 'public/Pages/Communication/Target-Audience/csv-file-handler.js';
 import { csvErrors } from 'public/consts.js';
+
+import * as constants from 'public/consts';
 
 $w.onReady(function () {
     const communication = (wixWindow.lightbox.getContext()).communication;
@@ -14,7 +17,7 @@ $w.onReady(function () {
                 sendBi('replaceCSV', { 'campaignId': communication._id, 'button_name': 'replace_CSV_file' });
                 wixWindow.lightbox.close({ uploadedFiles: recivedData });
             } else {
-                wixWindow.openLightbox('CSV File Error', { communication, reason: csvErrors.notValidFile });
+                wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication, reason: csvErrors.notValidFile });
             }
         } catch (error) {
             let reason = csvErrors.uploadFail;
@@ -23,7 +26,7 @@ $w.onReady(function () {
             } else {
                 console.error('Target Audiance - Replace CSV Warning Po -> uploadFiles failed - origin error - ' + error);
             }
-            await wixWindow.openLightbox('CSV File Error', { communication, reason });
+            await wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication, reason });
             $w('#uploadCSVButton').enable();
         }
     })

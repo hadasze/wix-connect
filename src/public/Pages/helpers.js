@@ -50,7 +50,6 @@ export function contains(array, item) {
     return false;
 }
 
-//TODO: Remove title
 export const getMustHaveFieldsOfCommunication = (communication) => {
 
     const emailContent = communication?.template?.data?.body;
@@ -62,5 +61,5 @@ export const getMustHaveFieldsOfCommunication = (communication) => {
     const senderName = communication?.finalDetails?.senderName;
     const replyToAddress = communication?.finalDetails?.replyToAddress;
 
-    return { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress }
+    return { emailContent, subjectLine, previewText, fullName, positionTitle, finalGreeting, senderName, replyToAddress };
 }

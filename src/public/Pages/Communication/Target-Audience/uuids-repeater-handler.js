@@ -7,18 +7,18 @@ import { getAudienceDetails } from '../../../audience-handler.js';
 import { targetAudienceState } from './target-audience.js';
 import { showToast } from './csv-file-handler.js';
 import { disbaleCurrentButton, contains } from '../../helpers.js';
-import { AllAudienceRepeaterButtons, Text } from '../../../consts.js';
 import { sendBi } from '../../../BI/biModule.js';
 import { PagedRepeater, PagedRepeaterOptions, ButtonInfo } from '../../../paged-repeater';
 
 import * as roles from './filters-roles.js';
 import * as Helpers from './helpers.js';
 import * as Fedops from '../../../wix-fedops-api.js';
+import * as constants from '../../../consts.js';
 
 const repeaterOptions = new PagedRepeaterOptions(10);
 
 const approvedRepeater = new PagedRepeater(filter, null, repeaterOptions);
-const needApprovalRepeater = new PagedRepeater(filter, null, repeaterOptions); 
+const needApprovalRepeater = new PagedRepeater(filter, null, repeaterOptions);
 const rejectedRepeater = new PagedRepeater(filter, null, repeaterOptions);
 const NUM_BUTTONS = 7;
 
@@ -115,7 +115,7 @@ const setTargetAudienceData = () => {
             await setAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
             $w('#usersUuidsMultiState').changeState('ApprovedUsersState');
-            disbaleCurrentButton('approvedUsersButton', AllAudienceRepeaterButtons);
+            disbaleCurrentButton('approvedUsersButton', constants.AllAudienceRepeaterButtons);
         }
     })
 }
@@ -127,7 +127,7 @@ function clearAllRepeatersAudienceData() {
 }
 
 const setAllRepeatersAudienceData = async () => {
-   
+
     try {
         const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
         const audienceData = await getAudienceDetails(uuidsAndMsidsList);
@@ -247,7 +247,7 @@ const setNeedApprovaldRepeater = (data) => {
     setPagination(needApprovalRepeater);
     const numOfManuallyApproved = Object.values(state.communication.manuallyApprovedUsers).length;
     targetAudienceState.setNeedApprovalCounter(data.length - numOfManuallyApproved);
-    autorun(() => $w('#numOfManuallyApprovedText').text = Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
+    autorun(() => $w('#numOfManuallyApprovedText').text = constants.Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
 }
 
 const setRejectedRepeater = async (data) => {
@@ -258,12 +258,12 @@ const setRejectedRepeater = async (data) => {
 }
 
 const initActions = () => {
-    autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
-    autorun(() => $w('#requestApprovalButton').label = Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
+    autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
+    autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
         sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' });
-        wixWindow.openLightbox('Create Requests Pop Up', {
+        wixWindow.openLightbox(constants.Lightboxs.createRequests, {
             uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
             needApprovalCounter: targetAudienceState.needApprovalCounter
         });
@@ -327,7 +327,8 @@ const repeatedItemActions = () => {
             'uuidChosen': clickedItemData.uuid,
             'cloumnName': 'contacted'
         })
-        wixWindow.openLightbox("Contacted User Details Sidebar", {
+
+        wixWindow.openLightbox(constants.Lightboxs.contactedUserDetailsSidebar, {
             "user": clickedItemData,
             "communication": state.communication
         });
@@ -340,13 +341,13 @@ const repeatedItemActions = () => {
             'uuidChosen': clickedItemData.uuid,
             biCloumnName: biCloumnName
         })
-        wixWindow.openLightbox("Top user", { "user": clickedItemData, "communication": state.communication });
+        wixWindow.openLightbox(constants.Lightboxs.topUser, { "user": clickedItemData, "communication": state.communication });
     }
 }
 
 const setApproveToggleEvent = () => {
     $w('#approveAllButton').onClick(() => {
-        if ($w('#approveAllButton').text === Text.APPROVE_ALL) {
+        if ($w('#approveAllButton').text === constants.Text.APPROVE_ALL) {
             const needApprovalUsers = $w("#needApprovalReapter").data;
             const allManuallyApprovedUsers = (Object.values(toJS(state.communication.manuallyApprovedUsers)))
             needApprovalUsers.forEach((user) => {
@@ -354,12 +355,12 @@ const setApproveToggleEvent = () => {
                 if (!contains(allManuallyApprovedUsers, user))
                     state.addApprovedUser(user);
             })
-            $w('#approveAllButton').text = Text.UNAPPROVE_ALL
+            $w('#approveAllButton').text = constants.Text.UNAPPROVE_ALL
             sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'approve_all' })
         } else {
             $w("#approveToggleSwitch").checked = false;
             state.resetApprovedUserList();
-            $w('#approveAllButton').text = Text.APPROVE_ALL
+            $w('#approveAllButton').text = constants.Text.APPROVE_ALL
             sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'unapprove_all' })
         }
     })
@@ -388,15 +389,15 @@ const setApproveToggleEvent = () => {
 
 const handleNotValidAudience = (uploadedCounter, allAudienceCounter) => {
     if (uploadedCounter < allAudienceCounter) {
-        $w("#usersWereNotAddedErrorText").text = Text.USERS_WERE_NOT_UPLOADED(allAudienceCounter - uploadedCounter);
+        $w("#usersWereNotAddedErrorText").text = constants.Text.USERS_WERE_NOT_UPLOADED(allAudienceCounter - uploadedCounter);
         showToast('usersWereNotAddedError', 10000);
     } else {
-        $w("#uploadCSVSuccessText").text = Text.USERS_WERE_UPLOADED(uploadedCounter);
+        $w("#uploadCSVSuccessText").text = constants.Text.USERS_WERE_UPLOADED(uploadedCounter);
         showToast('uploadCSVSuccessToast', 3000);
     }
 }
 
-function getReapeater(){
+function getReapeater() {
     const currentState = $w("#usersUuidsMultiState").currentState;
     return stateToRepeaterMap[currentState.id];
 }

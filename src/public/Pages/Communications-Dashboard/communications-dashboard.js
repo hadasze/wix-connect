@@ -1,5 +1,9 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
+// @ts-ignore
 import wixLocation from 'wix-location';
+// @ts-ignore
+import wixSiteFrontend from 'wix-site-frontend';
 
 import { autorun, observable, configure, toJS } from 'mobx';
 
@@ -12,6 +16,7 @@ import { sendBi } from '../../BI/biModule.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import * as Fedops from '../../wix-fedops-api.js';
 
+// @ts-ignore
 import { getAllUserCommunications, createCommunication } from 'backend/data-methods-wrapper.jsw';
 
 const routerData = wixWindow.getRouterData();
@@ -88,6 +93,11 @@ const setMyCommunications = async () => {
     const communicationDetails = await prepareSentCommunicationsDetails(routerData.communicationDetails);
     const filters = { "sent": true, "draft": true };
     const itemReadyFun = ($item, itemData, index) => {
+
+        wixSiteFrontend.prefetchPageResources({
+            "pages": [Urls.EXISTS_COMMUNICATION + itemData._id]
+        });
+
         $item('#communicationTitleText').text = itemData.name || Text.NO_NAME;
         (CommunicationActions.All).forEach(button => {
             !$item(button).collapsed && $item(button).collapse();

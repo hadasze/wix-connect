@@ -1,6 +1,6 @@
 import { mediaManager } from 'wix-media-backend';
 
-import { getAllRecentlySentUsers} from './data-methods.js';
+import { getAllRecentlySentUsers } from './data-methods.js';
 
 const { Parser } = require('json2csv');
 const allRecentlySentUsersPromise = getAllRecentlySentUsers();
@@ -109,5 +109,7 @@ function stringToBoolean(obj) {
 
 async function userExistInSentUsersCollection(uuid) {
     const allRecentlySentUsers = await allRecentlySentUsersPromise;
-    return allRecentlySentUsers.includes(uuid);
+    const doNotSendList = allRecentlySentUsers.map((item) => item._id);
+    const includes = doNotSendList.includes(uuid);
+    return includes;
 }

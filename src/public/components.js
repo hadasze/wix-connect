@@ -25,10 +25,46 @@ export const CommunicationDashboardPage = {
     dashboardMultiState: WC('dashboardMultiState'),
     myCommunicationItemBox: WC('myCommunicationItemBox'),
     createCommunicationStateButton: WC('createCommunicationStateButton'),
-    
+
     States: {
         myCommunicationsState: 'myCommunicationsState',
         emptyState: 'emptyState'
     }
 
+}
+
+export const SendTestEmail = {
+    sendBtn: WC('sendBtn'),
+    cancelBtn: WC('cancelBtn'),
+    sendingLoadingBox: WC('sendingLoadingBox'),
+    testEmailsInput: WC('testEmailsInput'),
+    emailIsNotValidBox: WC('emailIsNotValidBox'),
+    testEmail: WC('testEmail'),
+    sendMultiStateBox: WC('sendMultiStateBox'),
+    tryAgainButton: WC('tryAgainButton'),
+    errorMsgText: WC('errorMsgText'),
+    gotItButton: WC('gotItButton'),
+
+    States: {
+        Send: 'Send',
+        Error: 'Error',
+        Success: 'Success'
+    }
+
+}
+
+export const SendCommunication = {
+
+    sendCommunicationTitleText: WC('sendCommunicationTitleText'),
+    sendBtn: WC('sendBtn'),
+    cancelBtn: WC('cancelBtn'),
+    sendMultiStateBox: WC('sendMultiStateBox'),
+    closeButton: WC('closeButton'),
+    gotItErrorButton: WC('gotItErrorButton'),
+    
+    States: {
+        Send: 'Send',
+        Error: 'Error',
+        Success: 'Success'
+    }
 }

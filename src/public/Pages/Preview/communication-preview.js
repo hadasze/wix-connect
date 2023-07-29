@@ -1,15 +1,22 @@
 import wixWindow from 'wix-window';
 import wixLocation from 'wix-location';
+
 import { toJS } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js';
-import { disbaleCurrentButton } from 'public/Pages/helpers.js';
-import { initPreviewUIData } from 'public/Pages/Preview/preview-component.js';
-import { prepareSentCommunicationsDetails } from 'public/Pages/Communications-Dashboard/communications-dashboard.js'
-import { getDownloadFileUrlFromArray, getAudienceDetails as getAudienceDetailsBE } from 'backend/target-audience-handler-wrapper.jsw';
-import { getAudienceDetails } from 'public/audience-handler.js';
-import * as roles from 'public/Pages/Communication/Target-Audience/filters-roles.js';
-import { AllPreviewSectionsButtons } from 'public/consts.js'
+
+import { state } from '../Communication/state-management.js';
+import { disbaleCurrentButton } from '../helpers.js';
+import { initPreviewUIData } from './preview-component.js';
+import { prepareSentCommunicationsDetails } from '../Communications-Dashboard/communications-dashboard.js';
+
+import { getAudienceDetails } from '../../audience-handler.js';
 import { getUserJWTToken } from '../../_utils';
+
+import * as roles from '../Communication/Target-Audience/filters-roles.js';
+import * as constants from '../../consts.js';
+
+// @ts-ignore
+import { getDownloadFileUrlFromArray, getAudienceDetails as getAudienceDetailsBE } from 'backend/target-audience-handler-wrapper.jsw';
+
 
 let currCommunication = wixWindow.getRouterData();
 
@@ -30,12 +37,12 @@ const setCommunicationDeatilsPreviewData = () => {
 const setCommunicationPreviewEvents = () => {
     $w('#previewButton').onClick((event) => {
         $w('#previewSectionsMultiStateBox').changeState('previewState');
-        disbaleCurrentButton('previewButton', AllPreviewSectionsButtons);
+        disbaleCurrentButton('previewButton', constants.AllPreviewSectionsButtons);
     })
 
     $w('#detailsButton').onClick((event) => {
         $w('#previewSectionsMultiStateBox').changeState('detailsState');
-        disbaleCurrentButton('detailsButton', AllPreviewSectionsButtons);
+        disbaleCurrentButton('detailsButton', constants.AllPreviewSectionsButtons);
     })
 
     $w('#downloadReportButton').onClick((event) => {
@@ -43,7 +50,7 @@ const setCommunicationPreviewEvents = () => {
     })
 
     $w('#needHelpButton').onClick((event) => {
-        wixWindow.openLightbox('Need Help Sidebar');
+        wixWindow.openLightbox(constants.Lightboxs.needHelpSidebar);
     });
 }
 

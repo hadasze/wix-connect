@@ -1,11 +1,15 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
 
+// @ts-ignore
 import * as AudienceHandler from 'backend/target-audience-handler-wrapper.jsw';
+// @ts-ignore
 import * as DataHandler from 'backend/data-methods-wrapper.jsw';
+// @ts-ignore
 import * as MarketingAPI from 'backend/marketing-api-wrapper.jsw';
 
 import { state } from './Pages/Communication/state-management.js';
-import { csvFileLimit, csvErrors } from './consts.js'
+import * as constants from './consts.js';
 import { targetAudienceState } from './Pages/Communication/Target-Audience/target-audience.js';
 
 import * as Utils from './_utils.js';
@@ -13,11 +17,12 @@ import * as Utils from './_utils.js';
 import pLimit from 'p-limit';
 
 export async function getAudienceDetails(payload) {
-
+    console.log('getAudienceDetails payload: ', payload);
+    console.log('getAudienceDetails state: ', state);
     const limit = pLimit(10);
 
     const validateRes = validateFile(payload);
-
+    console.log({ validateRes });
     if (validateRes.valid) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
 
@@ -34,8 +39,9 @@ export async function getAudienceDetails(payload) {
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
             chunks.push(uuidsAndMsidsList.slice(i, i + chunkSize));
         }
-
+        console.log(chunks);
         let promises = chunks.map(chunk => {
+            console.log({ chunk });
             return limit(() => AudienceHandler.getAudienceDetails(chunk, userJWT));
         });
 
@@ -53,7 +59,7 @@ export async function getAudienceDetails(payload) {
     } else {
         if ($w('#rejectedRepeater').isVisible)
             setNotValidFileUI();
-        wixWindow.openLightbox('CSV File Error', { "communication": state.communication, reason: validateRes.reason });
+        wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { "communication": state.communication, reason: validateRes.reason });
     }
 }
 
@@ -69,27 +75,32 @@ export async function getSentCommunications() {
 
 function validateFile(payload) {
 
+    console.log('validateFile payload: ', payload);
+
     if (!Utils.isArray(payload)) {
-        return { valid: false, reason: csvErrors.notValidFile };
+        return { valid: false, reason: constants.csvErrors.notValidFile };
     }
 
-    if (payload.length > csvFileLimit) {
-        return { valid: false, reason: csvErrors.moreThenLimitItems };
+    if (payload.length > constants.csvFileLimit) {
+        return { valid: false, reason: constants.csvErrors.moreThenLimitItems };
     }
 
     const uuidsAndMsidsList = clearAudiance(payload);
+
+    console.log('uuidsAndMsidsList: ', uuidsAndMsidsList);
 
     if (uuidsAndMsidsList.length > 0) {
         return { valid: true, uuidsAndMsidsList };
     }
 
-    return { valid: false, reason: csvErrors.missingUUIDMSID };
+    return { valid: false, reason: constants.csvErrors.missingUUIDMSID };
 }
 
 export function clearAudiance(payload) {
     const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
+        console.log('clearAudiance item: ', item);
         if (item.uuid && item.msid) {
             if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
                 uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
