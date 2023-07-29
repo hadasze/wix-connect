@@ -61,6 +61,7 @@ export const SendCommunication = {
     sendMultiStateBox: WC('sendMultiStateBox'),
     closeButton: WC('closeButton'),
     gotItErrorButton: WC('gotItErrorButton'),
+    errorMsgText: WC('errorMsgText'),
     
     States: {
         Send: 'Send',

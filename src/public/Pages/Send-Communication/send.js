@@ -57,7 +57,8 @@ async function onSuccess() {
 }
 
 async function onError(error) {
-    console.error('public/user-mailer.js sendEmails failed -origin error- ' + error);
+    console.error('public/user-mailer.js sendEmails failed -origin error- ' + { error, state });
+    Comp.errorMsgText.text = constants.SendCommunicationError;
     await Comp.sendMultiStateBox.changeState(Comp.States.Error);
 }
 

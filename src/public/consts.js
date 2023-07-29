@@ -267,3 +267,5 @@ export const Lightboxs = {
     topUser: 'Top user',
     CustomLogin: 'Custom-Login'
 }
+
+export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';
