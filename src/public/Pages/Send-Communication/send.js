@@ -49,6 +49,7 @@ export function bindData() {
 function disable() {
     Comp.cancelBtn.disable();
     Comp.sendBtn.disable();
+    Comp.sendingLoadingBox.expand();
 }
 
 async function onSuccess() {
