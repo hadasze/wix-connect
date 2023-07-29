@@ -4,4 +4,5 @@ $w.onReady(function () {
     SentCommunication.Send.setEvents();
     SentCommunication.Success.setEvents();
     SentCommunication.Error.setEvents();
+    SentCommunication.Send.bindData();
 });

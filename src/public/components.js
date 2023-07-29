@@ -44,7 +44,7 @@ export const SendTestEmail = {
     tryAgainButton: WC('tryAgainButton'),
     errorMsgText: WC('errorMsgText'),
     gotItButton: WC('gotItButton'),
-    
+
     States: {
         Send: 'Send',
         Error: 'Error',
@@ -54,9 +54,17 @@ export const SendTestEmail = {
 }
 
 export const SendCommunication = {
+
     sendCommunicationTitleText: WC('sendCommunicationTitleText'),
     sendBtn: WC('sendBtn'),
     cancelBtn: WC('cancelBtn'),
+    sendMultiStateBox: WC('sendMultiStateBox'),
+    closeButton: WC('closeButton'),
+    gotItErrorButton: WC('gotItErrorButton'),
     
-
+    States: {
+        Send: 'Send',
+        Error: 'Error',
+        Success: 'Success'
+    }
 }
