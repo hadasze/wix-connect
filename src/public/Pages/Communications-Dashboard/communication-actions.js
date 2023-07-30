@@ -1,80 +1,96 @@
+// @ts-ignore
 import wixLocation from 'wix-location';
-import { updateCommunication, saveCommunication } from 'backend/data-methods-wrapper.jsw';
-import { Urls } from 'public/consts.js';
+
 import { sendBi } from '../../BI/biModule.js';
 import { removeItemFromRepeater } from '../../_utils.js';
 import { state } from './communications-dashboard.js';
+import * as constants from '../../consts.js';
+import { CommunicationDashboardPage as Comp } from '../../components.js';
 
+// @ts-ignore
+import { updateCommunication, saveCommunication } from 'backend/data-methods-wrapper.jsw';
+
+// @ts-ignore
 const $item = (event) => $w.at(event.context);
+
 const itemData = (event, repeater) => {
     const data = repeater.data;
     return data.find(item => item._id === event.context.itemId);
 }
 
 export const setCommunicationMoreActionsEvents = () => {
-    const repeater = $w('#myCommunicationsRepeater');
+    
+    const repeater = Comp.myCommunicationsRepeater;
 
-    $w('#communicationClickbaleArea').onClick((event) => {
+    Comp.communicationClickbaleArea.onClick((event) => {
 
         const data = itemData(event, repeater)
         if (data.archive)
             return
 
         if (data.sent)
-            wixLocation.to(Urls.PREVIEW + event.context.itemId);
+            wixLocation.to(constants.Urls.PREVIEW + event.context.itemId);
 
         if (data.draft)
-            wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
+            wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + event.context.itemId);
 
     });
 
-    $w('#seeMoreActionsButton').onClick((event) => {
-        $item(event)('#communicationActionsbox').expand();
+    Comp.seeMoreActionsButton.onClick((event) => {
+        Comp.communicationActionsbox($item(event)).expand();
     });
 
-    $w('#myCommunicationItemBox').onMouseOut((event) => {
-        $item(event)('#communicationActionsbox').collapse();
+    Comp.myCommunicationItemBox.onMouseOut((event) => {
+        Comp.communicationActionsbox($item(event)).collapse();
     });
 
-    $w('#editCommunicationButton').onClick((event) => {
+    Comp.editCommunicationButton.onClick((event) => {
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' });
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
+        wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + event.context.itemId);
     });
 
-    $w('#reuseCommunicationButton').onClick(async (event) => {
+    Comp.reuseCommunicationButton.onClick(async (event) => {
         await reuseCommunication(itemData(event, repeater));
     })
 
-    $w('#saveAsTempalteButton').onClick(async (event) => {
-        $item(event)('#saveAsTempalteButton').disable();
+    Comp.saveAsTempalteButton.onClick(async (event) => {
+        event.target.disable();
+        Comp.saveAsTempalteButton
         const template = resetCommunication(itemData(event, repeater));
         template.isTemplate = true;
         saveCommunication(template);
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
-        $item(event)('#saveAsTempalteButton').enable();
+        event.target.enable();
     });
 
-    $w('#archiveCommunicationButton').onClick(async (event) => {
-        $item(event)('#archiveCommunicationButton').disable();
+    Comp.archiveCommunicationButton.onClick(async (event) => {
+        event.target.disable();
         itemData(event, repeater).archive = true;
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
         removeItemFromRepeater(repeater, event.context.itemId);
         state.communicationsCounts.archive++;
         state.communicationsCounts.all--;
-        $item(event)('#archiveCommunicationButton').enable();
     });
 
-    $w('#uarchiveCommunicationButton').onClick(async (event) => {
-        $item(event)('#uarchiveCommunicationButton').disable();
+    Comp.uarchiveCommunicationButton.onClick(async (event) => {
+        event.target.disable();
         itemData(event, repeater).archive = false;
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'unarchive' });
         removeItemFromRepeater(repeater, event.context.itemId);
         state.communicationsCounts.archive--;
         state.communicationsCounts.all++;
-        $item(event)('#uarchiveCommunicationButton').disable();
     });
+
+    Comp.deleteCommunicationButton.onClick((event) => {
+        event.target.disable();
+        itemData(event, repeater).delete = true;
+        updateCommunication(itemData(event, repeater));
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'delete' });
+        removeItemFromRepeater(repeater, event.context.itemId);
+        state.communicationsCounts.all--;
+    })
 }
 
 export const reuseCommunication = async (communication) => {
@@ -84,7 +100,7 @@ export const reuseCommunication = async (communication) => {
     try {
         const saved = await saveCommunication(reused);
         sendBi('campainOptions', { 'campaignId': communication._id, 'button_name': 'reuse' })
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + saved._id)
+        wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + saved._id)
     } catch (err) {
         console.error('public/communications-dashboard reuse communication ', err);
     }
