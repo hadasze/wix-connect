@@ -1,5 +1,6 @@
 import wixWindow from 'wix-window';
-import wixLocation from 'wix-location';
+
+import { ContactedUserDetailsSidebar as Comp } from 'public/components.js';
 
 const receivedData = wixWindow.lightbox.getContext();
 
@@ -9,10 +10,10 @@ const getLinkHTML = (url) => {
 }
 
 $w.onReady(function () {
-    $w('#contactedUserUUIDText').text = receivedData.user.uuid;
-    $w('#contactedUserSiteNameText').text = receivedData.user.site_display_name;
-    $w('#contactedUserSiteURLText').text = receivedData.user.url;
-    $w('#contactedUserSiteURLText').html = getLinkHTML(receivedData.user.url || '');
-    $w('#contactedUserEmployeeEmailText').text = receivedData.user.last_contact_email +'@wix.com';
-    $w('#dateOfLastContactedText').text = receivedData.user.last_contact_date;
+    Comp.contactedUserUUIDText.text = receivedData.user.uuid;
+    Comp.contactedUserSiteNameText.text = receivedData.user.site_display_name;
+    Comp.contactedUserSiteURLText.text = receivedData.user.url;
+    Comp.contactedUserSiteURLText.html = getLinkHTML(receivedData.user.url || '');
+    Comp.contactedUserEmployeeEmailText.text = receivedData.user.last_contact_email + '@wix.com';
+    Comp.dateOfLastContactedText.text = receivedData.user.last_contact_date;
 });

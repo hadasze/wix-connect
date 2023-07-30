@@ -79,3 +79,11 @@ export const SendCommunication = {
         Success: 'Success'
     }
 }
+
+export const ContactedUserDetailsSidebar = {
+    contactedUserUUIDText: WC('contactedUserUUIDText'),
+    contactedUserSiteNameText: WC('contactedUserSiteNameText'),
+    contactedUserSiteURLText: WC('contactedUserSiteURLText'),
+    contactedUserEmployeeEmailText: WC('contactedUserEmployeeEmailText'),
+    dateOfLastContactedText: WC('dateOfLastContactedText')
+}
