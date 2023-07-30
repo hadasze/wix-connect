@@ -1,6 +1,6 @@
-
+const WithH = (string) => '#' + string;
 // @ts-ignore
-export const WC = (compID) => $w('#' + compID);
+export const WC = (compID) => $w(WithH(compID));
 
 export const CommunicationPage = {
 
@@ -15,8 +15,8 @@ export const CommunicationPage = {
     States: {
         TargetAudienceContentLoading: 'TargetAudienceContentLoading',
         TargetAudienceContentUpload: 'TargetAudienceContentUpload',
-    }
-    // teamBtn: ($i) => $i('#teamBtn'),
+    },
+
 }
 
 export const CommunicationDashboardPage = {
@@ -25,12 +25,21 @@ export const CommunicationDashboardPage = {
     dashboardMultiState: WC('dashboardMultiState'),
     myCommunicationItemBox: WC('myCommunicationItemBox'),
     createCommunicationStateButton: WC('createCommunicationStateButton'),
+    communicationClickbaleArea: WC('communicationClickbaleArea'),
+    seeMoreActionsButton: WC('seeMoreActionsButton'),
+    editCommunicationButton: WC('editCommunicationButton'),
+    reuseCommunicationButton: WC('reuseCommunicationButton'),
+    saveAsTempalteButton: WC('saveAsTempalteButton'),
+    archiveCommunicationButton: WC('archiveCommunicationButton'),
+    uarchiveCommunicationButton: WC('uarchiveCommunicationButton'),
+    deleteCommunicationButton: WC('deleteCommunicationButton'),
 
     States: {
         myCommunicationsState: 'myCommunicationsState',
-        emptyState: 'emptyState'
-    }
+        emptyState: 'emptyState',
+    },
 
+    communicationActionsbox: ($i) => $i(WithH('communicationActionsbox')),
 }
 
 export const SendTestEmail = {
@@ -63,7 +72,7 @@ export const SendCommunication = {
     gotItErrorButton: WC('gotItErrorButton'),
     errorMsgText: WC('errorMsgText'),
     sendingLoadingBox: WC('sendingLoadingBox'),
-    
+
     States: {
         Send: 'Send',
         Error: 'Error',
