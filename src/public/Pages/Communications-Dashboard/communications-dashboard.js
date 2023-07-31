@@ -68,14 +68,15 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
 
 const setNavigeationBtnsData = () => {
     autorun((event) => {
-        $w('#allButton').label = `${CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
-        $w('#sentButton').label = `${CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
-        $w('#draftsButton').label = `${CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
-        $w('#archiveButton').label = `${CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
+        Comp.allButton.label = `${CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
+        Comp.sentButton.label = `${CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
+        Comp.draftsButton.label = `${CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
+        Comp.archiveButton.label = `${CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
     })
 }
 
 const setMyCommunications = async () => {
+    Comp.myCommunicationsButton.disable();
 
     const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
     const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
