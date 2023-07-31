@@ -1,6 +1,7 @@
-import { autorun } from 'mobx';
+import { autorun, reaction } from 'mobx';
 import { state } from './state-management.js';
 import { TIME } from 'public/consts.js';
+import { CommunicationPage } from '../../components.js';
 
 import * as createEmailHandler from './create-email.js';
 import * as addDetailsHandler from './add-details.js';
@@ -11,6 +12,7 @@ import * as targetAudienceHandler from './Target-Audience/target-audience.js';
 import * as validationsHandler from './validations.js';
 import * as Fedops from '../../wix-fedops-api.js';
 
+// @ts-ignore
 import { saveCommunication } from 'backend/data-methods-wrapper.jsw';
 
 
@@ -34,17 +36,26 @@ export function setData() {
     targetAudienceHandler.initTargetAudienceData();
 }
 
+let savedCount = 0;
+
 const handleAutoSave = () => {
-    autorun(async () => {
-        try {
-            const $autoSaveAnimation = $w('#autoSaveAnimation');
-            Fedops.appLoadStarted();
-            $autoSaveAnimation.show();
-            await saveCommunication(state.communication);
-            $autoSaveAnimation.hide();
-            Fedops.appLoaded();
-        } catch (err) {
-            console.error('public/create-email save debounce ', err);
-        }
+    autorun(() => {
+        savedCount++;
+        Fedops.appLoadStarted();
+        CommunicationPage.autoSaveAnimation.show();
+
+        saveCommunication(state.communication).then(() => {
+            CommunicationPage.autoSaveAnimation.hide();
+            if (savedCount > 1) {
+                state.setDraftStatus(true);
+            };
+        }).catch((error) => {
+            console.error('public/create-email save debounce ', error);
+        });
+
+        Fedops.appLoaded();
+
     }, { delay: TIME.AUTO_SAVE });
 }
+
+

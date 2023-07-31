@@ -11,7 +11,8 @@ export const CommunicationPage = {
     replaceCSVTooltipBox: WC('replaceCSVTooltipBox'),
     downloadReportButton: WC('downloadReportButton'),
     downloadCSVTooltipBox: WC('downloadCSVTooltipBox'),
-
+    autoSaveAnimation: WC('autoSaveAnimation'),
+    
     States: {
         TargetAudienceContentLoading: 'TargetAudienceContentLoading',
         TargetAudienceContentUpload: 'TargetAudienceContentUpload',
@@ -87,3 +88,4 @@ export const ContactedUserDetailsSidebar = {
     contactedUserEmployeeEmailText: WC('contactedUserEmployeeEmailText'),
     dateOfLastContactedText: WC('dateOfLastContactedText')
 }
+

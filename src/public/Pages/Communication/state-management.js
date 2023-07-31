@@ -1,4 +1,6 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
+
 import { observable, configure, toJS } from 'mobx';
 import { clearAudiance } from '../../audience-handler.js';
 
@@ -10,6 +12,7 @@ configure({
 
 export const state = observable({
     communication: routerData,
+    createEmailAvailable: undefined,
     setCreateEmailAvailable(isAvailible) {
         state.createEmailAvailable = isAvailible;
     },
@@ -56,7 +59,7 @@ export const state = observable({
     setTemplateImg(img) {
         state.communication.template.data.img = img;
     },
-   
+
     setTemplateBody(text) {
         state.communication.template.data.body = text;
     },
@@ -102,4 +105,7 @@ export const state = observable({
     setSentToCounter(counter) {
         state.communication.sentToCounter = counter;
     },
+    increaseAutoSaveCount() {
+        state.autoSavedCount++;
+    }
 });
