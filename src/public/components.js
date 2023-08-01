@@ -20,6 +20,15 @@ export const CommunicationPage = {
 }
 
 export const CommunicationDashboardPage = {
+    seeMoreTemplateActionsButton: WC('seeMoreTemplateActionsButton'),
+    templateActionsBox: WC('templateActionsBox'),
+    templatesItemInfoBox : WC('templatesItemInfoBox'),
+    myTemplateItemBox: WC('myTemplateItemBox'),
+    allTemplatesButton: WC('allTemplatesButton'),
+    deleteTemplateButton: WC('deleteTemplateButton'),
+    duplicateTemplateButton: WC('duplicateTemplateButton'),
+    editTempalteButton: WC('editTempalteButton'),
+    myTemplatesRepeater: WC('myTemplatesRepeater'),
     myCommunicationsButton: WC('myCommunicationsButton'),
     myCommunicationsRepeater: WC('myCommunicationsRepeater'),
     dashboardMultiState: WC('dashboardMultiState'),

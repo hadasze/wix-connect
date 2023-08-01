@@ -5,6 +5,8 @@ import wixLocation from 'wix-location';
 // @ts-ignore
 import wixSiteFrontend from 'wix-site-frontend';
 
+import { debounce } from 'lodash';
+
 import { autorun, observable, configure, toJS } from 'mobx';
 
 import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from '../../consts.js';
@@ -155,36 +157,54 @@ const setCommunicationActionsOptions = ($item, itemData) => {
 }
 
 const setNavigeationBtnsEvents = (repeater) => {
-    $w('#allButton').onClick((event) => {
-        Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
-        updateRepeater(repeater, { "sent": true, "draft": true }, 'allButton');
-        sendBi('thirdMenu', { 'button_name': 'all_button' })
-        Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
+    const debounced = debounce(async (func) => {
+        await func();
+    }, 1000);
+
+    Comp.allButton.onClick((event) => {
+        disbaleCurrentButton('allButton', AllCommunicationDashboardRepeaterButtons);
+        debounced(async () => {
+            Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
+            await updateRepeater(repeater, { "sent": true, "draft": true },);
+            sendBi('thirdMenu', { 'button_name': 'all_button' })
+            Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
+        })
     })
-    $w('#sentButton').onClick((event) => {
-        Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
-        updateRepeater(repeater, { 'sent': true }, 'sentButton');
-        sendBi('thirdMenu', { 'button_name': 'sent_button' })
-        Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
+
+    Comp.sentButton.onClick((event) => {
+        disbaleCurrentButton('sentButton', AllCommunicationDashboardRepeaterButtons);
+        debounced(async () => {
+            Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
+            await updateRepeater(repeater, { 'sent': true },);
+            sendBi('thirdMenu', { 'button_name': 'sent_button' })
+            Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
+        })
     })
-    $w('#draftsButton').onClick((event) => {
-        Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
-        updateRepeater(repeater, { 'draft': true }, 'draftsButton');
-        sendBi('thirdMenu', { 'button_name': 'drafts_button' })
-        Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
+
+    Comp.draftsButton.onClick((event) => {
+        disbaleCurrentButton('draftsButton', AllCommunicationDashboardRepeaterButtons);
+        debounced(async () => {
+            Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
+            await updateRepeater(repeater, { 'draft': true },);
+            sendBi('thirdMenu', { 'button_name': 'drafts_button' })
+            Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
+        })
     })
-    $w('#archiveButton').onClick((event) => {
-        Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
-        updateRepeater(repeater, { 'archive': true }, 'archiveButton');
-        sendBi('thirdMenu', { 'button_name': 'archive_button' })
-        Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
+
+    Comp.archiveButton.onClick( (event) => {
+        disbaleCurrentButton('archiveButton', AllCommunicationDashboardRepeaterButtons);
+        debounced(async () => {
+            Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
+            await updateRepeater(repeater, { 'archive': true },);
+            sendBi('thirdMenu', { 'button_name': 'archive_button' })
+            Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
+        })
     })
 }
 
-const updateRepeater = (repeater, filters, buttonClicked) => {
-    disbaleCurrentButton(buttonClicked, AllCommunicationDashboardRepeaterButtons);
+const updateRepeater = async (repeater, filters) => {
     repeater.filters = filters;
-    repeater.resetRepeater();
+    await repeater.resetRepeater();
 }
 
 const setCommunicationMoreActionsUI = ($item) => {

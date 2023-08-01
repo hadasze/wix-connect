@@ -52,11 +52,11 @@ export class SmartRepeater {
         this.loadMoreData();
     }
 
-    resetRepeater() {
+    async resetRepeater() {
         this.finishLoad = false;
         this.skip = SmartRepeaterConsts.SKIP;
         this.repeater.data = [];
-        this.loadMoreData();
+        await this.loadMoreData();
     }
 
 }

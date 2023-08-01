@@ -1,12 +1,15 @@
+// @ts-ignore
 import wixWindow from 'wix-window';
+// @ts-ignore
 import wixLocation from 'wix-location';
 
 import { Text, CommunicationDahboardStates, Urls } from '../../consts.js';
 import { SmartRepeater } from '../../smart-repeater.js';
-import { setTemplateActionsEvents } from './templates-actions.js';
+import { CommunicationDashboardPage as Comp } from '../../components.js';
+import { removeItemFromRepeater } from '../../_utils.js';
 
-import { getAllUserCommunications } from 'backend/data-methods-wrapper.jsw';
-
+// @ts-ignore
+import * as DataMethods from 'backend/data-methods-wrapper.jsw';
 
 const routerData = wixWindow.getRouterData();
 
@@ -16,35 +19,71 @@ export const initTemplatesDashboardData = () => {
 }
 
 const setButtonsData = () => {
-    $w('#allTemplatesButton').label = `${CommunicationDahboardStates.ALL} ${routerData.templates}`;
+    Comp.allTemplatesButton.label = `${CommunicationDahboardStates.ALL} ${routerData.templates}`;
 }
 
 const setTemplatesRepeater = async () => {
+    setTemplateActionsEvents();
+    setTemplateActionsUI();
     const filters = { 'isTemplate': true };
     const itemReadyFun = ($item, itemData, index) => {
         $item('#templateNameText').text = itemData.name || Text.NO_NAME;
         $item('#lastEditedTemplateDateText').text = Text.EDITED_ON + itemData._updatedDate;
-        setTemplateActionsUI($item, itemData);
-        setTemplateActionsEvents($item, itemData);
     }
 
-    const smartTemplatesRepeater = new SmartRepeater($w('#myTemplatesRepeater'), $w('#myTemplateItemBox'), getAllUserCommunications, filters, itemReadyFun);
+    const smartTemplatesRepeater = new SmartRepeater(Comp.myTemplatesRepeater, Comp.myTemplateItemBox, DataMethods.getAllUserCommunications, filters, itemReadyFun);
     smartTemplatesRepeater.initRepeater();
 }
 
-const setTemplateActionsUI = ($item, itemData) => {
-    let clicked = false;
-    !$item('#templateActionsBox').collapsed && $item('#templateActionsBox').collapse();
-    $item('#seeMoreTemplateActionsButton').onClick((event) => {
-        $item('#templateActionsBox').expand();
-        clicked = true;
+const setTemplateActionsUI = () => {
+
+    
+    Comp.seeMoreTemplateActionsButton.onClick((event) => {
+        console.log('click');
+        // @ts-ignore
+        const $item = $w.at(event.context);
+        $item('#templateActionsBox').collapsed ? $item('#templateActionsBox').expand() : $item('#templateActionsBox').collapse();
     })
-    //cr to change after talking with UX and changing the box limits
-    $item('#box222').onClick(() => {
-        wixLocation.to(Urls.PREVIEW + itemData._id)
+
+    Comp.templatesItemInfoBox.onClick((event) => {
+        wixLocation.to(Urls.PREVIEW + event.context.itemId);
     })
-    $item('#templateActionsBox').onMouseOut((event) => {
-        $item('#templateActionsBox').collapse().then(() => clicked = false);
-        if ($item('#templateActionsBox').collapsed && clicked) $item('#templateActionsBox').expand();
+
+    Comp.myTemplateItemBox.onMouseOut((event) => {
+        // @ts-ignore
+        const $item = $w.at(event.context);
+        $item('#templateActionsBox').collapse();
+    })
+}
+
+
+export const setTemplateActionsEvents = () => {
+
+    Comp.editTempalteButton.onClick((event) => {
+        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
+    })
+
+
+    Comp.duplicateTemplateButton.onClick(async (event) => {
+        event.target.disable();
+        const data = Comp.myTemplatesRepeater.data;
+        let clickedItemData = data.find(item => item._id === event.context.itemId);
+        const { _id, _createdDate, _updatedDate, _owner, ...rest } = clickedItemData;
+
+        try {
+            const newTemplate = await DataMethods.saveCommunication(rest);
+            const newData = [newTemplate, ...Comp.myTemplatesRepeater.data];
+            Comp.myTemplatesRepeater.data = newData;
+            event.target.enable();
+
+        } catch (err) {
+            console.error('public/templates-dashboard duplicate template ', err);
+        }
+    })
+
+    Comp.deleteTemplateButton.onClick((event) => {
+        event.target.disable();
+        DataMethods.removeCommunication(event.context.itemId);
+        removeItemFromRepeater(Comp.myTemplatesRepeater, event.context.itemId);
     })
 }
