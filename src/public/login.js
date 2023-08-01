@@ -67,12 +67,12 @@ export async function validateAccessToken() {
 
                         if (userInfo.groups.includes('ero-wix-connect')) {
                             if (wixSite.currentPage?.url === '/guide-ask-page') {
-                                wixLocation.to('/')
+                                wixLocation.to('/');
                             } else {
                                 return tokenset;
                             }
                         } else {
-                            return wixLocation.to('/guide-ask-page')
+                            return wixLocation.to('/guide-ask-page');
                         }
                     } else {
                         if ((await introspectRefreshTokenRes).active) {
