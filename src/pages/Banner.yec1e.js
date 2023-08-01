@@ -6,5 +6,5 @@ $w.onReady(function () {
     Comp.msgText.text = msg;
     setTimeout(() => {
         wixWindow.lightbox.close();
-    }, 4000);
+    }, 2000);
 });
