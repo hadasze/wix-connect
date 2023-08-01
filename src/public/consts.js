@@ -264,7 +264,9 @@ export const Lightboxs = {
     createRequests: 'Create Requests Pop Up',
     firstTimeApprove: 'First Time Approve Pop Up',
     topUser: 'Top user',
-    CustomLogin: 'Custom-Login'
+    CustomLogin: 'Custom-Login',
+    Banner: 'Banner'
 }
 
 export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';
+export const SavedAsTempalteText = 'Saved! go to "My Templates" to reuse';

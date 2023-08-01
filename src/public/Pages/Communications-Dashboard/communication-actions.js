@@ -4,8 +4,10 @@ import wixLocation from 'wix-location';
 import { sendBi } from '../../BI/biModule.js';
 import { removeItemFromRepeater } from '../../_utils.js';
 import { state } from './state-manager.js';
-import * as constants from '../../consts.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
+import { openBanner } from '../../_utils.js';
+
+import * as constants from '../../consts.js';
 
 // @ts-ignore
 import { updateCommunication, saveCommunication } from 'backend/data-methods-wrapper.jsw';
@@ -65,6 +67,7 @@ export const setCommunicationMoreActionsEvents = () => {
         const newData = [template, ...Comp.myTemplatesRepeater.data];
         Comp.myTemplatesRepeater.data = newData;
         Comp.communicationActionsbox($item(event)).collapse();
+        openBanner(constants.SavedAsTempalteText);
     });
 
     Comp.archiveCommunicationButton.onClick(async (event) => {
