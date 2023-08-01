@@ -1,10 +1,13 @@
 // @ts-ignore
 import wixLocation from 'wix-location';
 // @ts-ignore
+import wixWindow from 'wix-window';
+// @ts-ignore
 import { local } from 'wix-storage';
 
 import { Urls } from './consts.js';
 import { getTokenset } from './login.js';
+import { Lightboxs } from './consts.js';
 
 export function lowerize(obj) {
     return Object.keys(obj).reduce((acc, k) => {
@@ -49,3 +52,5 @@ export function getOwnerUUID() {
     const userInfo = JSON.parse(userInfoSTR);
     return userInfo.uuid;
 }
+
+export const openBanner = (msg) => wixWindow.openLightbox(Lightboxs.Banner, { msg });

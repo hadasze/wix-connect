@@ -12,7 +12,7 @@ export const CommunicationPage = {
     downloadReportButton: WC('downloadReportButton'),
     downloadCSVTooltipBox: WC('downloadCSVTooltipBox'),
     autoSaveAnimation: WC('autoSaveAnimation'),
-    
+
     States: {
         TargetAudienceContentLoading: 'TargetAudienceContentLoading',
         TargetAudienceContentUpload: 'TargetAudienceContentUpload',
@@ -23,7 +23,7 @@ export const CommunicationPage = {
 export const CommunicationDashboardPage = {
     seeMoreTemplateActionsButton: WC('seeMoreTemplateActionsButton'),
     templateActionsBox: WC('templateActionsBox'),
-    templatesItemInfoBox : WC('templatesItemInfoBox'),
+    templatesItemInfoBox: WC('templatesItemInfoBox'),
     myTemplateItemBox: WC('myTemplateItemBox'),
     allTemplatesButton: WC('allTemplatesButton'),
     deleteTemplateButton: WC('deleteTemplateButton'),
@@ -102,3 +102,6 @@ export const ContactedUserDetailsSidebar = {
     dateOfLastContactedText: WC('dateOfLastContactedText')
 }
 
+export const Banner = {
+    msgText: WC('msgText'),
+}
