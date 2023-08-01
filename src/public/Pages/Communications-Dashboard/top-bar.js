@@ -24,11 +24,9 @@ export const setTopBarButtonsEvents = () => {
     });
 
     $w('#createCommunicationButton').onClick(async (event) => {
-
         createCommunicationClick(event);
-
-      
     });
+    
     $w('#needHelpButton').onClick((event) => {
         wixWindow.openLightbox(constants.Lightboxs.needHelpSidebar);
     });
