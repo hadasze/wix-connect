@@ -3,7 +3,7 @@ import * as topBarHandler from './top-bar.js'
 import * as templatesDashboardHandler from './templates-dashboard.js'
 
 export function setEvents() {
-    topBarHandler.initTopBardActions();
+    topBarHandler.setTopBarButtonsEvents();
     communicationsDashboardHandler.setEmptyState();
 }
 

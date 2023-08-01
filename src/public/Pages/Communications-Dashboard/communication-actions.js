@@ -3,7 +3,7 @@ import wixLocation from 'wix-location';
 
 import { sendBi } from '../../BI/biModule.js';
 import { removeItemFromRepeater } from '../../_utils.js';
-import { state } from './communications-dashboard.js';
+import { state } from './state-manager.js';
 import * as constants from '../../consts.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 
@@ -19,7 +19,7 @@ const itemData = (event, repeater) => {
 }
 
 export const setCommunicationMoreActionsEvents = () => {
-    
+
     const repeater = Comp.myCommunicationsRepeater;
 
     Comp.communicationClickbaleArea.onClick((event) => {
@@ -56,11 +56,15 @@ export const setCommunicationMoreActionsEvents = () => {
     Comp.saveAsTempalteButton.onClick(async (event) => {
         event.target.disable();
         Comp.saveAsTempalteButton
-        const template = resetCommunication(itemData(event, repeater));
-        template.isTemplate = true;
-        saveCommunication(template);
+        const toSave = resetCommunication(itemData(event, repeater));
+        toSave.isTemplate = true;
+        const template = await saveCommunication(toSave);
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
         event.target.enable();
+        state.communicationsCounts.templates++;
+        const newData = [template, ...Comp.myTemplatesRepeater.data];
+        Comp.myTemplatesRepeater.data = newData;
+        Comp.communicationActionsbox($item(event)).collapse();
     });
 
     Comp.archiveCommunicationButton.onClick(async (event) => {
