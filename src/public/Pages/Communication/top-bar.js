@@ -11,6 +11,9 @@ import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
 import { redirectToMyCommunications } from '../../_utils.js';
 
+// @ts-ignore
+import { removeCommunication } from 'backend/data-methods-wrapper.jsw';
+
 import * as previewHandler from './preview.js';
 import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
@@ -110,14 +113,17 @@ const setOnClickStepsEvents = () => {
         previewHandler.cleanAllPreviewData();
         sendBi('upperMenu', { 'button_name': 'back_To_Edit' })
     })
-    $w('#backToDashboardButton').onClick((event) => {
-        sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' })
-        if (state.communication.sent) {
-            redirectToMyCommunications();
-        } else {
-            wixWindow.openLightbox(constants.Lightboxs.exitWarning);
+    $w('#backToDashboardButton').onClick(async (event) => {
+        $w('#backToDashboardButton').disable();
+        sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' });
+        console.log(state.communication.draft);
+        if (!state.communication.draft && !state.communication.sent && !state.communication.delete) {
+            removeCommunication(state.communication._id);
         }
+
+        return await redirectToMyCommunications();
     });
+
     $w('#sendStepButton').onClick(async (event) => {
         $w('#sendStepButton').disable();
         sendBi('upperMenu', { 'button_name': 'send_emails' })
@@ -127,7 +133,7 @@ const setOnClickStepsEvents = () => {
 
     $w('#sendTestButton').onClick(async (event) => {
         sendBi('upperMenu', { 'button_name': 'send_test_email' })
-        await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);       
+        await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
     })
 }
 

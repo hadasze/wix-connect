@@ -33,7 +33,7 @@ export class Communication {
         };
         this.tested = null;
         this.sent = null;
-        this.draft = true;
+        this.draft = null;
         this.archive = null;
         this.isTemplate = null;
         this.sentToCounter = null;
