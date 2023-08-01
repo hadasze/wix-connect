@@ -6,10 +6,6 @@ import { sendBi } from '../../BI/biModule.js';
 import { createCommunicationClick } from './communications-dashboard.js';
 import * as constants from '../../consts.js';
 
-export const initTopBardActions = () => {
-    setTopBarButtonsEvents();
-}
-
 export const setTopBarButtonsEvents = () => {
     $w('#myCommunicationsButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myCommunicationsState');
@@ -20,7 +16,7 @@ export const setTopBarButtonsEvents = () => {
     $w('#myTemplatesButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myTemplatesState');
         disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myTemplatesButton' })
+        sendBi('subMenu', { 'button_name': 'myTemplatesButton' });
     });
 
     $w('#createCommunicationButton').onClick(async (event) => {

@@ -1,17 +1,17 @@
 // @ts-ignore
-import wixWindow from 'wix-window';
-// @ts-ignore
 import wixLocation from 'wix-location';
 
-import { Text, CommunicationDahboardStates, Urls } from '../../consts.js';
 import { SmartRepeater } from '../../smart-repeater.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import { removeItemFromRepeater } from '../../_utils.js';
+import { state } from './state-manager.js';
+
+import * as constants from '../../consts.js';
 
 // @ts-ignore
 import * as DataMethods from 'backend/data-methods-wrapper.jsw';
+import { autorun } from 'mobx';
 
-const routerData = wixWindow.getRouterData();
 
 export const initTemplatesDashboardData = () => {
     setTemplatesRepeater();
@@ -19,25 +19,27 @@ export const initTemplatesDashboardData = () => {
 }
 
 const setButtonsData = () => {
-    Comp.allTemplatesButton.label = `${CommunicationDahboardStates.ALL} ${routerData.templates}`;
+    autorun(() => Comp.allTemplatesButton.label = `${constants.CommunicationDahboardStates.ALL} ${state.communicationsCounts.templates}`);
 }
 
 const setTemplatesRepeater = async () => {
-    setTemplateActionsEvents();
-    setTemplateActionsUI();
+
     const filters = { 'isTemplate': true };
     const itemReadyFun = ($item, itemData, index) => {
-        $item('#templateNameText').text = itemData.name || Text.NO_NAME;
-        $item('#lastEditedTemplateDateText').text = Text.EDITED_ON + itemData._updatedDate;
+        $item('#templateNameText').text = itemData.name || constants.Text.NO_NAME;
+        $item('#lastEditedTemplateDateText').text = constants.Text.EDITED_ON + itemData._updatedDate;
     }
 
     const smartTemplatesRepeater = new SmartRepeater(Comp.myTemplatesRepeater, Comp.myTemplateItemBox, DataMethods.getAllUserCommunications, filters, itemReadyFun);
     smartTemplatesRepeater.initRepeater();
+
+    setTemplateActionsEvents(smartTemplatesRepeater);
+    setTemplateActionsUI();
 }
 
 const setTemplateActionsUI = () => {
 
-    
+
     Comp.seeMoreTemplateActionsButton.onClick((event) => {
         console.log('click');
         // @ts-ignore
@@ -46,7 +48,7 @@ const setTemplateActionsUI = () => {
     })
 
     Comp.templatesItemInfoBox.onClick((event) => {
-        wixLocation.to(Urls.PREVIEW + event.context.itemId);
+        wixLocation.to(constants.Urls.PREVIEW + event.context.itemId);
     })
 
     Comp.myTemplateItemBox.onMouseOut((event) => {
@@ -57,10 +59,10 @@ const setTemplateActionsUI = () => {
 }
 
 
-export const setTemplateActionsEvents = () => {
+export const setTemplateActionsEvents = (smartTemplatesRepeater) => {
 
     Comp.editTempalteButton.onClick((event) => {
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + event.context.itemId);
+        wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + event.context.itemId);
     })
 
 
@@ -71,9 +73,13 @@ export const setTemplateActionsEvents = () => {
         const { _id, _createdDate, _updatedDate, _owner, ...rest } = clickedItemData;
 
         try {
-            const newTemplate = await DataMethods.saveCommunication(rest);
-            const newData = [newTemplate, ...Comp.myTemplatesRepeater.data];
-            Comp.myTemplatesRepeater.data = newData;
+
+            // const newTemplate =
+            await DataMethods.saveCommunication(rest);
+            // const newData = [newTemplate, ...Comp.myTemplatesRepeater.data];
+            // Comp.myTemplatesRepeater.data = newData;
+            smartTemplatesRepeater.resetRepeater();
+            state.communicationsCounts.templates++;
             event.target.enable();
 
         } catch (err) {
@@ -81,9 +87,11 @@ export const setTemplateActionsEvents = () => {
         }
     })
 
-    Comp.deleteTemplateButton.onClick((event) => {
+    Comp.deleteTemplateButton.onClick(async (event) => {
         event.target.disable();
-        DataMethods.removeCommunication(event.context.itemId);
-        removeItemFromRepeater(Comp.myTemplatesRepeater, event.context.itemId);
+        await DataMethods.removeCommunication(event.context.itemId);
+        // removeItemFromRepeater(Comp.myTemplatesRepeater, event.context.itemId);
+        smartTemplatesRepeater.resetRepeater();
+        state.communicationsCounts.templates--;
     })
 }

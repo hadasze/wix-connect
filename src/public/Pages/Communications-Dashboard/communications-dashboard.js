@@ -1,35 +1,24 @@
 // @ts-ignore
-import wixWindow from 'wix-window';
-// @ts-ignore
 import wixLocation from 'wix-location';
 // @ts-ignore
 import wixSiteFrontend from 'wix-site-frontend';
 
 import { debounce } from 'lodash';
+import { autorun } from 'mobx';
 
-import { autorun, observable, configure, toJS } from 'mobx';
-
-import { Text, CommunicationDahboardStates, AllCommunicationDashboardRepeaterButtons, CommunicationActions, Urls } from '../../consts.js';
 import { disbaleCurrentButton } from '../helpers.js'
 import { SmartRepeater } from '../../smart-repeater.js';
 import { getSentCommunications } from '../../audience-handler.js';
 import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
+import { state } from './state-manager.js';
+
 import * as Fedops from '../../wix-fedops-api.js';
+import * as constants from '../../consts.js';
 
 // @ts-ignore
 import { getAllUserCommunications, createCommunication } from 'backend/data-methods-wrapper.jsw';
-
-const routerData = wixWindow.getRouterData();
-
-configure({
-    useProxies: "never"
-})
-
-export const state = observable({
-    communicationsCounts: routerData.count,
-});
 
 export const initCommunicationsDashboardData = () => {
     setMyCommunications();
@@ -43,17 +32,16 @@ export const setEmptyState = () => {
 }
 
 export async function createCommunicationClick(event) {
-    const clickedElement = event.target;
-    clickedElement.disable();
+    event.target.disable();
     try {
         Fedops.interactionStarted(Fedops.events.createNewCommunication);
         const communication = await createCommunication();
         Fedops.interactionEnded(Fedops.events.createNewCommunication);
         sendBi('createCommunication', { 'button_name': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
-        wixLocation.to(Urls.EXISTS_COMMUNICATION + communication._id);
+        wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + communication._id);
     } catch (err) {
         console.error('error in createCommunicationButton, original error: ' + err);
-        clickedElement.enable();
+        event.target.enable();
     }
 }
 
@@ -70,10 +58,10 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
 
 const setNavigeationBtnsData = () => {
     autorun((event) => {
-        Comp.allButton.label = `${CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
-        Comp.sentButton.label = `${CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
-        Comp.draftsButton.label = `${CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
-        Comp.archiveButton.label = `${CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
+        Comp.allButton.label = `${constants.CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
+        Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
+        Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
+        Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
     })
 }
 
@@ -93,16 +81,16 @@ const setMyCommunications = async () => {
     });
 
     Comp.myCommunicationsRepeater.hide();
-    const communicationDetails = await prepareSentCommunicationsDetails(routerData.communicationDetails);
+    const communicationDetails = await prepareSentCommunicationsDetails(state.communicationDetails);
     const filters = { "sent": true, "draft": true };
     const itemReadyFun = ($item, itemData, index) => {
 
         wixSiteFrontend.prefetchPageResources({
-            "pages": [Urls.EXISTS_COMMUNICATION + itemData._id]
+            "pages": [constants.Urls.EXISTS_COMMUNICATION + itemData._id]
         });
 
-        $item('#communicationTitleText').text = itemData.name || Text.NO_NAME;
-        (CommunicationActions.All).forEach(button => {
+        $item('#communicationTitleText').text = itemData.name || constants.Text.NO_NAME;
+        (constants.CommunicationActions.All).forEach(button => {
             !$item(button).collapsed && $item(button).collapse();
         });
 
@@ -136,7 +124,7 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
         $item('#loadingSentDataBox').show();
     }
 
-    $item('#dateLabelText').text = Text.SENT_ON + new Date(itemData._updatedDate);
+    $item('#dateLabelText').text = constants.Text.SENT_ON + new Date(itemData._updatedDate);
     $item('#dateLabelText').show();
 }
 
@@ -145,12 +133,12 @@ const setUnsentCommunicationUI = ($item, itemData) => {
         $item('#draftLabelBox').show() && $item('#wasntSendText').show();
 
 
-    $item('#dateLabelText').text = Text.EDITED_ON + new Date(itemData._updatedDate);
+    $item('#dateLabelText').text = constants.Text.EDITED_ON + new Date(itemData._updatedDate);
 }
 
 const setCommunicationActionsOptions = ($item, itemData) => {
-    const buttonsList = itemData.archive ? CommunicationActions.Archive :
-        itemData.sent ? CommunicationActions.Sent : CommunicationActions.Draft;
+    const buttonsList = itemData.archive ? constants.CommunicationActions.Archive :
+        itemData.sent ? constants.CommunicationActions.Sent : constants.CommunicationActions.Draft;
     (buttonsList).forEach(button => {
         $item(button).collapsed && $item(button).expand();
     });
@@ -162,7 +150,7 @@ const setNavigeationBtnsEvents = (repeater) => {
     }, 1000);
 
     Comp.allButton.onClick((event) => {
-        disbaleCurrentButton('allButton', AllCommunicationDashboardRepeaterButtons);
+        disbaleCurrentButton('allButton', constants.AllCommunicationDashboardRepeaterButtons);
         debounced(async () => {
             Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
             await updateRepeater(repeater, { "sent": true, "draft": true },);
@@ -172,7 +160,7 @@ const setNavigeationBtnsEvents = (repeater) => {
     })
 
     Comp.sentButton.onClick((event) => {
-        disbaleCurrentButton('sentButton', AllCommunicationDashboardRepeaterButtons);
+        disbaleCurrentButton('sentButton', constants.AllCommunicationDashboardRepeaterButtons);
         debounced(async () => {
             Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
             await updateRepeater(repeater, { 'sent': true },);
@@ -182,7 +170,7 @@ const setNavigeationBtnsEvents = (repeater) => {
     })
 
     Comp.draftsButton.onClick((event) => {
-        disbaleCurrentButton('draftsButton', AllCommunicationDashboardRepeaterButtons);
+        disbaleCurrentButton('draftsButton', constants.AllCommunicationDashboardRepeaterButtons);
         debounced(async () => {
             Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
             await updateRepeater(repeater, { 'draft': true },);
@@ -191,8 +179,8 @@ const setNavigeationBtnsEvents = (repeater) => {
         })
     })
 
-    Comp.archiveButton.onClick( (event) => {
-        disbaleCurrentButton('archiveButton', AllCommunicationDashboardRepeaterButtons);
+    Comp.archiveButton.onClick((event) => {
+        disbaleCurrentButton('archiveButton', constants.AllCommunicationDashboardRepeaterButtons);
         debounced(async () => {
             Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
             await updateRepeater(repeater, { 'archive': true },);
