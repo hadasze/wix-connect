@@ -18,6 +18,7 @@ export const initHeadlineActions = () => {
 }
 
 const setHeadlineData = () => {
+    $w('#previewButton').disable();
     $w('#communicationTitleText').text = currCommunication?.name || '';
     $w('#sentOnDateText').text = currCommunication.sent ? Text.SENT_ON + new Date(`${currCommunication?._updatedDate.$date || ''}`) :
         Text.EDITED_ON + new Date(`${currCommunication?._updatedDate.$date || ''}`);
