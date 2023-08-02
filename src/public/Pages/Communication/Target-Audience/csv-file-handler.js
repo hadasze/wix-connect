@@ -111,10 +111,10 @@ const setUploadCSVEvent = () => {
 
 const customePolling = async (cycle) => {
     if (!cycle)
-        cycle = 0;
+        cycle = 1;
     try {
-        if (cycle > 20) {
-            throw new Error('Csv upload failed');
+        if (cycle >= 10) {
+            throw new Error('Can not extract audiance from CSV');
         }
         let audience;
         setTimeout(async () => {
@@ -126,10 +126,12 @@ const customePolling = async (cycle) => {
             } else {
                 return await customePolling(cycle + 1);
             }
-        }, 10000);
+        }, 5000);
 
     } catch (error) {
-        return Promise.reject('public -> csv-file-handler.js -> customePolling failed -origin error- ' + error);
+        await Comp.targetAudienceContent.changeState(Comp.States.TargetAudienceContentUpload) && Comp.csvDetailsAndActionsBox.hide();
+        await wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication: state.communication, reason: constants.csvErrors.missingUUIDMSID });
+        throw new Error('public -> csv-file-handler.js -> customePolling failed -origin error- ' + error);
     }
 }
 
