@@ -41,7 +41,6 @@ const setTemplateActionsUI = () => {
 
 
     Comp.seeMoreTemplateActionsButton.onClick((event) => {
-        console.log('click');
         // @ts-ignore
         const $item = $w.at(event.context);
         $item('#templateActionsBox').collapsed ? $item('#templateActionsBox').expand() : $item('#templateActionsBox').collapse();

@@ -36,7 +36,6 @@ export const sendEmailToWixUsers = async (arrayOfEmails, userJWT, isTestEmail, o
 
         console.log(`Sending emails to users, communicationId: ${communicationId}, arrayOfEmails: ${JSON.stringify(arrayOfEmails)}`);
 
-
         arrayOfEmails.forEach((email) => !(doNotSendList.includes(email.userId)) && UserMailer.sendEmailToWixUsers(email.userId, email.body, userJWT));
 
         if (!isTestEmail) {
