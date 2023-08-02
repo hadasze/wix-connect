@@ -64,7 +64,7 @@ function onValid() {
     Comp.emailIsNotValidBox.hide();
     const email = Comp.testEmailsInput.value;
 
-    
+
     sendTestEmail(email);
 }
 

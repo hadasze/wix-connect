@@ -116,7 +116,6 @@ const setOnClickStepsEvents = () => {
     $w('#backToDashboardButton').onClick(async (event) => {
         $w('#backToDashboardButton').disable();
         sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' });
-        console.log(state.communication.draft);
         if (!state.communication.draft && !state.communication.sent && !state.communication.delete) {
             removeCommunication(state.communication._id);
         }

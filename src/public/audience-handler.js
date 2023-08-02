@@ -17,12 +17,9 @@ import * as Utils from './_utils.js';
 import pLimit from 'p-limit';
 
 export async function getAudienceDetails(payload) {
-    console.log('getAudienceDetails payload: ', payload);
-    console.log('getAudienceDetails state: ', state);
     const limit = pLimit(10);
 
     const validateRes = validateFile(payload);
-    console.log({ validateRes });
     if (validateRes.valid) {
         const uuidsAndMsidsList = validateRes.uuidsAndMsidsList;
 
@@ -30,20 +27,13 @@ export async function getAudienceDetails(payload) {
         if (!userJWT) {
             console.warn('public -> audiance-handler.js userJWT is missing');
         }
-        if ($w('#rejectedRepeater').hidden)
-            $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').show();
-
         const chunkSize = 1000;
         const chunks = [];
 
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
             chunks.push(uuidsAndMsidsList.slice(i, i + chunkSize));
         }
-        console.log(chunks);
-        let promises = chunks.map(chunk => {
-            console.log({ chunk });
-            return limit(() => AudienceHandler.getAudienceDetails(chunk, userJWT));
-        });
+        let promises = chunks.map(chunk => limit(() => AudienceHandler.getAudienceDetails(chunk, userJWT)));
 
         const results = await Promise.all(promises);
         const toReturn = { approved: [], rejected: [], needAprroval: [] };
@@ -75,8 +65,6 @@ export async function getSentCommunications() {
 
 function validateFile(payload) {
 
-    console.log('validateFile payload: ', payload);
-
     if (!Utils.isArray(payload)) {
         return { valid: false, reason: constants.csvErrors.notValidFile };
     }
@@ -86,8 +74,6 @@ function validateFile(payload) {
     }
 
     const uuidsAndMsidsList = clearAudiance(payload);
-
-    console.log('uuidsAndMsidsList: ', uuidsAndMsidsList);
 
     if (uuidsAndMsidsList.length > 0) {
         return { valid: true, uuidsAndMsidsList };
@@ -100,7 +86,6 @@ export function clearAudiance(payload) {
     const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
-        console.log('clearAudiance item: ', item);
         if (item.uuid && item.msid) {
             if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
                 uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
@@ -115,5 +100,7 @@ const setNotValidFileUI = () => {
     targetAudienceState.setNeedApprovalCounter(0);
     targetAudienceState.setRejectedCounter(0)
     targetAudienceState.setNeedApprovalCounter(0);
-    $w('#rejectedRepeater, #needApprovalReapter, #approvedRepeater').hide();
+    $w('#rejectedRepeater').data = [];
+    $w('#needApprovalReapter').data = [];
+    $w('#approvedRepeater').data = [];
 }
