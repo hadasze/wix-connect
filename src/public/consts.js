@@ -61,7 +61,7 @@ export const Text = {
     APPROVE_ALL: 'SELECT ALL',
     UNAPPROVE_ALL: 'CLEAR ALL',
     REUSE_COMMUNICATION: 'Reuse as a New Communication',
-    REUSE_TEMPLATE: 'Reuse Template',
+    REUSE_TEMPLATE: 'Reuse as a New Communication',
     SEND: 'send',
     CANCEL: 'cancel',
     REQUEST_APPROVAL_BTN: (num) => `Request Approval ${num}`,
