@@ -166,7 +166,7 @@ export const reciveLatestApprovedUsers = async (allApprovedUsers) => {
         //quick win to solve bug in viewr when the repeater isn't render
         setTimeout(() => {
             setApprovedRepeater(allApprovedUsers);
-        }, 50);
+        }, 100);
         
     }
     if (audienceData) {
