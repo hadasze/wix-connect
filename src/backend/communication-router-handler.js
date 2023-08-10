@@ -23,6 +23,10 @@ export async function setCommunication(routerRequest) {
 }
 //todo: make it faster
 export async function setMyCommunications(routerRequest) {
+
+    // get all user communications that are not delete
+    // split into all,draft,archive,sent,templates
+    
     try {
         let communicationDetails = {};
         if (routerRequest.query?.token) {
