@@ -63,7 +63,7 @@ export const setCommunicationMoreActionsEvents = () => {
         const template = await saveCommunication(toSave);
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
         event.target.enable();
-        state.communicationsCounts.templates++;
+        state.communications = [template, ...state.communications];
         const newData = [template, ...Comp.myTemplatesRepeater.data];
         Comp.myTemplatesRepeater.data = newData;
         Comp.communicationActionsbox($item(event)).collapse();
@@ -76,8 +76,7 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
         removeItemFromRepeater(repeater, event.context.itemId);
-        state.communicationsCounts.archive++;
-        state.communicationsCounts.all--;
+
     });
 
     Comp.uarchiveCommunicationButton.onClick(async (event) => {
@@ -86,8 +85,7 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'unarchive' });
         removeItemFromRepeater(repeater, event.context.itemId);
-        state.communicationsCounts.archive--;
-        state.communicationsCounts.all++;
+
     });
 
     Comp.deleteCommunicationButton.onClick((event) => {
@@ -96,7 +94,7 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'delete' });
         removeItemFromRepeater(repeater, event.context.itemId);
-        state.communicationsCounts.all--;
+        state.communications = state.communications.filter((item) => item._id !== event.context.itemId);
     })
 }
 

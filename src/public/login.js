@@ -62,8 +62,8 @@ export async function validateAccessToken() {
                     const introspectAccessTokenRes = Login.introspect(tokenset.access_token);
                     const introspectRefreshTokenRes = Login.introspect(tokenset.refresh_token);
                     if ((await introspectAccessTokenRes).active) {
-                        if (userInfo?.email !== 'binyaminm@wix.com')
-                            return wixLocation.to('/system-down');
+                        // if (userInfo?.email !== 'binyaminm@wix.com')
+                        //     return wixLocation.to('/system-down');
 
                         if (userInfo.groups.includes('ero-wix-connect')) {
                             if (wixSite.currentPage?.url === '/guide-ask-page') {

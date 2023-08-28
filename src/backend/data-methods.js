@@ -54,8 +54,8 @@ export async function getAllUserCommunications(filters, options = {}, limit = 10
         if (filters.isTemplate)
             query = query.eq('isTemplate', filters.isTemplate);
     }
-    if (options?.count)
-        return query.count(dataOptions);
+    if (options?.all)
+        return await retriveAllItems(query, defaultLimit);
     return query.find(dataOptions);
 }
 
@@ -75,26 +75,6 @@ export async function getContactedEmailByMemberID(memberID) {
     } catch (error) {
         return Promise.reject('backend -> data-methods.js -> getContactedEmailByMemberID failed - origin error - ' + error);
     }
-}
-
-export const countAllUserCommunications = async () => {
-    const allCurrentUserCommunications = await getAllUserCommunications({}, {}, defaultLimit, 0);
-    // all, draft, archive, sent, templates
-    const toReturn = [0, 0, 0, 0, 0];
-
-    allCurrentUserCommunications.items.forEach(item => {
-        if ((item.sent || item.draft) && !item.archive)
-            toReturn[0]++;
-        if ((item.draft) && !item.archive)
-            toReturn[1]++;
-        if (item.archive)
-            toReturn[2]++;
-        if ((item.sent) && !item.archive)
-            toReturn[3]++;
-        if (item.isTemplate)
-            toReturn[4]++;
-    });
-    return toReturn;
 }
 
 export async function duplicateCommunication(communicationID) {

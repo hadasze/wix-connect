@@ -1,6 +1,5 @@
 import { ok, sendStatus, redirect } from "wix-router";
 import { getCommunication, getAllUserCommunications } from './data-methods.js';
-import { countAllUserCommunications } from './data-methods.js';
 import { getServerToken } from "./ero-api.js";
 
 import * as MarketingAPI from './marketing-api.js';
@@ -24,23 +23,29 @@ export async function setCommunication(routerRequest) {
         return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origin error - ' + error.message);
     }
 }
-//todo: make it faster
-export async function setMyCommunications(routerRequest) {
 
-    // get all user communications that are not delete
-    // split into all,draft,archive,sent,templates
+export async function setMyCommunications(routerRequest) {
 
     try {
         let communicationDetails = {};
-        const serverTokenSet = await getServerToken();
-        const filters = { "sent": true };
-        const getAllUserCommunicationsRes = await getAllUserCommunications(filters);
-        const uniqueIds = [...new Set(getAllUserCommunicationsRes.items.map((item) => item._id))];
-        if (uniqueIds.length > 0)
-            communicationDetails = await MarketingAPI.getSentCommunications(uniqueIds, serverTokenSet.access_token);
+        const sentCommunicationsIds = [];
+        const filters = {};
+        const options = { all: true };
 
-        const [all, draft, archive, sent, templates] = await countAllUserCommunications();
-        return ok("my-communications-page", { count: { all, draft, archive, sent, templates }, communicationDetails });
+        const [serverTokenSet, communications] = await Promise.all([getServerToken(), getAllUserCommunications(filters, options)]);
+         
+        for (let index = 0; index < communications.length; index++) {
+            const item = communications[index];
+            if (item.sent) {
+                sentCommunicationsIds.push(item._id);
+            }
+        }
+
+        if (sentCommunicationsIds.length > 0) {
+            communicationDetails = await MarketingAPI.getSentCommunications(sentCommunicationsIds, serverTokenSet.access_token);
+        }
+
+        return ok("my-communications-page", { communications, communicationDetails });
     } catch (error) {
         return sendStatus('500', 'backend -> comunication-router-handler -> setCommunication failed - origin error - ' + error.message);
     }

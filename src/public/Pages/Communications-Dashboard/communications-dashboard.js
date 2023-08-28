@@ -3,11 +3,9 @@ import wixLocation from 'wix-location';
 // @ts-ignore
 import wixSiteFrontend from 'wix-site-frontend';
 
-import { debounce } from 'lodash';
-import { autorun } from 'mobx';
+import { autorun, isObservable, toJS } from 'mobx';
 
-import { disbaleCurrentButton } from '../helpers.js'
-import { SmartRepeater } from '../../smart-repeater.js';
+import { disbaleCurrentButton } from '../helpers.js';
 import { getSentCommunications } from '../../audience-handler.js';
 import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
@@ -18,7 +16,11 @@ import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
 
 // @ts-ignore
-import { getAllUserCommunications, createCommunication } from 'backend/data-methods-wrapper.jsw';
+import { createCommunication } from 'backend/data-methods-wrapper.jsw';
+
+
+export const isDraftOrSent = communication => communication.sent || communication.draft;
+export const isTemplateOrArchive = communication => communication.isTemplate || communication.archive;
 
 export const initCommunicationsDashboardData = () => {
     setMyCommunications();
@@ -56,35 +58,57 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
     }
 }
 
+export const formatDate = (dateObj) => isObservable(dateObj) ? new Date(toJS(dateObj).$date) : new Date(dateObj);
+
 const setNavigeationBtnsData = () => {
     autorun((event) => {
-        Comp.allButton.label = `${constants.CommunicationDahboardStates.ALL} ${state.communicationsCounts.all}`;
-        Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${state.communicationsCounts.sent}`;
-        Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${state.communicationsCounts.draft}`;
-        Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${state.communicationsCounts.archive}`;
+        let countSents = 0;
+        let countDrafts = 0;
+        let countArchives = 0;
+        let countAll = 0;
+
+
+        for (let index = 0; index < state.communications.length; index++) {
+            const communication = state.communications[index];
+            if (!isTemplateOrArchive(communication) && isDraftOrSent(communication)) {
+
+                countAll++;
+            }
+
+            if (communication.archive) {
+                countArchives++
+                continue;
+            }
+
+            if (communication.sent) {
+                countSents++;
+                continue;
+            }
+
+            if (communication.draft) {
+                countDrafts++;
+                continue;
+            }
+
+        }
+
+        Comp.allButton.label = `${constants.CommunicationDahboardStates.ALL} ${countAll}`;
+        Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${countSents}`;
+        Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${countDrafts}`;
+        Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${countArchives}`;
     })
 }
 
 const setMyCommunications = async () => {
     Comp.myCommunicationsButton.disable();
 
-    const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
-    const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
 
-    const getData = (...arg) => getAllUserCommunications(...arg).then((res) => {
-        if (res.totalCount > 0) {
-            myCommunicationsState();
-        } else {
-            emptyState();
-        }
-        return res;
-    });
 
-    Comp.myCommunicationsRepeater.hide();
+    Comp.myCommunicationsRepeater.data = [];
+
     const communicationDetails = await prepareSentCommunicationsDetails(state.communicationDetails);
-    const filters = { "sent": true, "draft": true };
-    const itemReadyFun = ($item, itemData, index) => {
 
+    Comp.myCommunicationsRepeater.onItemReady(($item, itemData, index) => {
         wixSiteFrontend.prefetchPageResources({
             "pages": [constants.Urls.EXISTS_COMMUNICATION + itemData._id]
         });
@@ -97,14 +121,25 @@ const setMyCommunications = async () => {
         setCommunicationActionsOptions($item, itemData)
         itemData.sent ? setSentCommunicationUI($item, itemData, communicationDetails) : setUnsentCommunicationUI($item, itemData);
         setCommunicationMoreActionsUI($item);
-    };
+    });
+
+
+    setAllCommunication();
     setCommunicationMoreActionsEvents();
-    const smartCommunictionsRepeater = new SmartRepeater(Comp.myCommunicationsRepeater, Comp.myCommunicationItemBox, getData, filters, itemReadyFun);
-    smartCommunictionsRepeater.initRepeater();
+    setNavigeationBtnsEvents();
 
-    setNavigeationBtnsEvents(smartCommunictionsRepeater);
-    Comp.myCommunicationsRepeater.show();
+}
 
+function setAllCommunication() {
+    const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
+    const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
+    const filteredItems = state.communications.filter((item) => isDraftOrSent(item) && !isTemplateOrArchive(item));
+    if (filteredItems.length > 0) {
+        Comp.myCommunicationsRepeater.data = filteredItems;
+        myCommunicationsState();
+    } else {
+        emptyState();
+    }
 }
 
 const setSentCommunicationUI = async ($item, itemData, communicationDetails) => {
@@ -124,7 +159,9 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
         $item('#loadingSentDataBox').show();
     }
 
-    $item('#dateLabelText').text = constants.Text.SENT_ON + new Date(itemData._updatedDate);
+    const date = formatDate(itemData._updatedDate);
+    //toDo: BUG sent on isn't the updateDate;
+    $item('#dateLabelText').text = constants.Text.SENT_ON + date;
     $item('#dateLabelText').show();
 }
 
@@ -132,8 +169,8 @@ const setUnsentCommunicationUI = ($item, itemData) => {
     $item('#sentLabelBox').hide() && $item('#sentDetailsBox').hide() &&
         $item('#draftLabelBox').show() && $item('#wasntSendText').show();
 
-
-    $item('#dateLabelText').text = constants.Text.EDITED_ON + new Date(itemData._updatedDate);
+    const date = formatDate(itemData._updatedDate);
+    $item('#dateLabelText').text = constants.Text.EDITED_ON + date;
 }
 
 const setCommunicationActionsOptions = ($item, itemData) => {
@@ -144,55 +181,58 @@ const setCommunicationActionsOptions = ($item, itemData) => {
     });
 }
 
-const setNavigeationBtnsEvents = (repeater) => {
-    const debounced = debounce(async (func) => {
-        await func();
-    }, 1000);
+const setNavigeationBtnsEvents = () => {
+
 
     Comp.allButton.onClick((event) => {
+
         disbaleCurrentButton('allButton', constants.AllCommunicationDashboardRepeaterButtons);
-        debounced(async () => {
-            Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
-            await updateRepeater(repeater, { "sent": true, "draft": true },);
-            sendBi('thirdMenu', { 'button_name': 'all_button' })
-            Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
-        })
+
+        Comp.myCommunicationsRepeater.date = [];
+        Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
+        setAllCommunication();
+        sendBi('thirdMenu', { 'button_name': 'all_button' })
+        Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
+
     })
 
     Comp.sentButton.onClick((event) => {
         disbaleCurrentButton('sentButton', constants.AllCommunicationDashboardRepeaterButtons);
-        debounced(async () => {
-            Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
-            await updateRepeater(repeater, { 'sent': true },);
-            sendBi('thirdMenu', { 'button_name': 'sent_button' })
-            Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
-        })
+
+        Comp.myCommunicationsRepeater.data = [];
+        Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
+        const filteredItems = state.communications.filter((item) => item.sent && !isTemplateOrArchive(item));
+        Comp.myCommunicationsRepeater.data = filteredItems;
+        sendBi('thirdMenu', { 'button_name': 'sent_button' })
+        Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
+
     })
 
     Comp.draftsButton.onClick((event) => {
+
         disbaleCurrentButton('draftsButton', constants.AllCommunicationDashboardRepeaterButtons);
-        debounced(async () => {
-            Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
-            await updateRepeater(repeater, { 'draft': true },);
-            sendBi('thirdMenu', { 'button_name': 'drafts_button' })
-            Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
-        })
+
+        Comp.myCommunicationsRepeater.data = [];
+        Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
+        const filteredItems = state.communications.filter((item) => item.draft && !isTemplateOrArchive(item));
+        Comp.myCommunicationsRepeater.data = filteredItems;
+        sendBi('thirdMenu', { 'button_name': 'drafts_button' })
+        Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
+
     })
 
     Comp.archiveButton.onClick((event) => {
-        disbaleCurrentButton('archiveButton', constants.AllCommunicationDashboardRepeaterButtons);
-        debounced(async () => {
-            Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
-            await updateRepeater(repeater, { 'archive': true },);
-            sendBi('thirdMenu', { 'button_name': 'archive_button' })
-            Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
-        })
-    })
-}
 
-const updateRepeater = async (repeater, filters) => {
-    repeater.filters = filters;
-    await repeater.resetRepeater();
+        disbaleCurrentButton('archiveButton', constants.AllCommunicationDashboardRepeaterButtons);
+
+        Comp.myCommunicationsRepeater.data = [];
+        Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
+        const filteredItems = state.communications.filter((item) => item.archive);
+        Comp.myCommunicationsRepeater.data = filteredItems;
+        sendBi('thirdMenu', { 'button_name': 'archive_button' })
+        Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
+
+    })
 }
 
 const setCommunicationMoreActionsUI = ($item) => {
