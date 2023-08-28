@@ -76,7 +76,6 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
         removeItemFromRepeater(repeater, event.context.itemId);
-
     });
 
     Comp.uarchiveCommunicationButton.onClick(async (event) => {

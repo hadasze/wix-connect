@@ -24,7 +24,7 @@ export const isTemplateOrArchive = communication => communication.isTemplate || 
 
 export const initCommunicationsDashboardData = () => {
     setMyCommunications();
-    setNavigeationBtnsData();
+    autorun((event) => { setNavigeationBtnsData(state.communications); })
 }
 
 export const setEmptyState = () => {
@@ -60,49 +60,57 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
 
 export const formatDate = (dateObj) => isObservable(dateObj) ? new Date(toJS(dateObj).$date) : new Date(dateObj);
 
-const setNavigeationBtnsData = () => {
-    autorun((event) => {
-        let countSents = 0;
-        let countDrafts = 0;
-        let countArchives = 0;
-        let countAll = 0;
+const setNavigeationBtnsData = (communications) => {
+    let countSents = 0;
+    let countDrafts = 0;
+    let countArchives = 0;
+    let countAll = 0;
+    let countTemplates = 0;
 
+    const currentState = Comp.dashboardMultiState.currentState.id;
 
-        for (let index = 0; index < state.communications.length; index++) {
-            const communication = state.communications[index];
-            if (!isTemplateOrArchive(communication) && isDraftOrSent(communication)) {
-
-                countAll++;
-            }
-
-            if (communication.archive) {
-                countArchives++
-                continue;
-            }
-
-            if (communication.sent) {
-                countSents++;
-                continue;
-            }
-
-            if (communication.draft) {
-                countDrafts++;
-                continue;
-            }
-
+    for (let index = 0; index < communications.length; index++) {
+        const communication = communications[index];
+        if (!isTemplateOrArchive(communication) && isDraftOrSent(communication)) {
+            countAll++;
         }
 
-        Comp.allButton.label = `${constants.CommunicationDahboardStates.ALL} ${countAll}`;
-        Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${countSents}`;
-        Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${countDrafts}`;
-        Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${countArchives}`;
-    })
+        if (communication.archive) {
+            countArchives++
+            continue;
+        }
+
+        if (communication.sent) {
+            countSents++;
+            continue;
+        }
+
+        if (communication.draft) {
+            countDrafts++;
+            continue;
+        }
+
+        if (!communication.archive && communication.isTemplate) {
+            countTemplates++;
+            continue;
+        }
+
+    }
+
+    const isTemplateState = currentState === Comp.States.myTemplatesState;
+    isTemplateState ? Comp.sentButton.hide() && Comp.draftsButton.hide() && Comp.archiveButton.hide() && Comp.myCommunicationsButtonBarSeperator.hide() : Comp.sentButton.show() && Comp.draftsButton.show() && Comp.archiveButton.show() && Comp.myCommunicationsButtonBarSeperator.show();
+
+    const countTemplatesText = `${constants.CommunicationDahboardStates.ALL} ${countTemplates.toString()}`;
+    const countAllText = `${constants.CommunicationDahboardStates.ALL} ${countAll.toString()}`;
+
+    Comp.allButton.label = isTemplateState ? countTemplatesText : countAllText;
+    Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${countSents.toString()}`;
+    Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${countDrafts.toString()}`;
+    Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${countArchives.toString()}`;
 }
 
 const setMyCommunications = async () => {
     Comp.myCommunicationsButton.disable();
-
-
 
     Comp.myCommunicationsRepeater.data = [];
 
@@ -123,23 +131,33 @@ const setMyCommunications = async () => {
         setCommunicationMoreActionsUI($item);
     });
 
-
     setAllCommunication();
     setCommunicationMoreActionsEvents();
     setNavigeationBtnsEvents();
-
+    setMultiStateBox();
 }
 
 function setAllCommunication() {
-    const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
-    const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
     const filteredItems = state.communications.filter((item) => isDraftOrSent(item) && !isTemplateOrArchive(item));
-    if (filteredItems.length > 0) {
-        Comp.myCommunicationsRepeater.data = filteredItems;
-        myCommunicationsState();
-    } else {
-        emptyState();
-    }
+    Comp.myCommunicationsRepeater.data = filteredItems;
+}
+
+function setMultiStateBox() {
+    autorun(() => {
+        const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
+        const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
+        const filteredItems = state.communications.filter((item) => isDraftOrSent(item) && !isTemplateOrArchive(item));
+        if (filteredItems.length > 0) {
+            myCommunicationsState();
+        } else {
+            emptyState();
+        }
+    });
+
+    Comp.dashboardMultiState.onChange((event) => {
+        setNavigeationBtnsData(state.communications);
+    });
+
 }
 
 const setSentCommunicationUI = async ($item, itemData, communicationDetails) => {
@@ -160,7 +178,7 @@ const setSentCommunicationUI = async ($item, itemData, communicationDetails) => 
     }
 
     const date = formatDate(itemData._updatedDate);
-    //toDo: BUG sent on isn't the updateDate;
+    //toDo: BUG! "sent on" isn't the updateDate;
     $item('#dateLabelText').text = constants.Text.SENT_ON + date;
     $item('#dateLabelText').show();
 }

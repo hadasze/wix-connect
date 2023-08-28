@@ -22,13 +22,13 @@ export const initTemplatesDashboardData = () => {
     autorun(() => {
         const filteredItems = state.communications.filter((item) => !item.archive && item.isTemplate);
         Comp.myTemplatesRepeater.data = filteredItems || [];
-        setButtonsData(filteredItems.length.toString());
+        // setButtonsData(filteredItems.length.toString());
     });
 }
 
-const setButtonsData = (count) => {
-    Comp.allTemplatesButton.label = `${constants.CommunicationDahboardStates.ALL} ${count}`;
-}
+// const setButtonsData = (count) => {
+//     Comp.allTemplatesButton.label = `${constants.CommunicationDahboardStates.ALL} ${count}`;
+// }
 
 const setTemplateActionsUI = () => {
 
