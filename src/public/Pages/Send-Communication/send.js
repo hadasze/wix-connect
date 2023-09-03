@@ -22,13 +22,13 @@ export function setEvents() {
 
     Comp.sendBtn.onClick(async (event) => {
         disable();
-        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'button_name': 'send' });
+        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'buttonName': 'send' });
         Fedops.interactionStarted(Fedops.events.sendEmail);
         await sendEmails();
     })
 
     Comp.cancelBtn.onClick((event) => {
-        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'button_name': 'cancel' });
+        sendBi('sendCommunication', { 'campaignId': state.communication._id, 'buttonName': 'cancel' });
         wixWindow.lightbox.close({ buttonName: constants.Text.CANCEL });
     })
 }

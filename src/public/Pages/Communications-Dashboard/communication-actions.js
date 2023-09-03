@@ -47,7 +47,7 @@ export const setCommunicationMoreActionsEvents = () => {
     });
 
     Comp.editCommunicationButton.onClick((event) => {
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'edit' });
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'buttonName': 'edit' });
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + event.context.itemId);
     });
 
@@ -61,7 +61,7 @@ export const setCommunicationMoreActionsEvents = () => {
         const toSave = resetCommunication(itemData(event, repeater));
         toSave.isTemplate = true;
         const template = await saveCommunication(toSave);
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'reusave_as_templatese' });
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'buttonName': 'reusave_as_templatese' });
         event.target.enable();
         state.communications = [template, ...state.communications];
         const newData = [template, ...Comp.myTemplatesRepeater.data];
@@ -74,7 +74,7 @@ export const setCommunicationMoreActionsEvents = () => {
         event.target.disable();
         itemData(event, repeater).archive = true;
         updateCommunication(itemData(event, repeater));
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'archive' });
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'buttonName': 'archive' });
         removeItemFromRepeater(repeater, event.context.itemId);
     });
 
@@ -82,7 +82,7 @@ export const setCommunicationMoreActionsEvents = () => {
         event.target.disable();
         itemData(event, repeater).archive = false;
         updateCommunication(itemData(event, repeater));
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'unarchive' });
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'buttonName': 'unarchive' });
         removeItemFromRepeater(repeater, event.context.itemId);
 
     });
@@ -91,7 +91,7 @@ export const setCommunicationMoreActionsEvents = () => {
         event.target.disable();
         itemData(event, repeater).delete = true;
         updateCommunication(itemData(event, repeater));
-        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'button_name': 'delete' });
+        sendBi('campainOptions', { 'campaignId': event.context.itemId, 'buttonName': 'delete' });
         removeItemFromRepeater(repeater, event.context.itemId);
         state.communications = state.communications.filter((item) => item._id !== event.context.itemId);
     })
@@ -103,7 +103,7 @@ export const reuseCommunication = async (communication) => {
     reused.tested = false;
     try {
         const saved = await saveCommunication(reused);
-        sendBi('campainOptions', { 'campaignId': communication._id, 'button_name': 'reuse' })
+        sendBi('campainOptions', { 'campaignId': communication._id, 'buttonName': 'reuse' })
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + saved._id)
     } catch (err) {
         console.error('public/communications-dashboard reuse communication ', err);

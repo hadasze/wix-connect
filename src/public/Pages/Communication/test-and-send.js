@@ -77,10 +77,10 @@ const setSubjectLineActions = () => {
         const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#subjectLineInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setSubjectLine(value);
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'button_name': 'add_dynamic_value' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'buttonName': 'add_dynamic_value' })
     })
     $w('#exploreTextTemplateBtn').onClick(async (event) => {
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'button_name': 'explore_text_templates' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'buttonName': 'explore_text_templates' })
     })
 }
 
@@ -99,9 +99,9 @@ const setPreviewTextActions = () => {
         const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#previewTextInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setPreviewText(value);
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'button_name': 'add_dynamic_value' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'buttonName': 'add_dynamic_value' })
     })
     $w('#exploreTextTemplateBtn').onClick(async (event) => {
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'button_name': 'explore_text_templates' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'buttonName': 'explore_text_templates' })
     })
 }

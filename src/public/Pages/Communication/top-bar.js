@@ -106,16 +106,16 @@ const setOnClickStepsEvents = () => {
         $w('#mainMultiStateBox').changeState('PreviewState');
         previewHandler.initPreviewData();
         Fedops.interactionEnded(Fedops.events.previewEmail);
-        sendBi('upperMenu', { 'button_name': 'preview_email' })
+        sendBi('upperMenu', { 'buttonName': 'preview_email' })
     })
     $w('#backToEditButton').onClick((event) => {
         $w('#mainMultiStateBox').changeState('EditState');
         previewHandler.cleanAllPreviewData();
-        sendBi('upperMenu', { 'button_name': 'back_To_Edit' })
+        sendBi('upperMenu', { 'buttonName': 'back_To_Edit' })
     })
     $w('#backToDashboardButton').onClick(async (event) => {
         $w('#backToDashboardButton').disable();
-        sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' });
+        sendBi('upperMenu', { 'buttonName': 'back_To_Dashboard' });
         if (!state.communication.draft && !state.communication.sent && !state.communication.delete) {
             removeCommunication(state.communication._id);
         }
@@ -125,13 +125,13 @@ const setOnClickStepsEvents = () => {
 
     $w('#sendStepButton').onClick(async (event) => {
         $w('#sendStepButton').disable();
-        sendBi('upperMenu', { 'button_name': 'send_emails' })
+        sendBi('upperMenu', { 'buttonName': 'send_emails' })
         await wixWindow.openLightbox(constants.Lightboxs.sendCommunication, { state, 'approvedCounter': targetAudienceState.approvedCounter });
         $w('#sendStepButton').enable();
     })
 
     $w('#sendTestButton').onClick(async (event) => {
-        sendBi('upperMenu', { 'button_name': 'send_test_email' })
+        sendBi('upperMenu', { 'buttonName': 'send_test_email' })
         await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
     })
 }
@@ -161,7 +161,7 @@ const setClickNextButton = () => {
         $w('#stepsOfCreationMultistateBox').changeState(constants.CommunicationStatesByOrder[nextStepIndex]);
         disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist);
         handleNextButton(buttonslist[nextStepIndex]);
-        sendBi('upperMenu', { 'button_name': 'next' });
+        sendBi('upperMenu', { 'buttonName': 'next' });
     });
 }
 

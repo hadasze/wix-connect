@@ -52,7 +52,7 @@ const replaceCsvFileEvent = async () => {
             state.resetApprovedUserList();
             state.setTargetAudienceCSV(csvLocalUrl);
             prepareUIAfterReplacingFile(uploadedFile.originalFileName);
-            sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'replace_csv_file' })
+            sendBi('audienceClick', { 'campaignId': state.communication._id, 'buttonName': 'replace_csv_file' })
             await customePolling();
             Fedops.interactionEnded(Fedops.events.replaceCSV);
 
@@ -94,7 +94,7 @@ const setUploadCSVEvent = () => {
                 const uploadedFile = await uploadFileAndSetAudience();
 
                 state.setTargetAudienceCSVFileName(uploadedFile.originalFileName);
-                sendBi('uploadCSV', { 'campaignId': state.communication._id, 'button_name': 'upload_csv_file' });
+                sendBi('uploadCSV', { 'campaignId': state.communication._id, 'buttonName': 'upload_csv_file' });
                 await customePolling();
 
 
@@ -145,7 +145,7 @@ const downloadReportEvent = () => {
                 const dataForFile = [...audienceData.approved, ...audienceData.needAprroval, ...audienceData.rejected];
                 const url = await getDownloadFileUrlFromArray(dataForFile, "targetAudienceReport")
                 wixLocation.to(url);
-                sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' })
+                sendBi('audienceClick', { 'campaignId': state.communication._id, 'buttonName': 'download_report' })
                 showToast('csvFileDownloadedBanner', 2000);
                 Comp.downloadReportButton.enable();
             }

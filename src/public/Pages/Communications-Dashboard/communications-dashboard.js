@@ -39,7 +39,7 @@ export async function createCommunicationClick(event) {
         Fedops.interactionStarted(Fedops.events.createNewCommunication);
         const communication = await createCommunication();
         Fedops.interactionEnded(Fedops.events.createNewCommunication);
-        sendBi('createCommunication', { 'button_name': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
+        sendBi('createCommunication', { 'buttonName': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + communication._id);
     } catch (err) {
         console.error('error in createCommunicationButton, original error: ' + err);
@@ -209,7 +209,7 @@ const setNavigeationBtnsEvents = () => {
         Comp.myCommunicationsRepeater.date = [];
         Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
         setAllCommunication();
-        sendBi('thirdMenu', { 'button_name': 'all_button' })
+        sendBi('thirdMenu', { 'buttonName': 'all_button' })
         Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
 
     })
@@ -221,7 +221,7 @@ const setNavigeationBtnsEvents = () => {
         Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
         const filteredItems = state.communications.filter((item) => item.sent && !isTemplateOrArchive(item));
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'button_name': 'sent_button' })
+        sendBi('thirdMenu', { 'buttonName': 'sent_button' })
         Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
 
     })
@@ -234,7 +234,7 @@ const setNavigeationBtnsEvents = () => {
         Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
         const filteredItems = state.communications.filter((item) => item.draft && !isTemplateOrArchive(item));
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'button_name': 'drafts_button' })
+        sendBi('thirdMenu', { 'buttonName': 'drafts_button' })
         Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
 
     })
@@ -247,7 +247,7 @@ const setNavigeationBtnsEvents = () => {
         Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
         const filteredItems = state.communications.filter((item) => item.archive);
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'button_name': 'archive_button' })
+        sendBi('thirdMenu', { 'buttonName': 'archive_button' })
         Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
 
     })

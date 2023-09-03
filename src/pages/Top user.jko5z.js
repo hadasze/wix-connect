@@ -8,7 +8,7 @@ $w.onReady(function () {
     $w('#topUserSiteNameText').text = receivedData.user.site_display_name;
     $w('#topUserSiteURLText').text = receivedData.user.url;
     $w('#topUserSiteURLText').onClick(() => {
-        sendBi('sideBarOptions', { 'campaignId': receivedData.communication._id, 'uuidChosen': receivedData.user.uuid, 'cloumnName': 'topUser', 'button_name': 'site_url' })
+        sendBi('sideBarOptions', { 'campaignId': receivedData.communication._id, 'uuidChosen': receivedData.user.uuid, 'cloumnName': 'topUser', 'buttonName': 'site_url' })
     })
 
     handleVerticalsRepeater(receivedData.user)

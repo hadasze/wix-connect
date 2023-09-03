@@ -38,13 +38,13 @@ const setLeftSidePannelEvents = () => {
             $w('#signatureBox').expand();
             state.setSignatureFullName($w('#fullNameInput').value);
             state.setSignatureJobTitle($w('#jobTitleInput').value)
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'signature_on' })
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'signature_on' })
         } else {
             $w('#SignatureContent').collapse();
             $w('#signatureBox').collapse();
             state.setSignatureFullName('');
             state.setSignatureJobTitle('')
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'signature_off' })
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'signature_off' })
         }
     });
     $w('#fullNameInput').onInput((event) => {
@@ -65,7 +65,7 @@ const setLeftSidePannelEvents = () => {
             const value = addDynamicValue(focusedElement, recievdData?.dynamicValue, recievdData?.fallBackValue);
             if (focusedElement.id === 'communicationInputTextBox')
                 state.setTemplateBody(value);
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'add_dynamic_values' })
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'add_dynamic_values' })
         }
     })
 
@@ -78,7 +78,7 @@ const setLeftSidePannelEvents = () => {
     })
 
     $w('#exploreTextValuesBtn').onClick((event) => {
-        sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'explore_text_templates' })
+        sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'explore_text_templates' })
     });
 }
 

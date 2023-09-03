@@ -10,13 +10,13 @@ export const setTopBarButtonsEvents = () => {
     $w('#myCommunicationsButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myCommunicationsState');
         disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myCommunicationsButton' });
+        sendBi('subMenu', { 'buttonName': 'myCommunicationsButton' });
     });
 
     $w('#myTemplatesButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myTemplatesState');
         disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myTemplatesButton' });
+        sendBi('subMenu', { 'buttonName': 'myTemplatesButton' });
     });
 
     $w('#createCommunicationButton').onClick(async (event) => {

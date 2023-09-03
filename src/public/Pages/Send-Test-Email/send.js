@@ -22,7 +22,7 @@ export function setEvents() {
     const isTestEmailsInputValid = () => Comp.testEmailsInput.valid;
 
     Comp.sendBtn.onClick((event) => {
-        sendBi('testEmail', { 'campaignId': communication._id, 'button_name': 'send' });
+        sendBi('testEmail', { 'campaignId': communication._id, 'buttonName': 'send' });
         disable();
 
         if (isTestEmailsInputValid()) {
@@ -33,7 +33,7 @@ export function setEvents() {
     })
 
     Comp.cancelBtn.onClick((event) => {
-        sendBi('testEmail', { 'campaignId': communication._id, 'button_name': 'cancel' });
+        sendBi('testEmail', { 'campaignId': communication._id, 'buttonName': 'cancel' });
         wixWindow.lightbox.close();
     })
 

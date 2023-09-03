@@ -135,7 +135,7 @@ const setAllRepeatersAudienceData = async () => {
             const totalNumOfAudience = Helpers.calcTotalAudienceNum(audienceData);
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
-          
+
             reciveLatestApprovedUsers(allApprovedUsers);
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
@@ -167,7 +167,7 @@ export const reciveLatestApprovedUsers = async (allApprovedUsers) => {
         setTimeout(() => {
             setApprovedRepeater(allApprovedUsers);
         }, 100);
-        
+
     }
     if (audienceData) {
         targetAudienceState.setNeedApprovalCounter(audienceData.needAprroval.length - manuallyApproveArray.length);
@@ -278,7 +278,7 @@ const initActions = () => {
     autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
-        sendBi('audienceClick', { 'campaignId': state.communication._id, 'button_name': 'download_report' });
+        sendBi('audienceClick', { 'campaignId': state.communication._id, 'buttonName': 'download_report' });
         wixWindow.openLightbox(constants.Lightboxs.createRequests, {
             uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
             needApprovalCounter: targetAudienceState.needApprovalCounter
@@ -372,12 +372,12 @@ const setApproveToggleEvent = () => {
                     state.addApprovedUser(user);
             })
             $w('#approveAllButton').text = constants.Text.UNAPPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'approve_all' })
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'buttonName': 'approve_all' })
         } else {
             $w("#approveToggleSwitch").checked = false;
             state.resetApprovedUserList();
             $w('#approveAllButton').text = constants.Text.APPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'button_name': 'unapprove_all' })
+            sendBi('approveToggle', { 'campaignId': state.communication._id, 'buttonName': 'unapprove_all' })
         }
     })
 
@@ -390,14 +390,14 @@ const setApproveToggleEvent = () => {
             sendBi('approveToggle', {
                 'campaignId': state.communication._id,
                 'uuid': clickedItemData.uuid,
-                'button_name': 'toggle_on'
+                'buttonName': 'toggle_on'
             })
         } else {
             state.removeApprovedUser(clickedItemData);
             sendBi('approveToggle', {
                 'campaignId': state.communication._id,
                 'uuid': clickedItemData.uuid,
-                'button_name': 'toggle_off'
+                'buttonName': 'toggle_off'
             })
         }
     });

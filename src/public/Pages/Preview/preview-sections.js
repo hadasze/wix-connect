@@ -31,7 +31,7 @@ const setHeadlineData = () => {
 const setHeadlineEvents = () => {
     $w('#reuseBtn').onClick((event) => {
         if (currCommunication.isTemplate)
-            sendBi('templateView', { 'campaignId': currCommunication._id, 'button_name': 'reuse_template' })
+            sendBi('templateView', { 'campaignId': currCommunication._id, 'buttonName': 'reuse_template' })
         reuseCommunication(currCommunication)
     });
 
