@@ -1,6 +1,6 @@
 import { autorun } from 'mobx';
-import { state } from 'public/Pages/Communication/state-management.js'
-import { getMustHaveFieldsOfCommunication } from 'public/Pages/helpers.js'
+import { state } from './state-management.js'
+import { getMustHaveFieldsOfCommunication } from '../helpers.js'
 
 export const initValidations = () => {
     sendButtonValidations();
@@ -20,9 +20,9 @@ export const sendButtonValidations = () => {
     });
     autorun(() => {
         if (allRequiredFieldsForSendTestEmail(state.communication)) {
-            $w('#sendTestButton').enable();
+            // $w('#sendTestButton').enable();
         } else {
-            $w('#sendTestButton').disable();
+            // $w('#sendTestButton').disable();
         }
 
     });

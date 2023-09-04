@@ -108,11 +108,11 @@ const setOnClickStepsEvents = () => {
         Fedops.interactionEnded(Fedops.events.previewEmail);
         sendBi('upperMenu', { 'buttonName': 'preview_email' })
     })
-    $w('#backToEditButton').onClick((event) => {
-        $w('#mainMultiStateBox').changeState('EditState');
-        previewHandler.cleanAllPreviewData();
-        sendBi('upperMenu', { 'buttonName': 'back_To_Edit' })
-    })
+    // $w('#backToEditButton').onClick((event) => {
+    //     $w('#mainMultiStateBox').changeState('EditState');
+    //     previewHandler.cleanAllPreviewData();
+    //     sendBi('upperMenu', { 'buttonName': 'back_To_Edit' })
+    // })
     $w('#backToDashboardButton').onClick(async (event) => {
         $w('#backToDashboardButton').disable();
         sendBi('upperMenu', { 'buttonName': 'back_To_Dashboard' });
@@ -130,10 +130,10 @@ const setOnClickStepsEvents = () => {
         $w('#sendStepButton').enable();
     })
 
-    $w('#sendTestButton').onClick(async (event) => {
-        sendBi('upperMenu', { 'buttonName': 'send_test_email' })
-        await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
-    })
+    // $w('#sendTestButton').onClick(async (event) => {
+    //     sendBi('upperMenu', { 'buttonName': 'send_test_email' })
+    //     await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
+    // })
 }
 
 const setStepsOfCreationMultistateBox = () => {

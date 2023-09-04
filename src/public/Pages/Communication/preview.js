@@ -1,8 +1,9 @@
+// @ts-ignore
 import { HTMLgenerator } from 'backend/templates-helper/generate-html-handler.jsw';
 import { state } from './state-management.js';
 import { autorun } from 'mobx';
 import { targetAudienceState } from './Target-Audience/target-audience.js';
-import { Text } from 'public/consts.js';
+import { Text } from '../../consts.js';
 
 export const initPreviewActions = () => {
     setShowPreviewButtons();
@@ -18,15 +19,15 @@ function setUIData() {
 }
 
 async function setShowPreviewButtons() {
-    $w('#nextButton').hide(), $w('#nextButton').disable();
-    $w('#sendTestButton').show(), $w('#sendTestButton').enable();
+    // $w('#nextButton').hide(), $w('#nextButton').disable();
+    // $w('#sendTestButton').show(), $w('#sendTestButton').enable();
     const generatedHTML = await HTMLgenerator(state.communication);
-    $w('#desktopButton').onClick((event) => {
-        setDesktopPreview()
-    })
-    $w('#mobileButton').onClick((event) => {
-        setMobilePreview(generatedHTML)
-    })
+    // $w('#desktopButton').onClick((event) => {
+    //     setDesktopPreview()
+    // })
+    // $w('#mobileButton').onClick((event) => {
+    //     setMobilePreview(generatedHTML)
+    // })
 }
 
 const setDesktopPreview = async () => {

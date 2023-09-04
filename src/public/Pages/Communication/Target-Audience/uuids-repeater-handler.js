@@ -364,20 +364,28 @@ const repeatedItemActions = () => {
 const setApproveToggleEvent = () => {
     $w('#approveAllButton').onClick(() => {
         if ($w('#approveAllButton').text === constants.Text.APPROVE_ALL) {
-            const needApprovalUsers = $w("#needApprovalReapter").data;
-            const allManuallyApprovedUsers = (Object.values(toJS(state.communication.manuallyApprovedUsers)))
+            const needApprovalUsers = needApprovalRepeater.allData;
+
+            const allManuallyApprovedUsers = (Object.values(toJS(state.communication.manuallyApprovedUsers)));
+            $w("#approveToggleSwitch").checked = true;
             needApprovalUsers.forEach((user) => {
-                $w("#approveToggleSwitch").checked = true;
-                if (!contains(allManuallyApprovedUsers, user))
+                if (!contains(allManuallyApprovedUsers, user)) {
                     state.addApprovedUser(user);
-            })
-            $w('#approveAllButton').text = constants.Text.UNAPPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'buttonName': 'approve_all' })
+                    sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': user.uuid, 'buttonName': 'approve_all' });
+                }
+            });
+            $w('#approveAllButton').text = constants.Text.UNAPPROVE_ALL;
+
         } else {
             $w("#approveToggleSwitch").checked = false;
+            const allManuallyApprovedUsers = (Object.values(toJS(state.communication.manuallyApprovedUsers)));
+            allManuallyApprovedUsers.forEach(user => {
+                console.log({ user });
+                sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': user.uuid, 'buttonName': 'unapprove_all' });
+            });
             state.resetApprovedUserList();
             $w('#approveAllButton').text = constants.Text.APPROVE_ALL
-            sendBi('approveToggle', { 'campaignId': state.communication._id, 'buttonName': 'unapprove_all' })
+
         }
     })
 
