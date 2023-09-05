@@ -274,16 +274,19 @@ const setRejectedRepeater = async (data) => {
 }
 
 const initActions = () => {
+    
     autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
     autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 
     $w('#requestApprovalButton').onClick(() => {
-        sendBi('audienceClick', { 'campaignId': state.communication._id, 'buttonName': 'download_report' });
+        sendBi('audienceClick', { 'campaignId': state.communication._id, 'buttonName': 'request_approval' });
         wixWindow.openLightbox(constants.Lightboxs.createRequests, {
             uuidsAndMsidsList: (Object.values(toJS(state.communication.targetAudience))),
-            needApprovalCounter: targetAudienceState.needApprovalCounter
+            needApprovalCounter: targetAudienceState.needApprovalCounter,
+            campaignId: state.communication._id
         });
     })
+
     repeatedItemActions();
     setApproveToggleEvent();
 }
@@ -311,13 +314,13 @@ const repeatedItemActions = () => {
         openContactedLightBox($w("#rejectedRepeater"), event);
     })
     $w(`#seeDetailsApprovedTopUser`).onClick((event) => {
-        openTopUserLightBox($w("#approvedRepeater"), event, 'approved');
+        openTopUserLightBox($w("#approvedRepeater"), event);
     })
     $w(`#seeDetailsNeedApproveTopUser`).onClick((event) => {
-        openTopUserLightBox($w("#needApprovalReapter"), event, 'needApproval');
+        openTopUserLightBox($w("#needApprovalReapter"), event);
     })
     $w(`#seeDetailsRejectedTopUser`).onClick((event) => {
-        openTopUserLightBox($w("#rejectedRepeater"), event, 'rejected');
+        openTopUserLightBox($w("#rejectedRepeater"), event);
     })
 
     const copyToClipBoard = (repeater, event) => {
@@ -349,13 +352,14 @@ const repeatedItemActions = () => {
             "communication": state.communication
         });
     }
-    const openTopUserLightBox = (repeater, event, biCloumnName) => {
+
+    const openTopUserLightBox = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
         sendBi('openSideBar', {
             'campaignId': state.communication._id,
             'uuidChosen': clickedItemData.uuid,
-            biCloumnName: biCloumnName
+            'cloumnName': 'topUser'
         })
         wixWindow.openLightbox(constants.Lightboxs.topUser, { "user": clickedItemData, "communication": state.communication });
     }
@@ -371,7 +375,7 @@ const setApproveToggleEvent = () => {
             needApprovalUsers.forEach((user) => {
                 if (!contains(allManuallyApprovedUsers, user)) {
                     state.addApprovedUser(user);
-                    sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': user.uuid, 'buttonName': 'approve_all' });
+                    sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuidChosen': user.uuid, 'buttonName': 'approve_all' });
                 }
             });
             $w('#approveAllButton').text = constants.Text.UNAPPROVE_ALL;
@@ -381,7 +385,7 @@ const setApproveToggleEvent = () => {
             const allManuallyApprovedUsers = (Object.values(toJS(state.communication.manuallyApprovedUsers)));
             allManuallyApprovedUsers.forEach(user => {
                 console.log({ user });
-                sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuid': user.uuid, 'buttonName': 'unapprove_all' });
+                sendBi('approveToggle', { 'campaignId': state.communication._id, 'uuidChosen': user.uuid, 'buttonName': 'unapprove_all' });
             });
             state.resetApprovedUserList();
             $w('#approveAllButton').text = constants.Text.APPROVE_ALL
@@ -397,14 +401,14 @@ const setApproveToggleEvent = () => {
             state.addApprovedUser(clickedItemData);
             sendBi('approveToggle', {
                 'campaignId': state.communication._id,
-                'uuid': clickedItemData.uuid,
+                'uuidChosen': clickedItemData.uuid,
                 'buttonName': 'toggle_on'
             })
         } else {
             state.removeApprovedUser(clickedItemData);
             sendBi('approveToggle', {
                 'campaignId': state.communication._id,
-                'uuid': clickedItemData.uuid,
+                'uuidChosen': clickedItemData.uuid,
                 'buttonName': 'toggle_off'
             })
         }

@@ -270,3 +270,15 @@ export const Lightboxs = {
 
 export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';
 export const SavedAsTempalteText = 'Saved! go to "My Templates" to reuse';
+
+export const DashboardBIMenuNames = {
+    myCommunications: 'My_communications',
+    myTemplates: 'My_Templates'
+}
+
+export const DashboardBITabNames = {
+    all: 'all',
+    sent: 'sent',
+    draft: 'draft',
+    archive: 'archive'
+}

@@ -9,7 +9,7 @@ import { state } from './state-management.js';
 import { disbaleCurrentButton } from '../helpers.js';
 import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
-import { redirectToMyCommunications } from '../../_utils.js';
+import { redirectToMyCommunications, updateQuery } from '../../_utils.js';
 
 // @ts-ignore
 import { removeCommunication } from 'backend/data-methods-wrapper.jsw';
@@ -80,27 +80,31 @@ const setDisabledSendButtonTooltip = () => {
 
 const setOnClickStepsEvents = () => {
     const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
+   
     $w('#addDetailsButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('AddDetailsState');
         disbaleCurrentButton('addDetailsButton', buttonslist);
         handleNextButton('addDetailsButton');
     })
+
     $w('#targetAudienceButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('TargetAudienceState');
         disbaleCurrentButton('targetAudienceButton', buttonslist);
         handleNextButton('targetAudienceButton');
     })
+
     $w('#createEmailButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('CreateEmailStep');
         disbaleCurrentButton('createEmailButton', buttonslist);
         handleNextButton('createEmailButton');
     })
-    $w('#testAndSendButton').onClick((event) => {
 
+    $w('#testAndSendButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('TestAndSendState');
         disbaleCurrentButton('testAndSendButton', buttonslist);
         handleNextButton('testAndSendButton');
     })
+
     $w('#previewEmailButton').onClick((event) => {
         Fedops.interactionStarted(Fedops.events.previewEmail);
         $w('#mainMultiStateBox').changeState('PreviewState');
@@ -108,11 +112,13 @@ const setOnClickStepsEvents = () => {
         Fedops.interactionEnded(Fedops.events.previewEmail);
         sendBi('upperMenu', { 'buttonName': 'preview_email' })
     })
+    
     // $w('#backToEditButton').onClick((event) => {
     //     $w('#mainMultiStateBox').changeState('EditState');
     //     previewHandler.cleanAllPreviewData();
     //     sendBi('upperMenu', { 'buttonName': 'back_To_Edit' })
     // })
+
     $w('#backToDashboardButton').onClick(async (event) => {
         $w('#backToDashboardButton').disable();
         sendBi('upperMenu', { 'buttonName': 'back_To_Dashboard' });
@@ -138,19 +144,15 @@ const setOnClickStepsEvents = () => {
 
 const setStepsOfCreationMultistateBox = () => {
 
-    const addStateToParam = (stateID) => wixLocation.queryParams.add({
-        "stepOfCreation": stateID
-    });
-
     $w("#stepsOfCreationMultistateBox").onChange((event) => {
         let currentState = event.target.currentState.id;
-        addStateToParam(currentState);
+        updateQuery('stepOfCreation', currentState);
     });
 
     if (wixLocation.query?.stepOfCreation) {
         $w("#stepsOfCreationMultistateBox").changeState(wixLocation.query.stepOfCreation);
     } else {
-        addStateToParam(constants.CommunicationStatesByOrder[0]);
+        updateQuery('stepOfCreation', constants.CommunicationStatesByOrder[0]);
     }
 }
 

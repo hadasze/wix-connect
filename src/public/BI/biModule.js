@@ -1,3 +1,4 @@
+// @ts-ignore
 import { biLoggerFactory } from 'wix-private';
 import { rendering } from 'wix-window';
 
@@ -12,7 +13,8 @@ export const sendBi = (eventName, params = {}) => {
     if (rendering.env === 'backend') return;
 
     params.evid = biEvents[eventName];
+    // @ts-ignore
     params.sessionId = self.fedops.sessionId;
-    console.log({ params });
+    console.log({ ...params });
     return platformBiLogger.log(params);
 }

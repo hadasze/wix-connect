@@ -52,3 +52,9 @@ export function getOwnerUUID() {
 }
 
 export const openBanner = (msg) => wixWindow.openLightbox(Lightboxs.Banner, { msg });
+
+export function updateQuery(key, value) {
+    const toAdd = {};
+    toAdd[key] = value;
+    return wixLocation.queryParams.add(toAdd);
+}

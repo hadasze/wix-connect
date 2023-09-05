@@ -11,6 +11,7 @@ import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import { state } from './state-manager.js';
+import { updateQuery } from '../../_utils.js';
 
 import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
@@ -39,6 +40,7 @@ export async function createCommunicationClick(event) {
         Fedops.interactionStarted(Fedops.events.createNewCommunication);
         const communication = await createCommunication();
         Fedops.interactionEnded(Fedops.events.createNewCommunication);
+        //ToDo - BUG: buttonName should reflect where the commmunication created from
         sendBi('createCommunication', { 'buttonName': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + communication._id);
     } catch (err) {
@@ -59,6 +61,11 @@ export const prepareSentCommunicationsDetails = async (communicationDetails) => 
 }
 
 export const formatDate = (dateObj) => isObservable(dateObj) ? new Date(toJS(dateObj).$date) : new Date(dateObj);
+export const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
+export const myTemplateState = () => Comp.dashboardMultiState.changeState(Comp.States.myTemplatesState);
+
+const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
+const isTemplateState = (currentState) => currentState === Comp.States.myTemplatesState;
 
 const setNavigeationBtnsData = (communications) => {
     let countSents = 0;
@@ -67,7 +74,7 @@ const setNavigeationBtnsData = (communications) => {
     let countAll = 0;
     let countTemplates = 0;
 
-    const currentState = Comp.dashboardMultiState.currentState.id;
+
 
     for (let index = 0; index < communications.length; index++) {
         const communication = communications[index];
@@ -97,13 +104,13 @@ const setNavigeationBtnsData = (communications) => {
 
     }
 
-    const isTemplateState = currentState === Comp.States.myTemplatesState;
-    isTemplateState ? Comp.sentButton.hide() && Comp.draftsButton.hide() && Comp.archiveButton.hide() && Comp.myCommunicationsButtonBarSeperator.hide() : Comp.sentButton.show() && Comp.draftsButton.show() && Comp.archiveButton.show() && Comp.myCommunicationsButtonBarSeperator.show();
+    const currentState = Comp.dashboardMultiState.currentState.id;
+    isTemplateState(currentState) ? Comp.sentButton.hide() && Comp.draftsButton.hide() && Comp.archiveButton.hide() && Comp.myCommunicationsButtonBarSeperator.hide() : Comp.sentButton.show() && Comp.draftsButton.show() && Comp.archiveButton.show() && Comp.myCommunicationsButtonBarSeperator.show();
 
     const countTemplatesText = `${constants.CommunicationDahboardStates.ALL} ${countTemplates.toString()}`;
     const countAllText = `${constants.CommunicationDahboardStates.ALL} ${countAll.toString()}`;
 
-    Comp.allButton.label = isTemplateState ? countTemplatesText : countAllText;
+    Comp.allButton.label = isTemplateState(currentState) ? countTemplatesText : countAllText;
     Comp.sentButton.label = `${constants.CommunicationDahboardStates.SENT} ${countSents.toString()}`;
     Comp.draftsButton.label = `${constants.CommunicationDahboardStates.DRAFT} ${countDrafts.toString()}`;
     Comp.archiveButton.label = `${constants.CommunicationDahboardStates.ARCHIVE} ${countArchives.toString()}`;
@@ -111,6 +118,7 @@ const setNavigeationBtnsData = (communications) => {
 
 const setMyCommunications = async () => {
     Comp.myCommunicationsButton.disable();
+    updateQuery('menuName', constants.DashboardBIMenuNames.myCommunications);
 
     Comp.myCommunicationsRepeater.data = [];
 
@@ -138,14 +146,18 @@ const setMyCommunications = async () => {
 }
 
 function setAllCommunication() {
+    Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
+    disbaleCurrentButton('allButton', constants.AllCommunicationDashboardRepeaterButtons);
+    Comp.myCommunicationsRepeater.data = [];
     const filteredItems = state.communications.filter((item) => isDraftOrSent(item) && !isTemplateOrArchive(item));
     Comp.myCommunicationsRepeater.data = filteredItems;
+    updateQuery('tabName', constants.DashboardBITabNames.all);
+    Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
 }
 
 function setMultiStateBox() {
     autorun(() => {
-        const emptyState = () => Comp.dashboardMultiState.changeState(Comp.States.emptyState);
-        const myCommunicationsState = () => Comp.dashboardMultiState.changeState(Comp.States.myCommunicationsState);
+
         const filteredItems = state.communications.filter((item) => isDraftOrSent(item) && !isTemplateOrArchive(item));
         if (filteredItems.length > 0) {
             myCommunicationsState();
@@ -156,6 +168,15 @@ function setMultiStateBox() {
 
     Comp.dashboardMultiState.onChange((event) => {
         setNavigeationBtnsData(state.communications);
+        const menuName = isTemplateState(event.target.currentState.id) ? constants.DashboardBIMenuNames.myTemplates : constants.DashboardBIMenuNames.myCommunications;
+        updateQuery('menuName', menuName);
+        if (isTemplateState(event.target.currentState.id)) {
+            updateQuery('tabName', constants.DashboardBITabNames.all);
+            Comp.allButton.disable();
+        } else {
+            setAllCommunication();
+        }
+
     });
 
 }
@@ -203,53 +224,43 @@ const setNavigeationBtnsEvents = () => {
 
 
     Comp.allButton.onClick((event) => {
-
-        disbaleCurrentButton('allButton', constants.AllCommunicationDashboardRepeaterButtons);
-
-        Comp.myCommunicationsRepeater.date = [];
-        Fedops.interactionStarted(Fedops.events.myCommunicationsAll);
+        sendBi('thirdMenu', { 'buttonName': 'all_button' });
         setAllCommunication();
-        sendBi('thirdMenu', { 'buttonName': 'all_button' })
-        Fedops.interactionEnded(Fedops.events.myCommunicationsAll);
-
     })
 
     Comp.sentButton.onClick((event) => {
-        disbaleCurrentButton('sentButton', constants.AllCommunicationDashboardRepeaterButtons);
-
-        Comp.myCommunicationsRepeater.data = [];
         Fedops.interactionStarted(Fedops.events.myCommunicationsSent);
+        disbaleCurrentButton('sentButton', constants.AllCommunicationDashboardRepeaterButtons);
+        Comp.myCommunicationsRepeater.data = [];
         const filteredItems = state.communications.filter((item) => item.sent && !isTemplateOrArchive(item));
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'buttonName': 'sent_button' })
+        sendBi('thirdMenu', { 'buttonName': 'sent_button' });
+        updateQuery('tabName', constants.DashboardBITabNames.all);
         Fedops.interactionEnded(Fedops.events.myCommunicationsSent);
 
     })
 
     Comp.draftsButton.onClick((event) => {
-
-        disbaleCurrentButton('draftsButton', constants.AllCommunicationDashboardRepeaterButtons);
-
-        Comp.myCommunicationsRepeater.data = [];
         Fedops.interactionStarted(Fedops.events.myCommunicationsDraft);
+        disbaleCurrentButton('draftsButton', constants.AllCommunicationDashboardRepeaterButtons);
+        Comp.myCommunicationsRepeater.data = [];
         const filteredItems = state.communications.filter((item) => item.draft && !isTemplateOrArchive(item));
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'buttonName': 'drafts_button' })
+        sendBi('thirdMenu', { 'buttonName': 'drafts_button' });
+        updateQuery('tabName', constants.DashboardBITabNames.draft);
         Fedops.interactionEnded(Fedops.events.myCommunicationsDraft);
 
     })
 
     Comp.archiveButton.onClick((event) => {
-
-        disbaleCurrentButton('archiveButton', constants.AllCommunicationDashboardRepeaterButtons);
-
-        Comp.myCommunicationsRepeater.data = [];
         Fedops.interactionStarted(Fedops.events.myCommunicationsArchive);
+        disbaleCurrentButton('archiveButton', constants.AllCommunicationDashboardRepeaterButtons);
+        Comp.myCommunicationsRepeater.data = [];
         const filteredItems = state.communications.filter((item) => item.archive);
         Comp.myCommunicationsRepeater.data = filteredItems;
-        sendBi('thirdMenu', { 'buttonName': 'archive_button' })
+        sendBi('thirdMenu', { 'buttonName': 'archive_button' });
+        updateQuery('tabName', constants.DashboardBITabNames.archive);
         Fedops.interactionEnded(Fedops.events.myCommunicationsArchive);
-
     })
 }
 

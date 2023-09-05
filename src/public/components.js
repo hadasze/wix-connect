@@ -47,7 +47,10 @@ export const CommunicationDashboardPage = {
     draftsButton: WC('draftsButton'),
     archiveButton: WC('archiveButton'),
     myCommunicationsButtonBarSeperator: WC('myCommunicationsButtonBarSeperator'),
-
+    myTemplatesButton: WC('myTemplatesButton'),
+    createCommunicationButton: WC('createCommunicationButton'),
+    needHelpButton: WC('needHelpButton'),
+    
     States: {
         myCommunicationsState: 'myCommunicationsState',
         emptyState: 'emptyState',
