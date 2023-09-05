@@ -122,6 +122,7 @@ const customePolling = async (cycle) => {
 
             if (audience) {
                 state.setTargetAudience(audience);
+                sendCSVUploadedBIEvent();
                 return;
             } else {
                 return await customePolling(cycle + 1);
@@ -132,6 +133,14 @@ const customePolling = async (cycle) => {
         await Comp.targetAudienceContent.changeState(Comp.States.TargetAudienceContentUpload) && Comp.csvDetailsAndActionsBox.hide();
         await wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication: state.communication, reason: constants.csvErrors.missingUUIDMSID });
         throw new Error('public -> csv-file-handler.js -> customePolling failed -origin error- ' + error);
+    }
+}
+
+async function sendCSVUploadedBIEvent() {
+    const uuidsAndMsidsList = (Object.values(toJS(state.communication.targetAudience)));
+    const audienceData = await getAudienceDetails(uuidsAndMsidsList);
+    if (audienceData) {
+        sendBi('CSVUploaded', { campaignId: state.communication._id, approved: audienceData.approved.length, needApproval: audienceData.needAprroval.length, rejected: audienceData.rejected.length });
     }
 }
 

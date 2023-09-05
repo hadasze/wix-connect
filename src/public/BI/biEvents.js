@@ -1,4 +1,5 @@
 export const biEvents = {
+    errorMessage: 9700,
     userLogin: 9701,
     permissionRequest: 9702,
     seeGuidelines: 9703,
@@ -26,4 +27,6 @@ export const biEvents = {
     sideBarOptions: 9725,
     filterTopUsers: 9726,
     search: 9727,
+    communicationSent: 9728,
+    CSVUploaded: 9729,
 }

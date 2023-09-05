@@ -14,7 +14,8 @@ import * as constants from '../../consts.js';
 
 // @ts-ignore
 import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
-
+// @ts-ignore
+import { getRejectedReason } from 'backend/target-audience-handler-wrapper.jsw';
 
 const { state, approvedCounter } = wixWindow.lightbox.getContext();
 
@@ -63,10 +64,10 @@ async function onError(error) {
 async function sendEmails() {
     console.log('sendEmails state: ', state);
     try {
-        const [userJWT, allApprovedUsers] = await Promise.all([getUserJWTToken(), reciveAllApprovedUsers()]);
-        console.log({ allApprovedUsers });
+        const [userJWT, filteredUsers] = await Promise.all([getUserJWTToken(), reciveFilteredUsers()]);
+        console.log({ filteredUsers });
         state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
-        const arrayOfEmails = allApprovedUsers.map((user) => {
+        const arrayOfEmails = filteredUsers.allApprovedUsers.map((user) => {
             const email = buildEmail(user);
             return { userId: user.uuid, msid: user.msid, body: email.createBody() };
         });
@@ -76,10 +77,39 @@ async function sendEmails() {
         const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false, ownerUUID);
         console.log('sendEmails res:', res);
 
+        sendBIEvents(filteredUsers);
+
         onSuccess();
     } catch (error) {
         onError(error);
     }
+}
+
+async function sendBIEvents(filteredUsers) {
+    const campaignId = state.communication._id;
+    const send = (uuidUploaded, status, rejectedReason) => sendBi('communicationSent', { campaignId, uuidUploaded, status, rejectedReason });
+
+    for (let index = 0; index < filteredUsers.approved.length; index++) {
+        const user = filteredUsers.approved[index];
+        send(user.uuid, 'approved');
+    }
+
+    for (let index = 0; index < filteredUsers.approvedManually.length; index++) {
+        const user = filteredUsers.approvedManually[index];
+        send(user.uuid, 'approvedManually');
+    }
+
+    for (let index = 0; index < filteredUsers.needAprroval.length; index++) {
+        const user = filteredUsers.needAprroval[index];
+        send(user.uuid, 'needAprroval');
+    }
+
+    for (let index = 0; index < filteredUsers.rejected.length; index++) {
+        const user = filteredUsers.rejected[index];
+        const rejectedReason = await getRejectedReason(user);
+        send(user.uuid, 'rejected', rejectedReason);
+    }
+
 }
 
 function buildEmail(user) {
@@ -117,13 +147,14 @@ function evaluateDynamicVariabels(state, user, emailContent, subjectLine, previe
 }
 
 
-async function reciveAllApprovedUsers() {
+async function reciveFilteredUsers() {
     const uuidsAndMsidsList = typeof state.communication.targetAudience.slice === 'function' ? (Object.values(state.communication.targetAudience.slice())) : (Object.values(toJS(state.communication.targetAudience)));
     const audienceData = await getAudienceDetails(uuidsAndMsidsList);
-
+    let allApprovedUsers = [];
+    let approvedManually = [];
     if (audienceData) {
-        const manuallyApproveArray = typeof state.communication.manuallyApprovedUsers.slice === 'function' ? (Object.values(state.communication.manuallyApprovedUsers.slice())) : (Object.values(toJS(state.communication.manuallyApprovedUsers)));
-        const allApprovedUsers = (audienceData.approved).concat(manuallyApproveArray);
-        return allApprovedUsers;
+        approvedManually = typeof state.communication.manuallyApprovedUsers.slice === 'function' ? (Object.values(state.communication.manuallyApprovedUsers.slice())) : (Object.values(toJS(state.communication.manuallyApprovedUsers)));
+        allApprovedUsers = (audienceData.approved).concat(approvedManually);
     }
+    return { allApprovedUsers, ...audienceData, approvedManually };
 }

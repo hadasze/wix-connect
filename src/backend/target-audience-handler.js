@@ -113,3 +113,13 @@ async function userExistInSentUsersCollection(uuid) {
     const includes = doNotSendList.includes(uuid);
     return includes;
 }
+
+export async function getRejectedReason(user) {
+    return {
+        unSubscribed: unSubscribed(user) || null,
+        isB2B: isB2B(user) || null,
+        isChannels: isChannels(user) || null,
+        contactedLately: await contactedLately(user) || null,
+        unqualified_for_emails_ind: user.unqualified_for_emails_ind || null
+    }
+}
