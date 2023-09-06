@@ -77,7 +77,7 @@ async function sendEmails() {
         const res = await UserMailer.sendEmailToWixUsers(arrayOfEmails, userJWT, false, ownerUUID);
         console.log('sendEmails res:', res);
 
-        sendBIEvents(filteredUsers);
+        sendCommunicationSentBIEvents(filteredUsers);
 
         onSuccess();
     } catch (error) {
@@ -85,7 +85,7 @@ async function sendEmails() {
     }
 }
 
-async function sendBIEvents(filteredUsers) {
+async function sendCommunicationSentBIEvents(filteredUsers) {
     const campaignId = state.communication._id;
     const send = (uuidUploaded, uuidStatus, rejectedReason) => sendBi('communicationSent', { campaignId, uuidUploaded, uuidStatus, rejectedReason });
 
