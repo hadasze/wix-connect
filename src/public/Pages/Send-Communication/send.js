@@ -87,7 +87,7 @@ async function sendEmails() {
 
 async function sendBIEvents(filteredUsers) {
     const campaignId = state.communication._id;
-    const send = (uuidUploaded, status, rejectedReason) => sendBi('communicationSent', { campaignId, uuidUploaded, status, rejectedReason });
+    const send = (uuidUploaded, uuidStatus, rejectedReason) => sendBi('communicationSent', { campaignId, uuidUploaded, uuidStatus, rejectedReason });
 
     for (let index = 0; index < filteredUsers.approved.length; index++) {
         const user = filteredUsers.approved[index];
