@@ -1,5 +1,5 @@
 
-import { state } from 'public/Pages/Communication/state-management.js';
+import { state } from '../state-management.js';
 
 export const calcTotalAudienceNum = (audience) => {
     return Object.values(audience).reduce(

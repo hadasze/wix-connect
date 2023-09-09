@@ -14,10 +14,10 @@ export function getCommunication(id) {
     return wixData.get('Communications', id, dataOptions);
 }
 
-export async function createCommunication() {
+export async function createCommunication(origin) {
     try {
         const _id = uuidv4();
-        const communication = new Communication(_id);
+        const communication = new Communication(_id, origin);
         const insertRes = await wixData.insert("Communications", communication, dataOptions);
         return insertRes;
 

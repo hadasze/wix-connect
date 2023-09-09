@@ -1,6 +1,7 @@
 export class Communication {
-    constructor(_id) {
+    constructor(_id, origin) {
         this._id = _id;
+        this.origin = origin;
         this.name = null;
         this.description = null;
         this.targetAudienceCsv = null;

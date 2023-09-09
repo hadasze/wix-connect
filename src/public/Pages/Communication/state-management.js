@@ -104,8 +104,5 @@ export const state = observable({
     },
     setSentToCounter(counter) {
         state.communication.sentToCounter = counter;
-    },
-    increaseAutoSaveCount() {
-        state.autoSavedCount++;
     }
 });

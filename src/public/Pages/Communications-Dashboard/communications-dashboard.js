@@ -38,10 +38,20 @@ export async function createCommunicationClick(event) {
     event.target.disable();
     try {
         Fedops.interactionStarted(Fedops.events.createNewCommunication);
-        const communication = await createCommunication();
+        const communication = await createCommunication('new');
         Fedops.interactionEnded(Fedops.events.createNewCommunication);
-        //ToDo - BUG: buttonName should reflect where the commmunication created from
-        sendBi('createCommunication', { 'buttonName': 'myTemplatesButton', 'origin': 'upper', 'campainedid': communication._id })
+        let buttonName = '';
+        switch (event.target.id) {
+            case Comp.createCommunicationStateButton.id:
+                buttonName = 'Create_Communication_Empty_State_Button';
+                break;
+            case Comp.createCommunicationButton.id:
+                buttonName = 'Create_Communication_Top_Button';
+                break;
+            default:
+                break;
+        }
+        sendBi('createCommunication', { buttonName, 'campainedid': communication._id })
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + communication._id);
     } catch (err) {
         console.error('error in createCommunicationButton, original error: ' + err);
