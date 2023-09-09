@@ -67,7 +67,6 @@ export const setCommunicationMoreActionsEvents = () => {
     Comp.saveAsTempalteButton.onClick(async (event) => {
         console.log('Comp.saveAsTempalteButton.onClick');
         event.target.disable();
-        Comp.saveAsTempalteButton
         const toSave = resetCommunication(itemData(event, repeater));
         toSave.isTemplate = true;
         const template = await saveCommunication(toSave);
@@ -113,9 +112,11 @@ export const setCommunicationMoreActionsEvents = () => {
 
 export const reuseCommunication = async (communication) => {
     console.log('reuseCommunication: ', communication);
+    const origin = communication.isTemplate ? 'template' : 'reuse';
     const reused = resetCommunication(communication);
     reused.draft = true;
     reused.tested = false;
+    reused.origin = origin;
     try {
         const saved = await saveCommunication(reused);
         sendCampainOptionsBIEvent(communication._id, 'reuse');
@@ -133,6 +134,7 @@ const resetCommunication = (communication) => {
     toReturn.draft = false;
     toReturn.archive = false;
     toReturn.isTemplate = false;
+    toReturn.origin = null;
     toReturn.targetAudienceCsv = null;
     toReturn.targetAudience = null;
     toReturn.manuallyApprovedUsers = [];
