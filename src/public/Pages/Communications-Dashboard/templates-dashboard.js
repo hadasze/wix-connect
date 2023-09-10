@@ -13,7 +13,7 @@ import { autorun } from 'mobx';
 
 export const initTemplatesDashboardData = () => {
     Comp.myTemplatesRepeater.onItemReady(($item, itemData, index) => {
-        $item('#templateNameText').text = itemData.name || formatDate(itemData._createdDate);
+        $item('#templateNameText').text = itemData.name || formatDate(itemData._createdDate).toString();
         const date = formatDate(itemData._updatedDate);
         $item('#lastEditedTemplateDateText').text = constants.Text.EDITED_ON + date;
     })

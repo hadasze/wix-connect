@@ -141,8 +141,7 @@ const setMyCommunications = async () => {
         wixSiteFrontend.prefetchPageResources({
             "pages": [constants.Urls.EXISTS_COMMUNICATION + itemData._id]
         });
-        console.log(itemData);
-        $item('#communicationTitleText').text = itemData.name || formatDate(itemData._createdDate);
+        $item('#communicationTitleText').text = itemData.name || formatDate(itemData._createdDate).toString();
         (constants.CommunicationActions.All).forEach(button => {
             !$item(button).collapsed && $item(button).collapse();
         });
