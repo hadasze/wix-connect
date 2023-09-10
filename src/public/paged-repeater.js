@@ -123,7 +123,6 @@ export class PagedRepeater {
         }
     }
     async initRepeater(data) {
-        console.log('init repeater');
         try {
             this.allData = data;
             this.setActiveData();
