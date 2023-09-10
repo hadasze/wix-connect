@@ -110,21 +110,16 @@ const setTargetAudienceData = () => {
 
     autorun(async () => {
         if (state.communication?.targetAudience) {
-            // clearAllRepeatersAudienceData();
             await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoading');
             await setAllRepeatersAudienceData();
-            await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded') && $w('#csvDetailsAndActionsBox').show();
+            await $w('#TargetAudienceContent').changeState('TargetAudienceContentLoaded');
+            $w('#csvDetailsAndActionsBox').show();
             $w('#usersUuidsMultiState').changeState('ApprovedUsersState');
             disbaleCurrentButton('approvedUsersButton', constants.AllAudienceRepeaterButtons);
         }
     })
 }
 
-// function clearAllRepeatersAudienceData() {
-//     $w('#approvedRepeater').data = [];
-//     $w('#needApprovalReapter').data = [];
-//     $w('#rejectedRepeater').data = [];
-// }
 
 const setAllRepeatersAudienceData = async () => {
 
@@ -136,12 +131,12 @@ const setAllRepeatersAudienceData = async () => {
             targetAudienceState.setTotalCounter(totalNumOfAudience);
             const allApprovedUsers = (audienceData.approved).concat((Object.values(state.communication.manuallyApprovedUsers)));
 
-            reciveLatestApprovedUsers(allApprovedUsers);
+            await reciveLatestApprovedUsers(allApprovedUsers);
             setNeedApprovaldRepeater(audienceData.needAprroval);
             setRejectedRepeater(audienceData.rejected);
             handleNotValidAudience(totalNumOfAudience, uuidsAndMsidsList.length);
         }
-
+        return 
     } catch (error) {
         console.error('setAllRepeatersAudienceData error, original error: ' + error);
     }
@@ -163,7 +158,7 @@ export const reciveLatestApprovedUsers = async (allApprovedUsers) => {
     }
 
     if (allApprovedUsers) {
-            setApprovedRepeater(allApprovedUsers);
+        setApprovedRepeater(allApprovedUsers);
     }
     if (audienceData) {
         targetAudienceState.setNeedApprovalCounter(audienceData.needAprroval.length - manuallyApproveArray.length);
@@ -262,7 +257,7 @@ const setNeedApprovaldRepeater = (data) => {
     autorun(() => $w('#numOfManuallyApprovedText').text = constants.Text.NUM_OF_APPROVED(data.length - targetAudienceState.needApprovalCounter))
 }
 
-const setRejectedRepeater = async (data) => {
+const setRejectedRepeater = (data) => {
     rejectedRepeater.setRepeater($w('#rejectedRepeater'));
     rejectedRepeater.setData(data);
     setPagination(rejectedRepeater);
@@ -270,7 +265,7 @@ const setRejectedRepeater = async (data) => {
 }
 
 const initActions = () => {
-    
+
     autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
     autorun(() => $w('#requestApprovalButton').label = constants.Text.REQUEST_APPROVAL_BTN(targetAudienceState.needApprovalCounter || ''));
 

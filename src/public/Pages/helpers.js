@@ -2,6 +2,7 @@ import { state } from './Communication/state-management.js';
 import { DynamicFieldsOptions } from '../consts.js';
 
 export const disbaleCurrentButton = (currButton, allButtonsArr) => {
+    console.log('disbaleCurrentButton: ', { currButton, allButtonsArr });
     for (let i = 0; i < allButtonsArr.length; i++) {
         if (currButton === allButtonsArr[i])
             $w('#' + currButton).disable();
