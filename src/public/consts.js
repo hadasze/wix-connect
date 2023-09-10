@@ -42,7 +42,8 @@ export const CommunicationActions = {
 export const CommunicationStatesByOrder = [
     "AddDetailsState",
     "TargetAudienceState",
-    "CreateEmailStep",
+    "SetEmailHeaderState",
+    "CreateEmailState",
     "TestAndSendState",
 ]
 
@@ -265,7 +266,8 @@ export const Lightboxs = {
     firstTimeApprove: 'First Time Approve Pop Up',
     topUser: 'Top user',
     CustomLogin: 'Custom-Login',
-    Banner: 'Banner'
+    Banner: 'Banner',
+    PreviewEmail : 'Preview Email'
 }
 
 export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';

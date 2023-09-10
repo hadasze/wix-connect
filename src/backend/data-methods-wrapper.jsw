@@ -4,7 +4,7 @@ export const saveCommunication = (data) => DataMethods.saveCommunication(data);
 
 export const getCommunication = (id) => DataMethods.getCommunication(id);
 
-export const createCommunication = (origin) => DataMethods.createCommunication(origin);
+export const createCommunication = (origin, replyToAddress, senderName) => DataMethods.createCommunication(origin, replyToAddress, senderName);
 
 export const getTargetAudience = (id) => DataMethods.getTargetAudience(id);
 

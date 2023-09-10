@@ -1,6 +1,6 @@
 import { autorun, reaction } from 'mobx';
 import { state } from './state-management.js';
-import { TIME } from 'public/consts.js';
+import { TIME } from '../../consts.js';
 import { CommunicationPage } from '../../components.js';
 
 import * as createEmailHandler from './create-email.js';

@@ -51,10 +51,11 @@ const setTopBarData = () => {
         const isCompleteCreateEmail = state.communication?.template?.data?.body;
         isCompleteCreateEmail ? $w('#createEmailButton').expandIcon() : $w('#createEmailButton').collapseIcon()
     });
+    
     autorun(() => {
-        const isCompleteTestAndSend = state.communication?.finalDetails?.senderName && state.communication?.finalDetails?.subjectLine &&
+        const isCompleteSetEmailHeader = state.communication?.finalDetails?.senderName && state.communication?.finalDetails?.subjectLine &&
             state.communication?.finalDetails?.previewText && state.communication?.finalDetails?.replyToAddress;
-        isCompleteTestAndSend ? $w('#testAndSendButton').expandIcon() : $w('#testAndSendButton').collapseIcon()
+        isCompleteSetEmailHeader ? $w('#setEmailheaderButton').expandIcon() : $w('#setEmailheaderButton').collapseIcon()
     });
 
     autorun(() => {
@@ -80,7 +81,7 @@ const setDisabledSendButtonTooltip = () => {
 
 const setOnClickStepsEvents = () => {
     const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
-   
+
     $w('#addDetailsButton').onClick((event) => {
         $w('#stepsOfCreationMultistateBox').changeState('AddDetailsState');
         disbaleCurrentButton('addDetailsButton', buttonslist);
@@ -93,8 +94,14 @@ const setOnClickStepsEvents = () => {
         handleNextButton('targetAudienceButton');
     })
 
+    $w('#setEmailheaderButton').onClick((event) => {
+        $w('#stepsOfCreationMultistateBox').changeState('SetEmailHeaderState');
+        disbaleCurrentButton('SetEmailHeaderState', buttonslist);
+        handleNextButton('setEmailheaderButton');
+    })
+
     $w('#createEmailButton').onClick((event) => {
-        $w('#stepsOfCreationMultistateBox').changeState('CreateEmailStep');
+        $w('#stepsOfCreationMultistateBox').changeState('CreateEmailState');
         disbaleCurrentButton('createEmailButton', buttonslist);
         handleNextButton('createEmailButton');
     })
@@ -105,14 +112,15 @@ const setOnClickStepsEvents = () => {
         handleNextButton('testAndSendButton');
     })
 
-    $w('#previewEmailButton').onClick((event) => {
+    $w('#previewEmailButton').onClick(async (event) => {
         Fedops.interactionStarted(Fedops.events.previewEmail);
-        $w('#mainMultiStateBox').changeState('PreviewState');
+        // $w('#mainMultiStateBox').changeState('PreviewState');
+        await wixWindow.openLightbox(constants.Lightboxs.PreviewEmail);
         previewHandler.initPreviewData();
         Fedops.interactionEnded(Fedops.events.previewEmail);
         sendBi('upperMenu', { 'buttonName': 'preview_email' })
     })
-    
+
     // $w('#backToEditButton').onClick((event) => {
     //     $w('#mainMultiStateBox').changeState('EditState');
     //     previewHandler.cleanAllPreviewData();

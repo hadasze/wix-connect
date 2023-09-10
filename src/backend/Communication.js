@@ -1,5 +1,5 @@
 export class Communication {
-    constructor(_id, origin) {
+    constructor(_id, origin, replyToAddress, senderName) {
         this._id = _id;
         this.origin = origin;
         this.name = null;
@@ -18,14 +18,14 @@ export class Communication {
         };
         this.signature = {
             finalGreeting: 'Best regards,',
-            fullName: null,
+            fullName: senderName,
             jobTitle: null,
         }
         this.finalDetails = {
-            senderName: null,
+            senderName,
             subjectLine: null,
             previewText: null,
-            replyToAddress: null,
+            replyToAddress,
         };
         this.dynamicVaribels = {
             businessName: null,

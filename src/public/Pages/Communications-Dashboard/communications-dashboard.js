@@ -11,7 +11,7 @@ import { setCommunicationMoreActionsEvents } from './communication-actions.js';
 import { sendBi } from '../../BI/biModule.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import { state } from './state-manager.js';
-import { updateQuery } from '../../_utils.js';
+import { updateQuery, getOwnerEmail, getOwnerName } from '../../_utils.js';
 
 import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
@@ -38,7 +38,10 @@ export async function createCommunicationClick(event) {
     event.target.disable();
     try {
         Fedops.interactionStarted(Fedops.events.createNewCommunication);
-        const communication = await createCommunication('new');
+        const origin = 'new';
+        const replyToAddress = getOwnerEmail();
+        const senderName = getOwnerName();
+        const communication = await createCommunication(origin, replyToAddress, senderName);
         Fedops.interactionEnded(Fedops.events.createNewCommunication);
         let buttonName = '';
         switch (event.target.id) {

@@ -23,9 +23,9 @@ export const initCreateEmailData = () => {
 const setCommunicationData = () => {
     autorun(() => $w('#communicationInputTextBox').value = `${state.communication?.template?.data?.body || ''}`);
     autorun(() => $w('#finalGreetingInput').value = `${state.communication?.signature?.finalGreeting || $w('#finalGreetingInput').value}`);
-    autorun(() => $w('#fullNameInput').value = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
+    autorun(() => $w('#fullNameInput').value = state.communication?.signature?.fullName);
     autorun(() => $w('#jobTitleInput').value = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
-    autorun(() => $w('#signatureFullName').text = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
+    autorun(() => $w('#signatureFullName').text = state.communication?.signature?.fullName);
     autorun(() => $w('#signatureJobTitle').text = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
     autorun(() => $w('#overviewCountMailText').text = constants.Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter));
 }
