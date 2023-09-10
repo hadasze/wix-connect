@@ -54,7 +54,6 @@ export const Urls = {
 }
 
 export const Text = {
-    NO_NAME: 'Temporary name',
     SENT_ON: 'Sent on: ',
     EDITED_ON: 'Last edited on: ',
     WILL_BE_SENT_TO: (num) => `This email will be sent to ${num || 0} users.`,
