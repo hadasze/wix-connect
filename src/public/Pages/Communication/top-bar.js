@@ -114,7 +114,6 @@ const setOnClickStepsEvents = () => {
 
     $w('#previewEmailButton').onClick(async (event) => {
         Fedops.interactionStarted(Fedops.events.previewEmail);
-        // $w('#mainMultiStateBox').changeState('PreviewState');
         await wixWindow.openLightbox(constants.Lightboxs.PreviewEmail);
         previewHandler.initPreviewData();
         Fedops.interactionEnded(Fedops.events.previewEmail);

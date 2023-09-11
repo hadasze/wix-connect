@@ -18,7 +18,7 @@ export const CommunicationDahboardStates = {
     ARCHIVE: 'Archive',
 }
 
-export const AllCompuseEmailTopBarButton = ['addDetailsButton', 'targetAudienceButton', 'createEmailButton', 'testAndSendButton'];
+export const AllCompuseEmailTopBarButton = ['addDetailsButton', 'targetAudienceButton', 'setEmailheaderButton', 'createEmailButton', 'testAndSendButton'];
 
 export const AllEditTemplateBarButton = ['addDetailsButton', 'createEmailButton', 'testAndSendButton'];
 
@@ -266,7 +266,7 @@ export const Lightboxs = {
     topUser: 'Top user',
     CustomLogin: 'Custom-Login',
     Banner: 'Banner',
-    PreviewEmail : 'Preview Email'
+    PreviewEmail: 'Preview Email'
 }
 
 export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';
