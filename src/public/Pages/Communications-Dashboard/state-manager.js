@@ -1,7 +1,7 @@
 // @ts-ignore
 import wixWindow from 'wix-window';
 
-import {  observable, configure } from 'mobx';
+import { autorun, observable, configure, toJS } from 'mobx';
 
 
 const routerData = wixWindow.getRouterData();
@@ -12,6 +12,6 @@ configure({
 })
 
 export const state = observable({
-    communications: routerData.communications,
+    communicationsCounts: routerData.count,
     communicationDetails: routerData.communicationDetails,
 });

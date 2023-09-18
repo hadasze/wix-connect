@@ -1,9 +1,11 @@
 // @ts-ignore
 import wixLocation from 'wix-location';
+
+import { SmartRepeater } from '../../smart-repeater.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import { removeItemFromRepeater } from '../../_utils.js';
 import { state } from './state-manager.js';
-import { formatDate } from './communications-dashboard.js';
+
 import * as constants from '../../consts.js';
 
 // @ts-ignore
@@ -12,23 +14,28 @@ import { autorun } from 'mobx';
 
 
 export const initTemplatesDashboardData = () => {
-    Comp.myTemplatesRepeater.onItemReady(($item, itemData, index) => {
-        $item('#templateNameText').text = itemData.name || constants.Text.NO_NAME;
-        const date = formatDate(itemData._updatedDate);
-        $item('#lastEditedTemplateDateText').text = constants.Text.EDITED_ON + date;
-    })
-    setTemplateActionsEvents();
-    setTemplateActionsUI();
-    autorun(() => {
-        const filteredItems = state.communications.filter((item) => !item.archive && item.isTemplate);
-        Comp.myTemplatesRepeater.data = filteredItems || [];
-        // setButtonsData(filteredItems.length.toString());
-    });
+    setTemplatesRepeater();
+    setButtonsData();
 }
 
-// const setButtonsData = (count) => {
-//     Comp.allTemplatesButton.label = `${constants.CommunicationDahboardStates.ALL} ${count}`;
-// }
+const setButtonsData = () => {
+    autorun(() => Comp.allTemplatesButton.label = `${constants.CommunicationDahboardStates.ALL} ${state.communicationsCounts.templates}`);
+}
+
+const setTemplatesRepeater = async () => {
+
+    const filters = { 'isTemplate': true };
+    const itemReadyFun = ($item, itemData, index) => {
+        $item('#templateNameText').text = itemData.name || constants.Text.NO_NAME;
+        $item('#lastEditedTemplateDateText').text = constants.Text.EDITED_ON + itemData._updatedDate;
+    }
+
+    const smartTemplatesRepeater = new SmartRepeater(Comp.myTemplatesRepeater, Comp.myTemplateItemBox, DataMethods.getAllUserCommunications, filters, itemReadyFun);
+    smartTemplatesRepeater.initRepeater();
+
+    setTemplateActionsEvents(smartTemplatesRepeater);
+    setTemplateActionsUI();
+}
 
 const setTemplateActionsUI = () => {
 
@@ -51,7 +58,7 @@ const setTemplateActionsUI = () => {
 }
 
 
-export const setTemplateActionsEvents = () => {
+export const setTemplateActionsEvents = (smartTemplatesRepeater) => {
 
     Comp.editTempalteButton.onClick((event) => {
         wixLocation.to(constants.Urls.EXISTS_COMMUNICATION + event.context.itemId);
@@ -65,11 +72,15 @@ export const setTemplateActionsEvents = () => {
         const { _id, _createdDate, _updatedDate, _owner, ...rest } = clickedItemData;
 
         try {
-            const newTemplate = await DataMethods.saveCommunication(rest);
-            const newData = [newTemplate, ...Comp.myTemplatesRepeater.data];
-            Comp.myTemplatesRepeater.data = newData;
-            state.communications = [newTemplate, ...state.communications];
+
+            // const newTemplate =
+            await DataMethods.saveCommunication(rest);
+            // const newData = [newTemplate, ...Comp.myTemplatesRepeater.data];
+            // Comp.myTemplatesRepeater.data = newData;
+            smartTemplatesRepeater.resetRepeater();
+            state.communicationsCounts.templates++;
             event.target.enable();
+
         } catch (err) {
             console.error('public/templates-dashboard duplicate template ', err);
         }
@@ -78,7 +89,8 @@ export const setTemplateActionsEvents = () => {
     Comp.deleteTemplateButton.onClick(async (event) => {
         event.target.disable();
         await DataMethods.removeCommunication(event.context.itemId);
-        removeItemFromRepeater(Comp.myTemplatesRepeater, event.context.itemId);
-        state.communications = state.communications.filter((item) => item._id !== event.context.itemId);
+        // removeItemFromRepeater(Comp.myTemplatesRepeater, event.context.itemId);
+        smartTemplatesRepeater.resetRepeater();
+        state.communicationsCounts.templates--;
     })
 }
