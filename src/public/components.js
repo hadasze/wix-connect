@@ -12,10 +12,29 @@ export const CommunicationPage = {
     downloadReportButton: WC('downloadReportButton'),
     downloadCSVTooltipBox: WC('downloadCSVTooltipBox'),
     autoSaveAnimation: WC('autoSaveAnimation'),
+    sendStepButton: WC('sendStepButton'),
+    nextStepButton: WC('nextStepButton'),
+    addDetailsButton: WC('addDetailsButton'),
+    targetAudienceButton: WC('targetAudienceButton'),
+    setEmailheaderButton: WC('setEmailheaderButton'),
+    previewEmailButton: WC('previewEmailButton'),
+    createEmailButton: WC('createEmailButton'),
+    testAndSendButton: WC('testAndSendButton'),
+    hoverZoneSendTooltip: WC('hoverZoneSendTooltip'),
+    sendButtonTooltipBox: WC('sendButtonTooltipBox'),
+    headerEditMode: WC('HeaderEditMode'), //ToDo: change to lower case
+    stepsOfCreationMultistateBox: WC('stepsOfCreationMultistateBox'),
+    backToDashboardButton: WC('backToDashboardButton'),
+
 
     States: {
         TargetAudienceContentLoading: 'TargetAudienceContentLoading',
         TargetAudienceContentUpload: 'TargetAudienceContentUpload',
+        AddDetailsState: 'AddDetailsState',
+        TargetAudienceState: 'TargetAudienceState',
+        SetEmailHeaderState: 'SetEmailHeaderState',
+        TestAndSendState: 'TestAndSendState',
+        CreateEmailState: 'CreateEmailState'
     },
 
 }
@@ -50,7 +69,7 @@ export const CommunicationDashboardPage = {
     myTemplatesButton: WC('myTemplatesButton'),
     createCommunicationButton: WC('createCommunicationButton'),
     needHelpButton: WC('needHelpButton'),
-    
+
     States: {
         myCommunicationsState: 'myCommunicationsState',
         emptyState: 'emptyState',

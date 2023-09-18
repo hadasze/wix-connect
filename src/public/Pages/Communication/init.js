@@ -22,7 +22,7 @@ export function setEvents() {
     createEmailHandler.initCreateEmailActions();
     addDetailsHandler.initAddDetailsActions();
     testAndSendHandler.initTestAndSendActions();
-    previewHandler.initPreviewActions();
+    // previewHandler.initPreviewActions();
     targetAudienceHandler.initTargetAudienceActions();
     validationsHandler.initValidations();
     handleAutoSave();
