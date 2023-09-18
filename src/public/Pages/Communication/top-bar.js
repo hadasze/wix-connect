@@ -120,7 +120,7 @@ const setOnClickStepsEvents = () => {
             removeCommunication(state.communication._id);
         }
 
-        return redirectToMyCommunications();
+        return await redirectToMyCommunications();
     });
 
     $w('#sendStepButton').onClick(async (event) => {

@@ -18,6 +18,9 @@ import * as UserMailer from 'backend/user-mailer-api-wrapper.jsw';
 
 const { state, approvedCounter } = wixWindow.lightbox.getContext();
 
+
+console.log('send-communication: ', { state, approvedCounter });
+
 export function setEvents() {
 
     Comp.sendBtn.onClick(async (event) => {
