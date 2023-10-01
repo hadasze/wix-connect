@@ -1,10 +1,9 @@
 export const setUuidProperties = (user, $item, repeaterType) => {
 
-    isTopUser(user, $item, repeaterType);
     isPartnerUser(user, $item, repeaterType);
     isVeloUser(user, $item, repeaterType);
     isPremiumUser(user, $item, repeaterType);
-
+    isWixStudio(user, $item, repeaterType);
     if (repeaterType === 'NeedApprove') {
         isAccountManaged(user, $item, repeaterType);
     }
@@ -22,12 +21,7 @@ export const setSentUuidProperties = (user, $item, repeaterType) => {
     isPartnerUser(user, $item, repeaterType);
     isVeloUser(user, $item, repeaterType);
     isPremiumUser(user, $item, repeaterType);
-}
-
-const isTopUser = (user, $item, repeaterType) => {
-    isTopUserByCompanies(user) ?
-        $item(`#V${repeaterType}TopUser`).hide() && $item(`#X${repeaterType}TopUser`).hide() && $item(`#seeDetails${repeaterType}TopUser`).show() :
-        $item(`#V${repeaterType}TopUser`).hide() && $item(`#X${repeaterType}TopUser`).show() && $item(`#seeDetails${repeaterType}TopUser`).hide();
+    isWixStudio(user, $item, repeaterType);
 }
 
 const isSentTopUser = (user, $item, repeaterType) => {
@@ -52,6 +46,14 @@ const isPremiumUser = (user, $item, repeaterType) => {
     user.premium_ind ?
         $item(`#V${repeaterType}Premium`).show() && $item(`#X${repeaterType}Premium`).hide() :
         $item(`#V${repeaterType}Premium`).hide() && $item(`#X${repeaterType}Premium`).show();
+}
+
+const isWixStudio = (user, $item, repeaterType) => {
+    if ($item(`#V${repeaterType}WixStudio`).isVisible) {
+        user.studio_ind ?
+            $item(`#V${repeaterType}WixStudio`).show() && $item(`#X${repeaterType}WixStudio`).hide() :
+            $item(`#V${repeaterType}WixStudio`).hide() && $item(`#X${repeaterType}WixStudio`).show();
+    }
 }
 
 const isAccountManaged = (user, $item, repeaterType = 'NeedApprove') => {

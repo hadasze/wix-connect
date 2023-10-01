@@ -19,7 +19,7 @@ export class Communication {
         this.signature = {
             finalGreeting: 'Best regards,',
             fullName: senderName,
-            jobTitle: null,
+            positionTitle: null,
         }
         this.finalDetails = {
             senderName,

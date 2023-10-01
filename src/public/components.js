@@ -17,7 +17,7 @@ export const CommunicationPage = {
     addDetailsButton: WC('addDetailsButton'),
     targetAudienceButton: WC('targetAudienceButton'),
     setEmailheaderButton: WC('setEmailheaderButton'),
-    previewEmailButton: WC('previewEmailButton'),
+    previewOrSendTestEmailButton: WC('previewOrSendTestEmailButton'),
     createEmailButton: WC('createEmailButton'),
     testAndSendButton: WC('testAndSendButton'),
     hoverZoneSendTooltip: WC('hoverZoneSendTooltip'),

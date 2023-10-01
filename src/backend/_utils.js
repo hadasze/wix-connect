@@ -29,3 +29,13 @@ export function chunkArray(array, chunkSize) {
 export function uniqueArrayOfObjByKey(arrayOfObj, key) {
     return [...new Map(arrayOfObj.map(item => [item[key], item])).values()];
 }
+
+export function removeNullorUndefinedValuesfromObject(obj) {
+    Object.keys(obj).forEach(key => {
+        if (obj[key] === null) {
+            delete obj[key];
+        }
+    });
+
+    return obj;
+}

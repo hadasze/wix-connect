@@ -136,7 +136,7 @@ const setAllRepeatersAudienceData = async () => {
             setRejectedRepeater(audienceData.rejected);
             handleNotValidAudience(totalNumOfAudience, uuidsAndMsidsList.length);
         }
-        return 
+        return
     } catch (error) {
         console.error('setAllRepeatersAudienceData error, original error: ' + error);
     }
@@ -301,24 +301,18 @@ const repeatedItemActions = () => {
     $w('#rejectedSiteUrlText').onClick((event) => {
         clickOnUrl($w("#rejectedRepeater"), event);
     });
-    $w(`#seeDetailsRejectedContacted`).onClick((event) => {
+    $w('#seeDetailsRejectedContacted').onClick((event) => {
         openContactedLightBox($w("#rejectedRepeater"), event);
-    })
-    $w(`#seeDetailsApprovedTopUser`).onClick((event) => {
-        openTopUserLightBox($w("#approvedRepeater"), event);
-    })
-    $w(`#seeDetailsNeedApproveTopUser`).onClick((event) => {
+    });
+    $w('#seeDetailsNeedApproveTopUser').onClick((event) => {
         openTopUserLightBox($w("#needApprovalReapter"), event);
-    })
-    $w(`#seeDetailsRejectedTopUser`).onClick((event) => {
-        openTopUserLightBox($w("#rejectedRepeater"), event);
-    })
+    });
 
     const copyToClipBoard = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
         wixWindow.copyToClipboard(clickedItemData.uuid)
-    }
+    };
     const clickOnUrl = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
@@ -328,7 +322,7 @@ const repeatedItemActions = () => {
 
         // return urlToOpen;
         // wixLocation.to(clickedItemData.url)
-    }
+    };
     const openContactedLightBox = (repeater, event) => {
         const data = repeater.data;
         const clickedItemData = data.find(item => item._id === event.context.itemId);
@@ -342,7 +336,7 @@ const repeatedItemActions = () => {
             "user": clickedItemData,
             "communication": state.communication
         });
-    }
+    };
 
     const openTopUserLightBox = (repeater, event) => {
         const data = repeater.data;
@@ -353,7 +347,7 @@ const repeatedItemActions = () => {
             'cloumnName': 'topUser'
         })
         wixWindow.openLightbox(constants.Lightboxs.topUser, { "user": clickedItemData, "communication": state.communication });
-    }
+    };
 }
 
 const setApproveToggleEvent = () => {

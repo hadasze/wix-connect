@@ -1,5 +1,5 @@
 import { mediaManager } from 'wix-media-backend';
-
+import { removeNullorUndefinedValuesfromObject } from './_utils.js';
 import { getAllRecentlySentUsers } from './data-methods.js';
 
 const { Parser } = require('json2csv');
@@ -89,6 +89,7 @@ const unSubscribed = (user) => user?.unqualified_for_emails_ind;
 const isChannels = (user) => user?.channels_ind;
 const isB2B = (user) => user?.b2b_ind;
 const isManaged = (user) => user?.managed_ind;
+const isStudio = (user) => user?.studio_ind;
 
 const contactedLately = async (user) => user?.contacted_lately_ind || await userExistInSentUsersCollection(user.uuid);
 const isNotExistUser = (user) => user?.data && user.data.includes('No data for uuid');
@@ -115,11 +116,13 @@ async function userExistInSentUsersCollection(uuid) {
 }
 
 export async function getRejectedReason(user) {
-    return {
+    const obj = {
         unSubscribed: unSubscribed(user) || null,
         isB2B: isB2B(user) || null,
         isChannels: isChannels(user) || null,
         contactedLately: await contactedLately(user) || null,
         unqualified_for_emails_ind: user.unqualified_for_emails_ind || null
     }
+
+    return removeNullorUndefinedValuesfromObject(obj);
 }

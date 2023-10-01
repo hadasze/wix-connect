@@ -6,6 +6,7 @@ import { sendBi } from '../../BI/biModule.js';
 import { SendTestEmail as Comp } from '../../components.js';
 import { getUserJWTToken } from '../../_utils.js';
 import { getMustHaveFieldsOfCommunication } from '../helpers.js';
+import { enableSendBtn } from './init.js';
 
 import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
@@ -43,10 +44,6 @@ export function setEvents() {
 
 }
 
-function enableSendBtn() {
-    Comp.testEmailsInput.updateValidityIndication();
-    Comp.testEmailsInput.value.length > 0 ? Comp.sendBtn.enable() : Comp.sendBtn.disable();
-}
 
 function disable() {
     Comp.sendBtn.disable();

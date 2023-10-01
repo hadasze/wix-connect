@@ -37,11 +37,8 @@ const setTestAndSendData = () => {
     autorun(() => $w('#previewTextInput').value = `${state.communication?.finalDetails?.previewText || ''}`);
     autorun(() => $w('#replyToAddressInput').value = state.communication?.finalDetails?.replyToAddress);
     autorun(() => $w('#setEmailHeaderSenderNamePreviewText').text = state.communication?.finalDetails?.senderName);
-    autorun(() => $w('#testAndSendSenderNamePreviewText').text = state.communication?.finalDetails?.senderName);
     autorun(() => $w('#setEmailHeaderSubjectLinePreviewText').text = `${state.communication?.finalDetails?.subjectLine || $w('#subjectLineInput').value}`);
-    autorun(() => $w('#testAndSendSubjectLinePreviewText').text = `${state.communication?.finalDetails?.subjectLine || $w('#subjectLineInput').value}`);
     autorun(() => $w('#setEmailHeaderPreviewText').text = `${state.communication?.finalDetails?.previewText || $w('#previewTextInput').value}`);
-    autorun(() => $w('#testAndSendPreviewText').text = `${state.communication?.finalDetails?.previewText || $w('#previewTextInput').value}`);
     autorun(() => $w('#subjectLineInputLengthCounter').text = counters.subjectLineCounter + '/150');
     autorun(() => $w('#previewInputLengthCounter').text = counters.previewCounter + '/150');
 }

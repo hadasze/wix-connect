@@ -1,6 +1,7 @@
 import { autorun } from 'mobx';
 import { state } from './state-management.js'
 import { getMustHaveFieldsOfCommunication } from '../helpers.js'
+import { CommunicationPage as Comp } from '../../components.js';
 
 export const initValidations = () => {
     sendButtonValidations();
@@ -9,22 +10,14 @@ export const initValidations = () => {
 export const sendButtonValidations = () => {
     autorun(() => {
         if (allRequiredFieldsForSendToUsers(state.communication)) {
-            $w('#sendStepButton').enable();
-            $w('#hoverZoneSendTooltip').collapse();
+            Comp.sendStepButton.enable();
+            Comp.hoverZoneSendTooltip.collapse();
         } else {
             const currentStep = $w('#stepsOfCreationMultistateBox').currentState.id;
-            $w('#sendStepButton').disable();
+            Comp.sendStepButton.disable();
             if (currentStep === 'testAndSend')
-                $w('#hoverZoneSendTooltip').expand();
+                Comp.hoverZoneSendTooltip.expand();
         }
-    });
-    autorun(() => {
-        if (allRequiredFieldsForSendTestEmail(state.communication)) {
-            // $w('#sendTestButton').enable();
-        } else {
-            // $w('#sendTestButton').disable();
-        }
-
     });
 }
 

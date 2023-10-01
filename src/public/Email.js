@@ -1,16 +1,16 @@
 export class Email {
     constructor({
-                    templateName,
-                    senderName,
-                    replyTo,
-                    subjectLine,
-                    previewText,
-                    emailContent,
-                    emailcontent2,
-                    firstLastName,
-                    positionTitle,
-                    communicationId
-                }) {
+        templateName,
+        senderName,
+        replyTo,
+        subjectLine,
+        previewText,
+        emailContent,
+        emailcontent2,
+        firstLastName,
+        positionTitle,
+        communicationId
+    }) {
         this.templateName = this.isValid('templateName', templateName);
         this.senderName = this.isValid('senderName', senderName);
         this.replyTo = this.isValid('replyTo', replyTo);

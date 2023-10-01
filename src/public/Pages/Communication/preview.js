@@ -1,55 +1,30 @@
 // @ts-ignore
 import { HTMLgenerator } from 'backend/templates-helper/generate-html-handler.jsw';
-import { state } from './state-management.js';
-// import { autorun } from 'mobx';
-import { targetAudienceState } from './Target-Audience/target-audience.js';
+import { autorun } from 'mobx';
 import { Text } from '../../consts.js';
 
-// export const initPreviewActions = () => {
-//     setShowPreviewButtons();
-// }
-
-export const initPreviewData = () => {
-    setUIData();
-    setDesktopPreview();
+export const initPreviewData = (state, targetAudienceState) => {
+    setUIData(state, targetAudienceState);
+    setDesktopPreview(state);
 }
 
-function setUIData() {
-    // autorun(() =>
-    $w('#overviewCountSentMailText').text = Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter);
-    // );
+function setUIData(state, targetAudienceState) {
+    autorun(() => $w('#overviewCountSentMailText').text = Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter));
+    autorun(() => $w('#testAndSendSenderNamePreviewText').text = state.communication?.finalDetails?.senderName);
+    autorun(() => $w('#testAndSendSubjectLinePreviewText').text = state.communication?.finalDetails?.subjectLine);
+    autorun(() => $w('#testAndSendPreviewText').text = state.communication?.finalDetails?.previewText);
+
 }
 
-// async function setShowPreviewButtons() {
-//     // $w('#nextButton').hide(), $w('#nextButton').disable();
-//     // $w('#sendTestButton').show(), $w('#sendTestButton').enable();
-//     const generatedHTML = await HTMLgenerator(state.communication);
-//     // $w('#desktopButton').onClick((event) => {
-//     //     setDesktopPreview()
-//     // })
-//     // $w('#mobileButton').onClick((event) => {
-//     //     setMobilePreview(generatedHTML)
-//     // })
-// }
+const setDesktopPreview = (state) => {
+    autorun(async () => {
+        const generatedHTML = await HTMLgenerator(state.communication);
 
-const setDesktopPreview = async () => {
-    const generatedHTML = await HTMLgenerator(state.communication);
-    console.log($w('#mobileTemplateCustomElement'));
-    $w('#mobileTemplateCustomElement').setAttribute('html', `<div/>`);
-    $w('#mobileDesktopPreviewMultistateBox').changeState('Desktop').then(() => {
+        if ($w('#mobileTemplateCustomElement').rendered)
+            $w('#mobileTemplateCustomElement').setAttribute('html', `<div/>`);
+        if ($w('#mobileDesktopPreviewMultistateBox').rendered)
+            await $w('#mobileDesktopPreviewMultistateBox').changeState('Desktop');
         $w('#desktopTemplateCustomElement').setAttribute('html', generatedHTML);
+
     });
 }
-
-// const setMobilePreview = async (generatedHTMLl) => {
-//     const generatedHTML = await HTMLgenerator(state.communication);
-//     $w('#desktopTemplateCustomElement').setAttribute('html', `<div/>`);
-//     $w('#mobileDesktopPreviewMultistateBox').changeState('Mobile').then(() => {
-//         $w('#mobileTemplateCustomElement').setAttribute('html', generatedHTML);
-//     });
-// }
-
-// export const cleanAllPreviewData = () => {
-//     $w('#mobileTemplateCustomElement').setAttribute('html', `<div/>`);
-//     $w('#desktopTemplateCustomElement').setAttribute('html', `<div/>`);
-// }
