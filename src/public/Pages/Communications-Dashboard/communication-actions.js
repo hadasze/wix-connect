@@ -2,10 +2,10 @@
 import wixLocation from 'wix-location';
 
 import { sendBi } from '../../BI/biModule.js';
-import { removeItemFromRepeater } from '../../_utils.js';
+import { removeItemFromRepeater, openBanner } from '../../_utils.js';
+import { checkEmptyState } from './communications-dashboard.js';
 import { state } from './state-manager.js';
 import { CommunicationDashboardPage as Comp } from '../../components.js';
-import { openBanner } from '../../_utils.js';
 
 import * as constants from '../../consts.js';
 
@@ -87,6 +87,7 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendCampainOptionsBIEvent(event.context.itemId, 'archive');
         removeItemFromRepeater(repeater, event.context.itemId);
+        checkEmptyState();
     });
 
     Comp.uarchiveCommunicationButton.onClick(async (event) => {
@@ -96,7 +97,7 @@ export const setCommunicationMoreActionsEvents = () => {
         updateCommunication(itemData(event, repeater));
         sendCampainOptionsBIEvent(event.context.itemId, 'unarchive');
         removeItemFromRepeater(repeater, event.context.itemId);
-
+        checkEmptyState();
     });
 
     Comp.deleteCommunicationButton.onClick((event) => {
@@ -107,6 +108,7 @@ export const setCommunicationMoreActionsEvents = () => {
         sendCampainOptionsBIEvent(event.context.itemId, 'delete');
         removeItemFromRepeater(repeater, event.context.itemId);
         state.communications = state.communications.filter((item) => item._id !== event.context.itemId);
+        checkEmptyState();
     })
 }
 

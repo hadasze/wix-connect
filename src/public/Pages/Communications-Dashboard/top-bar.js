@@ -3,7 +3,7 @@ import wixWindow from 'wix-window';
 
 import { disbaleCurrentButton } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
-import { createCommunicationClick, myCommunicationsState, myTemplateState } from './communications-dashboard.js';
+import { createCommunicationClick, changeDashboardMultiStateState, setAllCommunication } from './communications-dashboard.js';
 
 import { CommunicationDashboardPage as Comp } from '../../components.js';
 import * as constants from '../../consts.js';
@@ -28,16 +28,12 @@ export const setTopBarButtonsEvents = () => {
 
 export function clickCommunicationButton(event) {
     disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
-    myCommunicationsState();
-    
-    //ToDo: validate BI event button name
+    setAllCommunication();
     sendBi('subMenu', { 'buttonName': 'myCommunicationsButton' });
 }
 
 export function clickTemplatesButton(event) {
     disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
-    myTemplateState();
-   
-    //ToDo: validate BI event button name
+    changeDashboardMultiStateState(Comp.States.myTemplatesState);
     sendBi('subMenu', { 'buttonName': 'myTemplatesButton' });
 }
