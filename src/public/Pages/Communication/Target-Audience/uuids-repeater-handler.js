@@ -304,9 +304,6 @@ const repeatedItemActions = () => {
     $w('#seeDetailsRejectedContacted').onClick((event) => {
         openContactedLightBox($w("#rejectedRepeater"), event);
     });
-    $w('#seeDetailsNeedApproveTopUser').onClick((event) => {
-        openTopUserLightBox($w("#needApprovalReapter"), event);
-    });
 
     const copyToClipBoard = (repeater, event) => {
         const data = repeater.data;
