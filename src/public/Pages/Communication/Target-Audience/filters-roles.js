@@ -17,18 +17,12 @@ export const setUuidProperties = (user, $item, repeaterType) => {
 }
 
 export const setSentUuidProperties = (user, $item, repeaterType) => {
-    isSentTopUser(user, $item, repeaterType);
     isPartnerUser(user, $item, repeaterType);
     isVeloUser(user, $item, repeaterType);
     isPremiumUser(user, $item, repeaterType);
     isWixStudio(user, $item, repeaterType);
 }
 
-const isSentTopUser = (user, $item, repeaterType) => {
-    isTopUserByCompanies(user) ?
-        $item(`#V${repeaterType}TopUser`).show() && $item(`#X${repeaterType}TopUser`).hide() :
-        $item(`#V${repeaterType}TopUser`).hide() && $item(`#X${repeaterType}TopUser`).show();
-}
 
 const isPartnerUser = (user, $item, repeaterType) => {
     user.partner_ind ?
