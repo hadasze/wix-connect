@@ -69,7 +69,10 @@ async function sendEmails() {
         state.setTemplateType(constants.TemplatesTypes.DefaultTempalte);
         const arrayOfEmails = filteredUsers.allApprovedUsers.map((user) => {
             const email = buildEmail(user);
-            return { userId: user.uuid, msid: user.msid, body: email.createBody() };
+            const toReturn = { userId: user.uuid, body: email.createBody() };
+            if (user.msid)
+                toReturn.msid = user.msid;
+            return toReturn
         });
         console.log({ arrayOfEmails });
         const ownerUUID = getOwnerUUID();
