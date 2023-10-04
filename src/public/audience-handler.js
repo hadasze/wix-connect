@@ -27,7 +27,7 @@ export async function getAudienceDetails(payload) {
         if (!userJWT) {
             console.warn('public -> audiance-handler.js userJWT is missing');
         }
-        const chunkSize = 500;
+        const chunkSize = 1000;
         const chunks = [];
 
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
