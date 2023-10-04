@@ -1,5 +1,5 @@
 import wixWindow from 'wix-window';
-import { initPreviewUIData } from 'public/Pages/Preview/preview-component.js';
+import { initPreviewUIData } from './preview-component.js';
 
 let currCommunication = wixWindow.getRouterData();
 

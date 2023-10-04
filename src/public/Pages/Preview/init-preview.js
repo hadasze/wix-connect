@@ -1,4 +1,4 @@
-import * as previewHeadlineHandler from 'public/Pages/Preview/preview-sections.js'
+import * as previewHeadlineHandler from './preview-sections.js'
 
 export function setEvents() {
     previewHeadlineHandler.initHeadlineActions();

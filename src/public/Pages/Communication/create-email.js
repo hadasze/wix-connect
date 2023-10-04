@@ -23,10 +23,10 @@ export const initCreateEmailData = () => {
 const setCommunicationData = () => {
     autorun(() => $w('#communicationInputTextBox').value = `${state.communication?.template?.data?.body || ''}`);
     autorun(() => $w('#finalGreetingInput').value = `${state.communication?.signature?.finalGreeting || $w('#finalGreetingInput').value}`);
-    autorun(() => $w('#fullNameInput').value = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
-    autorun(() => $w('#jobTitleInput').value = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
-    autorun(() => $w('#signatureFullName').text = `${state.communication?.signature?.fullName || $w('#fullNameInput').value}`);
-    autorun(() => $w('#signatureJobTitle').text = `${state.communication?.signature?.jobTitle || $w('#jobTitleInput').value}`);
+    autorun(() => $w('#fullNameInput').value = state.communication?.signature?.fullName);
+    autorun(() => $w('#positionTitleInput').value = `${state.communication?.signature?.positionTitle || $w('#positionTitleInput').value}`);
+    autorun(() => $w('#signatureFullName').text = state.communication?.signature?.fullName);
+    autorun(() => $w('#signaturePositionTitle').text = `${state.communication?.signature?.positionTitle || $w('#positionTitleInput').value}`);
     autorun(() => $w('#overviewCountMailText').text = constants.Text.WILL_BE_SENT_TO(targetAudienceState.approvedCounter));
 }
 
@@ -37,22 +37,22 @@ const setLeftSidePannelEvents = () => {
             $w('#SignatureContent').expand();
             $w('#signatureBox').expand();
             state.setSignatureFullName($w('#fullNameInput').value);
-            state.setSignatureJobTitle($w('#jobTitleInput').value)
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'signature_on' })
+            state.setSignaturePositionTitle($w('#positionTitleInput').value)
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'signature_on' })
         } else {
             $w('#SignatureContent').collapse();
             $w('#signatureBox').collapse();
             state.setSignatureFullName('');
-            state.setSignatureJobTitle('')
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'signature_off' })
+            state.setSignaturePositionTitle('')
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'signature_off' })
         }
     });
     $w('#fullNameInput').onInput((event) => {
         state.setSignatureFullName(event.target.value);
     });
 
-    $w('#jobTitleInput').onInput((event) => {
-        state.setSignatureJobTitle(event.target.value);
+    $w('#positionTitleInput').onInput((event) => {
+        state.setSignaturePositionTitle(event.target.value);
     });
 
     $w('#finalGreetingInput').onInput((event) => {
@@ -65,7 +65,7 @@ const setLeftSidePannelEvents = () => {
             const value = addDynamicValue(focusedElement, recievdData?.dynamicValue, recievdData?.fallBackValue);
             if (focusedElement.id === 'communicationInputTextBox')
                 state.setTemplateBody(value);
-            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'add_dynamic_values' })
+            sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'add_dynamic_values' })
         }
     })
 
@@ -78,7 +78,7 @@ const setLeftSidePannelEvents = () => {
     })
 
     $w('#exploreTextValuesBtn').onClick((event) => {
-        sendBi('emailAdditions', { 'campaignId': state.communication._id, 'button_name': 'explore_text_templates' })
+        sendBi('emailAdditions', { 'campaignId': state.communication._id, 'buttonName': 'explore_text_templates' })
     });
 }
 

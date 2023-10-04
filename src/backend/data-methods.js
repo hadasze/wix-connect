@@ -14,10 +14,10 @@ export function getCommunication(id) {
     return wixData.get('Communications', id, dataOptions);
 }
 
-export async function createCommunication() {
+export async function createCommunication(origin, replyToAddress, senderName) {
     try {
         const _id = uuidv4();
-        const communication = new Communication(_id);
+        const communication = new Communication(_id, origin, replyToAddress, senderName);
         const insertRes = await wixData.insert("Communications", communication, dataOptions);
         return insertRes;
 
@@ -40,7 +40,6 @@ export async function getTargetAudience(id) {
 }
 
 export async function getAllUserCommunications(filters, options = {}, limit = 10, skip = 0) {
-    //toDo: user retrive all items in case of more then 1000 communications
     let query = wixData.query('Communications').eq('_owner', wixUsersBackend.currentUser.id).ne('delete', true).skip(limit * skip).limit(limit);
     if (filters.draft && filters.sent) {
         query = query.eq('draft', filters.draft).or(query.eq('sent', filters.sent)).and(query.ne('archive', true));
@@ -132,6 +131,6 @@ async function retriveAllItems(query, limit) {
         queryPromise.push(query.skip(limit * index).limit(limit).find(dataOptions));
     const queryPromiseRes = await Promise.all(queryPromise);
 
-    const allItems = queryPromiseRes.map(queryRes => queryRes.items)
+    const allItems = queryPromiseRes.map(queryRes => queryRes.items);
     return [...queryRes.items, ...allItems].flat();
 }

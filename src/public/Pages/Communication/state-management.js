@@ -69,8 +69,8 @@ export const state = observable({
     setSignatureFullName(value) {
         state.communication.signature.fullName = value;
     },
-    setSignatureJobTitle(value) {
-        state.communication.signature.jobTitle = value;
+    setSignaturePositionTitle(value) {
+        state.communication.signature.positionTitle = value;
     },
     setBusinessName(businessName) {
         state.communication.dynamicVaribels.businessName = businessName;
@@ -104,8 +104,5 @@ export const state = observable({
     },
     setSentToCounter(counter) {
         state.communication.sentToCounter = counter;
-    },
-    increaseAutoSaveCount() {
-        state.autoSavedCount++;
     }
 });

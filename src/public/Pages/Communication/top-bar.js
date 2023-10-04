@@ -2,22 +2,21 @@
 import wixWindow from 'wix-window';
 // @ts-ignore
 import wixLocation from 'wix-location';
-
 import { autorun } from 'mobx';
 
 import { state } from './state-management.js';
-import { disbaleCurrentButton } from '../helpers.js';
+import { disbaleCurrentButton as _disbaleCurrentButton } from '../helpers.js';
 import { targetAudienceState } from './Target-Audience/target-audience.js';
 import { sendBi } from '../../BI/biModule.js';
-import { redirectToMyCommunications } from '../../_utils.js';
+import { redirectToMyCommunications, updateQuery } from '../../_utils.js';
+import { CommunicationPage as Comp } from '../../components.js';
 
-// @ts-ignore
-import { removeCommunication } from 'backend/data-methods-wrapper.jsw';
-
-import * as previewHandler from './preview.js';
 import * as Fedops from '../../wix-fedops-api.js';
 import * as constants from '../../consts.js';
 
+
+// @ts-ignore
+import { removeCommunication } from 'backend/data-methods-wrapper.jsw';
 
 export const initTopBarActions = () => {
     setOnClickStepsEvents();
@@ -32,90 +31,126 @@ export const initTestAndSendData = () => {
 
 const setTopBarData = () => {
 
-    $w('#sendStepButton').hide();
-    $w('#nextStepButton').show() && $w('#nextStepButton').enable();
+    Comp.sendStepButton.hide();
+    Comp.nextStepButton.show();
+    Comp.nextStepButton.enable();
+
     autorun(() => {
-        const isCompleteAddDetails = state.communication?.name;
-        isCompleteAddDetails ? $w('#addDetailsButton').expandIcon() : $w('#addDetailsButton').collapseIcon()
+        const isCompleteAddDetails = state.communication?.name?.length > 1;
+        isCompleteAddDetails ? Comp.addDetailsButton.expandIcon() : Comp.addDetailsButton.collapseIcon();
     });
+
+    autorun(() => Comp.sendStepButton.label = `Send to ${targetAudienceState.approvedCounter || '0'} Users`);
+
     autorun(() => {
         let isCompleteTargetAudience = state.communication?.targetAudience;
+
         if (state.communication?.isTemplate) {
-            $w('#targetAudienceButton').disable();
+            Comp.targetAudienceButton.disable();
         } else {
             isCompleteTargetAudience ?
-                $w('#targetAudienceButton').expandIcon() : $w('#targetAudienceButton').collapseIcon()
+                Comp.targetAudienceButton.expandIcon() : Comp.targetAudienceButton.collapseIcon();
         }
-    });
-    autorun(() => {
-        const isCompleteCreateEmail = state.communication?.template?.data?.body;
-        isCompleteCreateEmail ? $w('#createEmailButton').expandIcon() : $w('#createEmailButton').collapseIcon()
-    });
-    autorun(() => {
-        const isCompleteTestAndSend = state.communication?.finalDetails?.senderName && state.communication?.finalDetails?.subjectLine &&
-            state.communication?.finalDetails?.previewText && state.communication?.finalDetails?.replyToAddress;
-        isCompleteTestAndSend ? $w('#testAndSendButton').expandIcon() : $w('#testAndSendButton').collapseIcon()
     });
 
     autorun(() => {
-        const isCompleteTestAndSend = state.communication?.finalDetails?.senderName && state.communication?.finalDetails?.subjectLine &&
-            state.communication?.finalDetails?.previewText && state.communication?.finalDetails?.replyToAddress;
-        isCompleteTestAndSend ? $w('#testAndSendButton').expandIcon() : $w('#testAndSendButton').collapseIcon()
+        console.log(state.communication?.finalDetails?.senderName?.length);
+        const isCompleteSetEmailHeader = state.communication?.finalDetails?.senderName?.length > 1 && state.communication?.finalDetails?.subjectLine?.length > 1 && state.communication?.finalDetails?.replyToAddress?.length > 1;
+
+        console.log({ isCompleteSetEmailHeader });
+        isCompleteSetEmailHeader ? Comp.setEmailheaderButton.expandIcon() : Comp.setEmailheaderButton.collapseIcon();
+    });
+
+    autorun(() => {
+        const isCompleteCreateEmail = state.communication?.template?.data?.body?.length > 1 && state.communication?.finalDetails?.senderName?.length > 1 && state.communication?.finalDetails?.subjectLine?.length > 1 && state.communication?.finalDetails?.replyToAddress?.length > 1;
+        console.log({ isCompleteCreateEmail });
+        isCompleteCreateEmail ? (Comp.createEmailButton.expandIcon(), Comp.previewOrSendTestEmailButton.enable()) : (Comp.createEmailButton.collapseIcon(), Comp.previewOrSendTestEmailButton.disable());
+    });
+
+    autorun(() => {
+        const isCompleteTestAndSend = state.communication?.finalDetails?.senderName?.length > 1 && state.communication?.finalDetails?.subjectLine?.length > 1 &&
+            state.communication?.finalDetails?.previewText?.length > 1 && state.communication?.finalDetails?.replyToAddress?.length > 1;
+        isCompleteTestAndSend ? Comp.testAndSendButton.expandIcon() : Comp.testAndSendButton.collapseIcon()
     });
 }
 
 const setDisabledSendButtonTooltip = () => {
-    $w('#hoverZoneSendTooltip').onMouseIn((event) => {
-        $w('#sendButtonTooltipBox').expand();
+    Comp.hoverZoneSendTooltip.onMouseIn((event) => {
+        Comp.sendButtonTooltipBox.expand();
     });
 
-    $w('#sendButtonTooltipBox').onMouseOut((event) => {
-        $w('#sendButtonTooltipBox').collapse();
+    Comp.sendButtonTooltipBox.onMouseOut((event) => {
+        Comp.sendButtonTooltipBox.collapse();
     })
 
-    $w('#HeaderEditMode').onMouseOut((event) => {
-        $w('#sendButtonTooltipBox').collapse();
+    Comp.headerEditMode.onMouseOut((event) => {
+        Comp.sendButtonTooltipBox.collapse();
     })
 }
 
 const setOnClickStepsEvents = () => {
     const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
-    $w('#addDetailsButton').onClick((event) => {
-        $w('#stepsOfCreationMultistateBox').changeState('AddDetailsState');
-        disbaleCurrentButton('addDetailsButton', buttonslist);
+    const disbaleCurrentButton = (event) => _disbaleCurrentButton(event.target.id, buttonslist);
+
+    Comp.addDetailsButton.onClick((event) => {
+        console.log(event.target.id);
+        Comp.stepsOfCreationMultistateBox.changeState(Comp.States.AddDetailsState);
+        disbaleCurrentButton(event);
         handleNextButton('addDetailsButton');
     })
-    $w('#targetAudienceButton').onClick((event) => {
-        $w('#stepsOfCreationMultistateBox').changeState('TargetAudienceState');
-        disbaleCurrentButton('targetAudienceButton', buttonslist);
+
+    Comp.targetAudienceButton.onClick((event) => {
+        Comp.stepsOfCreationMultistateBox.changeState(Comp.States.TargetAudienceState);
+        disbaleCurrentButton(event);
         handleNextButton('targetAudienceButton');
     })
-    $w('#createEmailButton').onClick((event) => {
-        $w('#stepsOfCreationMultistateBox').changeState('CreateEmailStep');
-        disbaleCurrentButton('createEmailButton', buttonslist);
+
+    Comp.setEmailheaderButton.onClick((event) => {
+        Comp.stepsOfCreationMultistateBox.changeState(Comp.States.SetEmailHeaderState);
+        disbaleCurrentButton(event);
+        handleNextButton('setEmailheaderButton');
+    })
+
+    Comp.createEmailButton.onClick((event) => {
+        Comp.stepsOfCreationMultistateBox.changeState(Comp.States.CreateEmailState);
+        disbaleCurrentButton(event);
         handleNextButton('createEmailButton');
     })
-    $w('#testAndSendButton').onClick((event) => {
 
-        $w('#stepsOfCreationMultistateBox').changeState('TestAndSendState');
-        disbaleCurrentButton('testAndSendButton', buttonslist);
+    Comp.testAndSendButton.onClick((event) => {
+        // previewHandler.initPreviewData();
+        Comp.stepsOfCreationMultistateBox.changeState(Comp.States.TestAndSendState);
+        disbaleCurrentButton(event);
         handleNextButton('testAndSendButton');
     })
-    $w('#previewEmailButton').onClick((event) => {
-        Fedops.interactionStarted(Fedops.events.previewEmail);
-        $w('#mainMultiStateBox').changeState('PreviewState');
-        previewHandler.initPreviewData();
-        Fedops.interactionEnded(Fedops.events.previewEmail);
-        sendBi('upperMenu', { 'button_name': 'preview_email' })
+
+    Comp.previewOrSendTestEmailButton.onClick(async (event) => {
+        event.target.disable();
+        const currentState = Comp.stepsOfCreationMultistateBox.currentState.id;
+        switch (currentState) {
+            case Comp.States.CreateEmailState:
+                sendBi('upperMenu', { 'buttonName': 'preview_email' });
+                Fedops.interactionStarted(Fedops.events.previewEmail);
+                await wixWindow.openLightbox(constants.Lightboxs.PreviewEmail, { state, targetAudienceState });
+                Fedops.interactionEnded(Fedops.events.previewEmail);
+                break;
+
+            case Comp.States.TestAndSendState:
+                sendBi('upperMenu', { 'buttonName': 'send_test_email' })
+                await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
+                break;
+
+            default:
+
+                break;
+        }
+        event.target.enable();
+
     })
-    $w('#backToEditButton').onClick((event) => {
-        $w('#mainMultiStateBox').changeState('EditState');
-        previewHandler.cleanAllPreviewData();
-        sendBi('upperMenu', { 'button_name': 'back_To_Edit' })
-    })
-    $w('#backToDashboardButton').onClick(async (event) => {
-        $w('#backToDashboardButton').disable();
-        sendBi('upperMenu', { 'button_name': 'back_To_Dashboard' });
+
+    Comp.backToDashboardButton.onClick(async (event) => {
+        Comp.backToDashboardButton.disable();
+        sendBi('upperMenu', { 'buttonName': 'back_To_Dashboard' });
         if (!state.communication.draft && !state.communication.sent && !state.communication.delete) {
             removeCommunication(state.communication._id);
         }
@@ -123,68 +158,77 @@ const setOnClickStepsEvents = () => {
         return redirectToMyCommunications();
     });
 
-    $w('#sendStepButton').onClick(async (event) => {
-        $w('#sendStepButton').disable();
-        sendBi('upperMenu', { 'button_name': 'send_emails' })
+    Comp.sendStepButton.onClick(async (event) => {
+        Comp.sendStepButton.disable();
+        sendBi('upperMenu', { 'buttonName': 'send_emails' })
         await wixWindow.openLightbox(constants.Lightboxs.sendCommunication, { state, 'approvedCounter': targetAudienceState.approvedCounter });
-        $w('#sendStepButton').enable();
+        Comp.sendStepButton.enable();
     })
 
-    $w('#sendTestButton').onClick(async (event) => {
-        sendBi('upperMenu', { 'button_name': 'send_test_email' })
-        await wixWindow.openLightbox(constants.Lightboxs.sendTestEmail, state);
-    })
 }
 
 const setStepsOfCreationMultistateBox = () => {
 
-    const addStateToParam = (stateID) => wixLocation.queryParams.add({
-        "stepOfCreation": stateID
-    });
-
-    $w("#stepsOfCreationMultistateBox").onChange((event) => {
+    Comp.stepsOfCreationMultistateBox.onChange((event) => {
         let currentState = event.target.currentState.id;
-        addStateToParam(currentState);
+
+        switch (currentState) {
+            case Comp.States.CreateEmailState:
+                Comp.previewOrSendTestEmailButton.label = 'Preview Email';
+                Comp.previewOrSendTestEmailButton.expand();
+                break;
+
+            case Comp.States.TestAndSendState:
+                Comp.previewOrSendTestEmailButton.label = 'Send Test Email';
+                Comp.previewOrSendTestEmailButton.expand();
+                break;
+
+            default:
+                Comp.previewOrSendTestEmailButton.collapse();
+                break;
+        }
+        updateQuery('stepOfCreation', currentState);
     });
 
     if (wixLocation.query?.stepOfCreation) {
-        $w("#stepsOfCreationMultistateBox").changeState(wixLocation.query.stepOfCreation);
+        Comp.stepsOfCreationMultistateBox.changeState(wixLocation.query.stepOfCreation);
     } else {
-        addStateToParam(constants.CommunicationStatesByOrder[0]);
+        updateQuery('stepOfCreation', constants.CommunicationStatesByOrder[0]);
     }
 }
 
 const setClickNextButton = () => {
     const buttonslist = state.communication?.isTemplate ? constants.AllEditTemplateBarButton : constants.AllCompuseEmailTopBarButton;
-    $w('#nextStepButton').onClick((event) => {
+
+    Comp.nextStepButton.onClick((event) => {
         const nextStepIndex = getNextStepIndex();
-        $w('#stepsOfCreationMultistateBox').changeState(constants.CommunicationStatesByOrder[nextStepIndex]);
-        disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist);
+        Comp.stepsOfCreationMultistateBox.changeState(constants.CommunicationStatesByOrder[nextStepIndex]);
+        _disbaleCurrentButton(buttonslist[nextStepIndex], buttonslist);
         handleNextButton(buttonslist[nextStepIndex]);
-        sendBi('upperMenu', { 'button_name': 'next' });
+        sendBi('upperMenu', { 'buttonName': 'next' });
     });
 }
 
 const handleNextButton = (currStep) => {
     if (currStep === 'testAndSendButton') {
-        $w('#nextStepButton').disable();
-        $w('#sendStepButton').show();
-        if (!$w('#sendStepButton').enabled) {
-            $w('#hoverZoneSendTooltip').expand();
+        Comp.nextStepButton.disable();
+        Comp.sendStepButton.show();
+        if (!Comp.sendStepButton.enabled) {
+            Comp.hoverZoneSendTooltip.expand();
         } else {
-            $w('#hoverZoneSendTooltip').collapse();
+            Comp.hoverZoneSendTooltip.collapse();
         }
     } else {
-        $w('#nextStepButton').enable();
-        $w('#sendStepButton').hide();
-        $w('#hoverZoneSendTooltip').collapse();
+        Comp.nextStepButton.enable();
+        Comp.sendStepButton.hide();
+        Comp.hoverZoneSendTooltip.collapse();
     }
 }
 
 const getNextStepIndex = () => {
-    const currentStep = $w('#stepsOfCreationMultistateBox').currentState.id;
+    const currentState = Comp.stepsOfCreationMultistateBox.currentState.id;
     for (let i = 0; i < constants.CommunicationStatesByOrder.length - 1; i++) {
-        if (constants.CommunicationStatesByOrder[i] === currentStep) {
+        if (constants.CommunicationStatesByOrder[i] === currentState) {
             return i + 1
         }
     }

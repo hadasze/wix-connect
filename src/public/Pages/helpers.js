@@ -56,7 +56,7 @@ export const getMustHaveFieldsOfCommunication = (communication) => {
     const subjectLine = communication?.finalDetails?.subjectLine;
     const previewText = communication?.finalDetails?.previewText;
     const fullName = communication?.signature?.fullName;
-    const positionTitle = communication?.signature?.jobTitle;
+    const positionTitle = communication?.signature?.positionTitle;
     const finalGreeting = communication?.signature?.finalGreeting;
     const senderName = communication?.finalDetails?.senderName;
     const replyToAddress = communication?.finalDetails?.replyToAddress;

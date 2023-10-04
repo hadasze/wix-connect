@@ -18,7 +18,7 @@ export const CommunicationDahboardStates = {
     ARCHIVE: 'Archive',
 }
 
-export const AllCompuseEmailTopBarButton = ['addDetailsButton', 'targetAudienceButton', 'createEmailButton', 'testAndSendButton'];
+export const AllCompuseEmailTopBarButton = ['addDetailsButton', 'targetAudienceButton', 'setEmailheaderButton', 'createEmailButton', 'testAndSendButton'];
 
 export const AllEditTemplateBarButton = ['addDetailsButton', 'createEmailButton', 'testAndSendButton'];
 
@@ -42,7 +42,8 @@ export const CommunicationActions = {
 export const CommunicationStatesByOrder = [
     "AddDetailsState",
     "TargetAudienceState",
-    "CreateEmailStep",
+    "SetEmailHeaderState",
+    "CreateEmailState",
     "TestAndSendState",
 ]
 
@@ -53,7 +54,6 @@ export const Urls = {
 }
 
 export const Text = {
-    NO_NAME: 'Temporary name',
     SENT_ON: 'Sent on: ',
     EDITED_ON: 'Last edited on: ',
     WILL_BE_SENT_TO: (num) => `This email will be sent to ${num || 0} users.`,
@@ -265,8 +265,21 @@ export const Lightboxs = {
     firstTimeApprove: 'First Time Approve Pop Up',
     topUser: 'Top user',
     CustomLogin: 'Custom-Login',
-    Banner: 'Banner'
+    Banner: 'Banner',
+    PreviewEmail: 'Preview Email'
 }
 
 export const SendCommunicationError = 'Something went wrong, please contact us on our Slack channel #wix-connect-support';
 export const SavedAsTempalteText = 'Saved! go to "My Templates" to reuse';
+
+export const DashboardBIMenuNames = {
+    myCommunications: 'My_communications',
+    myTemplates: 'My_Templates'
+}
+
+export const DashboardBITabNames = {
+    all: 'all',
+    sent: 'sent',
+    draft: 'draft',
+    archive: 'archive'
+}

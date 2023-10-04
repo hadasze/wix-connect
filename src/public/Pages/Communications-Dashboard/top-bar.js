@@ -3,37 +3,37 @@ import wixWindow from 'wix-window';
 
 import { disbaleCurrentButton } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
-import { createCommunicationClick } from './communications-dashboard.js';
+import { createCommunicationClick, changeDashboardMultiStateState, setAllCommunication } from './communications-dashboard.js';
+
+import { CommunicationDashboardPage as Comp } from '../../components.js';
 import * as constants from '../../consts.js';
 
 export const setTopBarButtonsEvents = () => {
-    $w('#myCommunicationsButton').onClick((event) => {
-        $w('#dashboardMultiState').changeState('myCommunicationsState');
-        disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myCommunicationsButton' });
+    Comp.myCommunicationsButton.onClick((event) => {
+        clickCommunicationButton(event);
     });
 
-    $w('#myTemplatesButton').onClick((event) => {
-        $w('#dashboardMultiState').changeState('myTemplatesState');
-        disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myTemplatesButton' });
+    Comp.myTemplatesButton.onClick((event) => {
+        clickTemplatesButton(event);
     });
 
-    $w('#createCommunicationButton').onClick(async (event) => {
+    Comp.createCommunicationButton.onClick(async (event) => {
         createCommunicationClick(event);
     });
 
-    $w('#needHelpButton').onClick((event) => {
+    Comp.needHelpButton.onClick((event) => {
         wixWindow.openLightbox(constants.Lightboxs.needHelpSidebar);
     });
 }
 
-export const clickCommunicationButton = () => {
-    $w('#dashboardMultiState').changeState('myCommunicationsState');
-    disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons)
+export function clickCommunicationButton(event) {
+    disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
+    setAllCommunication();
+    sendBi('subMenu', { 'buttonName': 'myCommunicationsButton' });
 }
 
-export const clickTemplatesButton = () => {
-    $w('#dashboardMultiState').changeState('myTemplatesState');
-    disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons)
+export function clickTemplatesButton(event) {
+    disbaleCurrentButton('myTemplatesButton', constants.AllMainDashboardButtons);
+    changeDashboardMultiStateState(Comp.States.myTemplatesState);
+    sendBi('subMenu', { 'buttonName': 'myTemplatesButton' });
 }

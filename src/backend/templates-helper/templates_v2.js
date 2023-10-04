@@ -844,7 +844,7 @@ ${"preheader"}
 <td class="mob-padding-bottom-10" align="" width="600" style="color: #000000;padding-top: 5px;text-size-adjust: 100%; font-family: Arial, Helvetica, sans-serif;font-size: 16px; font-style: normal; font-weight: normal; line-height: 30px;" valign="top">
 <span style="color: #000000;padding-bottom: 0px; font-weight: normal; " class="">
 <span class="" style=""><strong>${firstLastName}</strong></span><br>
-<span class="" style="color:#9194A1; font-size:14px;">${positionTitle}</span>
+<span class="" style="color:#9194A1; font-size:14px;">${positionTitle || ''}</span>
 </span>
 </td>
 </tr>

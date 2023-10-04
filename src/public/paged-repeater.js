@@ -35,15 +35,15 @@ export class PagedRepeater {
     }
 
     setData(data) {
-        if(!this.repeater) {
+        if (!this.repeater) {
             throw new Error('paged-repeater -> repeater is not defined')
         }
 
-       
+
         this.initRepeater(data);
     }
 
-    setRepeater(repeater){
+    setRepeater(repeater) {
         this.repeater = repeater;
     }
 
@@ -52,15 +52,21 @@ export class PagedRepeater {
     }
 
     getPageData(page) {
-      
+
         return this.activeData.slice(page * this.options.page_size, (page + 1) * this.options.page_size);
     }
 
     setPageData(page) {
         this.repeater.data = [];
-        const pageData = this.getPageData(page);
-        this.repeater.data = pageData;
-        this.page = page;
+
+        //quick win to solve bug in viewr when the repeater isn't render
+
+        setTimeout(() => {            
+            const pageData = this.getPageData(page);
+            this.repeater.data = pageData;
+            this.page = page;
+        }, 100);
+
     }
 
     numPages() {
@@ -129,7 +135,7 @@ export class PagedRepeater {
     }
 
     setPaginator() {
-        const pagination = this.getPagination(this.page , this.numPages());
+        const pagination = this.getPagination(this.page, this.numPages());
         return pagination.map(value => {
             let state = ButtonInfo.NORMAL;
             if (this.page === (value - 1)) {
@@ -181,7 +187,7 @@ export class PagedRepeater {
         if (pages[pages.length - 1] < pageCount) {
             pages = pages.concat(withDots(pageCount, ['...', pageCount]))
         }
-        
+
         return pages;
     }
 }

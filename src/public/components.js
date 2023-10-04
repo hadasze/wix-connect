@@ -12,10 +12,29 @@ export const CommunicationPage = {
     downloadReportButton: WC('downloadReportButton'),
     downloadCSVTooltipBox: WC('downloadCSVTooltipBox'),
     autoSaveAnimation: WC('autoSaveAnimation'),
+    sendStepButton: WC('sendStepButton'),
+    nextStepButton: WC('nextStepButton'),
+    addDetailsButton: WC('addDetailsButton'),
+    targetAudienceButton: WC('targetAudienceButton'),
+    setEmailheaderButton: WC('setEmailheaderButton'),
+    previewOrSendTestEmailButton: WC('previewOrSendTestEmailButton'),
+    createEmailButton: WC('createEmailButton'),
+    testAndSendButton: WC('testAndSendButton'),
+    hoverZoneSendTooltip: WC('hoverZoneSendTooltip'),
+    sendButtonTooltipBox: WC('sendButtonTooltipBox'),
+    headerEditMode: WC('HeaderEditMode'), //ToDo: change to lower case
+    stepsOfCreationMultistateBox: WC('stepsOfCreationMultistateBox'),
+    backToDashboardButton: WC('backToDashboardButton'),
+
 
     States: {
         TargetAudienceContentLoading: 'TargetAudienceContentLoading',
         TargetAudienceContentUpload: 'TargetAudienceContentUpload',
+        AddDetailsState: 'AddDetailsState',
+        TargetAudienceState: 'TargetAudienceState',
+        SetEmailHeaderState: 'SetEmailHeaderState',
+        TestAndSendState: 'TestAndSendState',
+        CreateEmailState: 'CreateEmailState'
     },
 
 }
@@ -47,6 +66,9 @@ export const CommunicationDashboardPage = {
     draftsButton: WC('draftsButton'),
     archiveButton: WC('archiveButton'),
     myCommunicationsButtonBarSeperator: WC('myCommunicationsButtonBarSeperator'),
+    myTemplatesButton: WC('myTemplatesButton'),
+    createCommunicationButton: WC('createCommunicationButton'),
+    needHelpButton: WC('needHelpButton'),
 
     States: {
         myCommunicationsState: 'myCommunicationsState',

@@ -1,10 +1,11 @@
-import { redirectToMyCommunications } from 'public/_utils.js';
+import { redirectToMyCommunications } from '../../_utils.js';
 import wixWindow from 'wix-window';
-import { reuseCommunication } from 'public/Pages/Communications-Dashboard/communication-actions.js';
-import { Text, Urls } from 'public/consts.js';
-import * as communicationPreviewHandler from 'public/Pages/Preview/communication-preview.js';
-import * as templatePreviewHandler from 'public/Pages/Preview/template-preview.js';
+import { reuseCommunication } from '../Communications-Dashboard/communication-actions.js';
+import { Text, Urls } from '../../consts.js';
 import { sendBi } from '../../BI/biModule.js';
+
+import * as communicationPreviewHandler from './communication-preview.js';
+import * as templatePreviewHandler from './template-preview.js';
 
 let currCommunication = wixWindow.getRouterData();
 
@@ -31,7 +32,7 @@ const setHeadlineData = () => {
 const setHeadlineEvents = () => {
     $w('#reuseBtn').onClick((event) => {
         if (currCommunication.isTemplate)
-            sendBi('templateView', { 'campaignId': currCommunication._id, 'button_name': 'reuse_template' })
+            sendBi('templateView', { 'templateId': currCommunication._id, 'buttonName': 'reuse_template' })
         reuseCommunication(currCommunication)
     });
 

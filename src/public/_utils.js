@@ -51,4 +51,22 @@ export function getOwnerUUID() {
     return userInfo.uuid;
 }
 
+export function getOwnerEmail() {
+    const userInfoSTR = local.getItem('userInfo');
+    const userInfo = JSON.parse(userInfoSTR);
+    return userInfo.email;
+}
+
+export function getOwnerName() {
+    const userInfoSTR = local.getItem('userInfo');
+    const userInfo = JSON.parse(userInfoSTR);
+    return userInfo.name;
+}
+
 export const openBanner = (msg) => wixWindow.openLightbox(Lightboxs.Banner, { msg });
+
+export function updateQuery(key, value) {
+    const toAdd = {};
+    toAdd[key] = value;
+    return wixLocation.queryParams.add(toAdd);
+}

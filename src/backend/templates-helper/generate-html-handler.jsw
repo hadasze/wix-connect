@@ -6,6 +6,6 @@ export const HTMLgenerator = (variables = {}) => {
     return templateHTML(
         templateData?.body,
         signatureData?.fullName,
-        signatureData?.jobTitle,
+        signatureData?.positionTitle,
         signatureData?.finalGreeting);
 }

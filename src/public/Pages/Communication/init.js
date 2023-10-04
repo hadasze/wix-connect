@@ -1,6 +1,6 @@
 import { autorun, reaction } from 'mobx';
 import { state } from './state-management.js';
-import { TIME } from 'public/consts.js';
+import { TIME } from '../../consts.js';
 import { CommunicationPage } from '../../components.js';
 
 import * as createEmailHandler from './create-email.js';
@@ -11,7 +11,6 @@ import * as topBarHandler from './top-bar.js';
 import * as targetAudienceHandler from './Target-Audience/target-audience.js';
 import * as validationsHandler from './validations.js';
 import * as Fedops from '../../wix-fedops-api.js';
-
 // @ts-ignore
 import { saveCommunication } from 'backend/data-methods-wrapper.jsw';
 
@@ -22,7 +21,7 @@ export function setEvents() {
     createEmailHandler.initCreateEmailActions();
     addDetailsHandler.initAddDetailsActions();
     testAndSendHandler.initTestAndSendActions();
-    previewHandler.initPreviewActions();
+    previewHandler.initPreviewData(state, targetAudienceHandler.targetAudienceState);
     targetAudienceHandler.initTargetAudienceActions();
     validationsHandler.initValidations();
     handleAutoSave();

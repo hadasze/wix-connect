@@ -5,6 +5,7 @@ import { observable, autorun } from 'mobx';
 import { state } from './state-management.js';
 import { addDynamicValue } from '../helpers.js';
 import { sendBi } from '../../BI/biModule.js';
+import { getOwnerEmail } from '../../_utils.js';
 
 import * as constants from '../../consts.js';
 
@@ -29,17 +30,20 @@ export const initTestAndSendData = () => {
     setTestAndSendData();
 }
 
+
 const setTestAndSendData = () => {
     autorun(() => $w('#senderNameInput').value = `${state.communication?.finalDetails?.senderName || ''}`);
     autorun(() => $w('#subjectLineInput').value = `${state.communication?.finalDetails?.subjectLine || ''}`);
     autorun(() => $w('#previewTextInput').value = `${state.communication?.finalDetails?.previewText || ''}`);
-    autorun(() => $w('#replyToAddressInput').value = `${state.communication?.finalDetails?.replyToAddress || ''}`);
-    autorun(() => $w('#senderNamePreviewText').text = `${state.communication?.finalDetails?.senderName || $w('#senderNameInput').value}`);
-    autorun(() => $w('#subjectLinePreviewText').text = `${state.communication?.finalDetails?.subjectLine || $w('#subjectLineInput').value}`);
-    autorun(() => $w('#previewText').text = `${state.communication?.finalDetails?.previewText || $w('#previewTextInput').value}`);
+    autorun(() => $w('#replyToAddressInput').value = state.communication?.finalDetails?.replyToAddress);
+    autorun(() => $w('#setEmailHeaderSenderNamePreviewText').text = state.communication?.finalDetails?.senderName);
+    autorun(() => $w('#setEmailHeaderSubjectLinePreviewText').text = `${state.communication?.finalDetails?.subjectLine || $w('#subjectLineInput').value}`);
+    autorun(() => $w('#setEmailHeaderPreviewText').text = `${state.communication?.finalDetails?.previewText || $w('#previewTextInput').value}`);
     autorun(() => $w('#subjectLineInputLengthCounter').text = counters.subjectLineCounter + '/150');
     autorun(() => $w('#previewInputLengthCounter').text = counters.previewCounter + '/150');
 }
+
+
 
 const setTestAndSendInputsEvents = () => {
     $w("#subjectLineInput").maxLength = 150;
@@ -77,10 +81,10 @@ const setSubjectLineActions = () => {
         const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#subjectLineInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setSubjectLine(value);
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'button_name': 'add_dynamic_value' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'buttonName': 'add_dynamic_value' })
     })
     $w('#exploreTextTemplateBtn').onClick(async (event) => {
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'button_name': 'explore_text_templates' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'subject_line', 'buttonName': 'explore_text_templates' })
     })
 }
 
@@ -99,9 +103,9 @@ const setPreviewTextActions = () => {
         const recievdData = await wixWindow.openLightbox(constants.Lightboxs.addDynamicValue, { 'communication': state.communication, 'BIorigin': 'testAndSend' });
         const value = addDynamicValue($w('#previewTextInput'), recievdData.dynamicValue, recievdData.fallBackValue);
         state.setPreviewText(value);
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'button_name': 'add_dynamic_value' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'buttonName': 'add_dynamic_value' })
     })
     $w('#exploreTextTemplateBtn').onClick(async (event) => {
-        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'button_name': 'explore_text_templates' })
+        sendBi('plusClick', { 'campaignId': state.communication._id, 'origin': 'preview_text', 'buttonName': 'explore_text_templates' })
     })
 }

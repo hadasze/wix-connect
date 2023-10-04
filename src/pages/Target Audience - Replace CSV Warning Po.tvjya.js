@@ -14,7 +14,7 @@ $w.onReady(function () {
             $w('#uploadCSVButton').disable();
             if (isValidFileBeforeUpload(event)) {
                 const recivedData = await $w("#uploadCSVButton").uploadFiles();
-                sendBi('replaceCSV', { 'campaignId': communication._id, 'button_name': 'replace_CSV_file' });
+                sendBi('replaceCSV', { 'campaignId': communication._id, 'buttonName': 'replace_CSV_file' });
                 wixWindow.lightbox.close({ uploadedFiles: recivedData });
             } else {
                 wixWindow.openLightbox(constants.Lightboxs.CSVFileError, { communication, reason: csvErrors.notValidFile });
@@ -32,6 +32,6 @@ $w.onReady(function () {
     })
 
     $w('#cancelBtn').onClick(async (event) => {
-        sendBi('replaceCSV', { 'campaignId': communication._id, 'button_name': 'cancel' })
+        sendBi('replaceCSV', { 'campaignId': communication._id, 'buttonName': 'cancel' })
     })
 });

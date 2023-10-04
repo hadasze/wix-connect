@@ -16,4 +16,4 @@ export const getAudienceDetails = async (uuidsAndMsidsList, userJWT, filter = tr
 }
 
 export const getDownloadFileUrlFromArray = (array, fileName) => TargetAudienceDataHelper.getDownloadCsvUrlFromArray(array, fileName);
-
+export const getRejectedReason = (user) => TargetAudienceDataHelper.getRejectedReason(user);

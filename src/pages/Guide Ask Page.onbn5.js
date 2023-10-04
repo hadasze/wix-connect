@@ -6,10 +6,9 @@ $w.onReady(function () {
     
     $w('#seeGuidelinesBtn').onClick((event) => {
         sendBi('seeGuidelines', {});
+        local.removeItem('tokenset');
+        local.removeItem('userInfo');
         wixLocation.to('https://www.wix-smart.com/admin/tool/course/selfenrol.php?id=8333')
     });
 
-    local.removeItem('tokenset');
-    local.removeItem('userInfo');
-    
 })

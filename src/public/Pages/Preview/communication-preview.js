@@ -112,7 +112,7 @@ const initPreviewDetailsRepeaterData = async () => {
             $item('#userUUIDButton').label = itemData.uuid;
             $item('#userNameText').text = itemData.site_display_name || '';
             $item('#siteUrlText').text = itemData.url || '';
-            setRepeaterActions($item, itemData)
+            setRepeaterActions($item, itemData);
             roles.setSentUuidProperties(itemData, $item, 'Sent');
         });
     } catch (err) {
