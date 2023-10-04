@@ -23,15 +23,13 @@ export function isUUID(str) {
     return regexExp.test(str);
 }
 
-export async function redirectToMyCommunications(withBaseURL) {
+export function redirectToMyCommunications(withBaseURL) {
     const url = new URL(wixLocation.baseUrl + Urls.MY_COMMUNICATIONS_DASHOBOARD);
     if (wixLocation.query.siteRevision)
         url.searchParams.append('siteRevision', wixLocation.query.siteRevision);
     if (wixLocation.query.branchId)
         url.searchParams.append('branchId', wixLocation.query.branchId);
-    const userJWT = await getUserJWTToken();
-    url.searchParams.append('token', userJWT);
-    const redirectURL = withBaseURL && !userJWT ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
+    const redirectURL = withBaseURL ? url.toString() : url.toString().replace(wixLocation.baseUrl, '');
     wixLocation.to(redirectURL);
 }
 

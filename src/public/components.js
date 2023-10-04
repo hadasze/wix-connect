@@ -25,7 +25,6 @@ export const CommunicationDashboardPage = {
     templateActionsBox: WC('templateActionsBox'),
     templatesItemInfoBox: WC('templatesItemInfoBox'),
     myTemplateItemBox: WC('myTemplateItemBox'),
-    allTemplatesButton: WC('allTemplatesButton'),
     deleteTemplateButton: WC('deleteTemplateButton'),
     duplicateTemplateButton: WC('duplicateTemplateButton'),
     editTempalteButton: WC('editTempalteButton'),
@@ -47,10 +46,12 @@ export const CommunicationDashboardPage = {
     sentButton: WC('sentButton'),
     draftsButton: WC('draftsButton'),
     archiveButton: WC('archiveButton'),
+    myCommunicationsButtonBarSeperator: WC('myCommunicationsButtonBarSeperator'),
 
     States: {
         myCommunicationsState: 'myCommunicationsState',
         emptyState: 'emptyState',
+        myTemplatesState: 'myTemplatesState'
     },
 
     communicationActionsbox: ($i) => $i(WithH('communicationActionsbox')),
