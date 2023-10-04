@@ -1,4 +1,5 @@
 import { mediaManager } from 'wix-media-backend';
+// @ts-ignore
 import { csv } from 'csvtojson';
 import request from 'request-promise-node';
 
