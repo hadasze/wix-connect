@@ -27,7 +27,7 @@ export async function getAudienceDetails(payload) {
         if (!userJWT) {
             console.warn('public -> audiance-handler.js userJWT is missing');
         }
-        const chunkSize = 1000;
+        const chunkSize = 500;
         const chunks = [];
 
         for (let i = 0; i < uuidsAndMsidsList.length; i += chunkSize) {
@@ -86,11 +86,16 @@ export function clearAudiance(payload) {
     const uuidsAndMsidsList = [];
     for (let index = 0; index < payload.length; index++) {
         const item = Utils.lowerize(payload[index]);
-        if (item.uuid && item.msid) {
-            if (Utils.isUUID(item.uuid) && Utils.isUUID(item.msid))
-                uuidsAndMsidsList.push({ uuid: item.uuid, msid: item.msid });
+        if (item.uuid) {
+            if (Utils.isUUID(item.uuid)) {
+                const toPush = { uuid: item.uuid };
+                if (item.msid)
+                    toPush.msid = item.msid
+                uuidsAndMsidsList.push(toPush);
+            }
         }
     }
+    console.log('clearAudiance', { uuidsAndMsidsList });
     return uuidsAndMsidsList;
 }
 

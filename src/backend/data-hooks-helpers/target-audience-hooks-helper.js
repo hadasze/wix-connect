@@ -12,7 +12,7 @@ export async function updateTargetAudience(item) {
                 const targetAudience = [];
                 for (let index = 0; index < csvItems.length; index++) {
                     const item = csvItems[index];
-                    if (item.uuid.length > 1 || item.msid.length > 1)
+                    if (item.uuid.length > 1)
                         targetAudience.push()
                 }
                 item.targetAudience = csvItems;
