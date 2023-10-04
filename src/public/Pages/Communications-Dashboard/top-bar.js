@@ -10,7 +10,7 @@ export const setTopBarButtonsEvents = () => {
     $w('#myCommunicationsButton').onClick((event) => {
         $w('#dashboardMultiState').changeState('myCommunicationsState');
         disbaleCurrentButton('myCommunicationsButton', constants.AllMainDashboardButtons);
-        sendBi('subMenu', { 'button_name': 'myCommunicationsButton' })
+        sendBi('subMenu', { 'button_name': 'myCommunicationsButton' });
     });
 
     $w('#myTemplatesButton').onClick((event) => {
@@ -22,7 +22,7 @@ export const setTopBarButtonsEvents = () => {
     $w('#createCommunicationButton').onClick(async (event) => {
         createCommunicationClick(event);
     });
-    
+
     $w('#needHelpButton').onClick((event) => {
         wixWindow.openLightbox(constants.Lightboxs.needHelpSidebar);
     });

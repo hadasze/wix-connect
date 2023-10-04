@@ -117,7 +117,6 @@ export class PagedRepeater {
         }
     }
     async initRepeater(data) {
-        // this.repeater.data = [];
         try {
             this.allData = data;
             this.setActiveData();
